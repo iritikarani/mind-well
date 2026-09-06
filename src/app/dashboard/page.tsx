@@ -29,6 +29,9 @@ function summarizePlay(game: string, resultJson: string): string {
       const monument = monumentById(result.monumentId);
       return monument ? `${monument.name}, ${monument.country}` : "Puzzle completed";
     }
+    if (game === "SPIN_AND_CONNECT") {
+      return `${result.totalCorrect}/${result.totalPossible} correct across ${result.rounds?.length ?? 5} rounds`;
+    }
     return "Played";
   } catch {
     return "Played";

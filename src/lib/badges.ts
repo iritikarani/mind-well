@@ -171,6 +171,12 @@ export interface ColorTheoryResult {
   totalQuestions: number;
 }
 
+export interface SpinAndConnectRound {
+  tier: "rare" | "medium" | "common";
+  correctCount: number;
+  hintsUsed: number;
+}
+
 const ALL_COLOR_KEYS = [
   "red",
   "orange",
@@ -317,6 +323,21 @@ export async function awardBadgesForWorldPuzzle(userId: string) {
     evaluateCrossGame(userId),
   ]);
   return grant(userId, [...gameBadges, ...crossGameBadges]);
+}
+
+function evaluateSpinAndConnect(rounds: SpinAndConnectRound[]): BadgeKey[] {
+  const earned: BadgeKey[] = [];
+
+  if (rounds.length >= 5) earned.push("FIVE_ROUNDS_STRONG");
+  if (rounds.some((r) => r.hintsUsed === 0)) earned.push("QUICK_THINKER");
+  if (rounds.some((r) => r.tier === "common" && r.correctCount >= 5)) earned.push("WORDSMITH");
+
+  return earned;
+}
+
+export async function awardBadgesForSpinAndConnect(userId: string, rounds: SpinAndConnectRound[]) {
+  const crossGameBadges = await evaluateCrossGame(userId);
+  return grant(userId, [...evaluateSpinAndConnect(rounds), ...crossGameBadges]);
 }
 
 export async function awardBadgesForAnimalRunner(userId: string, result: AnimalRunnerResult) {

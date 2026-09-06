@@ -47,7 +47,7 @@ export const GAMES: GameMeta[] = [
     emoji: "🎡",
     href: "/games/spin-and-connect",
     tagline: "Spin a letter and a category, then connect the dots.",
-    playable: false,
+    playable: true,
   },
   {
     key: "FIND_THE_WORD",

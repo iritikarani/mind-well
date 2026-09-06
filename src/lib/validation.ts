@@ -64,6 +64,20 @@ export const worldPuzzlePlaySchema = z.object({
   monumentId: z.string().min(1),
 });
 
+export const spinAndConnectPlaySchema = z.object({
+  rounds: z
+    .array(
+      z.object({
+        letter: z.string().length(1),
+        category: z.string().min(1),
+        tier: z.enum(["rare", "medium", "common"]),
+        correctCount: z.number().int().min(0),
+        hintsUsed: z.number().int().min(0),
+      }),
+    )
+    .min(5),
+});
+
 export const resetPasswordSchema = z
   .object({
     resetToken: z.string().trim().min(1),
