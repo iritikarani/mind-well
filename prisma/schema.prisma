@@ -1,0 +1,108 @@
+// Prisma schema for Mind Well
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  username     String   @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  otpCodes      OtpCode[]
+  gamePlays     GamePlay[]
+  userBadges    UserBadge[]
+  journalEntries JournalEntry[]
+  streak        Streak?
+}
+
+enum OtpPurpose {
+  SIGNUP
+  PASSWORD_RESET
+}
+
+model OtpCode {
+  id        String     @id @default(cuid())
+  email     String
+  codeHash  String
+  purpose   OtpPurpose
+  expiresAt DateTime
+  consumed  Boolean    @default(false)
+  attempts  Int        @default(0)
+  createdAt DateTime   @default(now())
+
+  // present once the account exists (password reset flow)
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // pending signup payload, stored only until OTP is verified
+  pendingName         String?
+  pendingUsername     String?
+  pendingPasswordHash String?
+
+  @@index([email, purpose])
+}
+
+enum GameKey {
+  ANIMAL_RUNNER
+  WORLD_PUZZLE
+  COLOR_THEORY
+  SPIN_AND_CONNECT
+  FIND_THE_WORD
+  ANAGRAMS
+  THREE_THINGS
+}
+
+model GamePlay {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game      GameKey
+  result    String // JSON blob: per-game outcome summary
+  score     Int      @default(0)
+  playedAt  DateTime @default(now())
+
+  @@index([userId, game])
+  @@index([userId, playedAt])
+}
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeKey String
+  earnedAt DateTime @default(now())
+
+  @@unique([userId, badgeKey])
+}
+
+model Streak {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentCount  Int      @default(0)
+  longestCount  Int      @default(0)
+  lastPlayedDate String? // YYYY-MM-DD, in the user's local calendar day
+}
+
+model JournalEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      String // YYYY-MM-DD
+  slot      Int // 1, 2, or 3
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date, slot])
+  @@index([userId, date])
+}

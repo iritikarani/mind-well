@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg-top: #fdeef4;
+  --color-bg-bottom: #f3effb;
+
+  --color-surface: #fffdfb;
+
+  --color-blush: #ffe3ee;
+  --color-blush-strong: #ffc7dd;
+  --color-blush-text: #7a3b57;
+
+  --color-butter: #ffe9c7;
+  --color-butter-soft: #fff3d6;
+  --color-butter-text: #8a6a2b;
+
+  --color-sky: #e3f2ff;
+  --color-sky-text: #2f5d82;
+
+  --color-mint: #dff5ea;
+  --color-mint-text: #2f6b4a;
+
+  --color-peach: #ffd7c2;
+
+  --color-heading: #6b5b73;
+  --color-muted: #a69aa8;
+}
+
+@theme inline {
+  --font-heading: var(--font-quicksand);
+  --font-sans: var(--font-nunito);
+
+  --color-bg-top: var(--color-bg-top);
+  --color-bg-bottom: var(--color-bg-bottom);
+  --color-surface: var(--color-surface);
+
+  --color-blush: var(--color-blush);
+  --color-blush-strong: var(--color-blush-strong);
+  --color-blush-text: var(--color-blush-text);
+
+  --color-butter: var(--color-butter);
+  --color-butter-soft: var(--color-butter-soft);
+  --color-butter-text: var(--color-butter-text);
+
+  --color-sky: var(--color-sky);
+  --color-sky-text: var(--color-sky-text);
+
+  --color-mint: var(--color-mint);
+  --color-mint-text: var(--color-mint-text);
+
+  --color-peach: var(--color-peach);
+
+  --color-heading: var(--color-heading);
+  --color-muted: var(--color-muted);
+}
+
+body {
+  background: linear-gradient(180deg, var(--color-bg-top) 0%, var(--color-bg-bottom) 100%);
+  background-attachment: fixed;
+  color: var(--color-heading);
+  font-family: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  min-height: 100dvh;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-quicksand), var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-14px) translateX(6px); }
+}
+
+@keyframes float-slower {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-22px) translateX(-10px); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+.animate-float-slower {
+  animation: float-slower 10s ease-in-out infinite;
+}
+
+.animate-breathe {
+  animation: breathe 5s ease-in-out infinite;
+}
+
+@keyframes runner-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes runner-jump {
+  0% { transform: translateY(0) rotate(0deg); }
+  40% { transform: translateY(-46px) rotate(-8deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes runner-win {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-10px) rotate(4deg); }
+}
+
+@keyframes runner-low {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow,
+  .animate-float-slower,
+  .animate-breathe,
+  [class*="runner-"] {
+    animation: none !important;
+  }
+}

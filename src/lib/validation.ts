@@ -1,0 +1,50 @@
+import { z } from "zod";
+
+const usernamePattern = /^[a-zA-Z0-9_]{3,20}$/;
+
+export const signupSchema = z
+  .object({
+    email: z.string().trim().toLowerCase().email("Enter a valid email"),
+    name: z.string().trim().min(1, "Name is required").max(80),
+    username: z
+      .string()
+      .trim()
+      .regex(usernamePattern, "3-20 letters, numbers, or underscores"),
+    password: z.string().min(8, "At least 8 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
+export const signupVerifySchema = z.object({
+  email: z.string().trim().toLowerCase().email(),
+  code: z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code"),
+});
+
+export const loginSchema = z.object({
+  identifier: z.string().trim().min(1, "Enter your username or email"),
+  password: z.string().min(1, "Enter your password"),
+});
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().trim().toLowerCase().email("Enter a valid email"),
+});
+
+export const journalSaveSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  slot: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+  text: z.string().max(500),
+});
+
+export const resetPasswordSchema = z
+  .object({
+    resetToken: z.string().trim().min(1),
+    password: z.string().min(8, "At least 8 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
