@@ -1,16 +1,21 @@
-import { ComingSoonGamePage } from "@/components/games/ComingSoon";
-import { GAMES } from "@/lib/games";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth";
+import { AppHeader } from "@/components/app/AppHeader";
+import { WorldPuzzleGame } from "@/components/games/world-puzzle/WorldPuzzleGame";
+import { prisma } from "@/lib/prisma";
 
-export default function WorldPuzzlePage() {
+export default async function WorldPuzzlePage() {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+
+  const streak = await prisma.streak.findUnique({ where: { userId: user.id } });
+
   return (
-    <ComingSoonGamePage
-      game={GAMES.find((g) => g.key === "WORLD_PUZZLE")!}
-      plannedMechanics={[
-        "Untimed jigsaw with no move-count or fail state — purely therapeutic",
-        "See the reference monument first, then fit large, easy-to-handle pieces at your own pace",
-        "Flip the finished puzzle to reveal an uplifting quote plus the monument's name and location",
-        "314 real, globally recognized landmarks to cycle through over time",
-      ]}
-    />
+    <>
+      <AppHeader name={user.name} streak={streak?.currentCount} />
+      <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-16 sm:px-10">
+        <WorldPuzzleGame />
+      </main>
+    </>
   );
 }

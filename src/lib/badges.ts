@@ -282,6 +282,43 @@ async function evaluateColorTheory(userId: string, result: ColorTheoryResult): P
   return earned;
 }
 
+async function evaluateWorldPuzzle(userId: string): Promise<BadgeKey[]> {
+  const earned: BadgeKey[] = ["PATIENT_BUILDER"];
+
+  // Assumes the current session's GamePlay row has already been created,
+  // so it's naturally included in these counts.
+  const [totalPlays, plays] = await Promise.all([
+    prisma.gamePlay.count({ where: { userId, game: "WORLD_PUZZLE" } }),
+    prisma.gamePlay.findMany({
+      where: { userId, game: "WORLD_PUZZLE" },
+      select: { result: true },
+    }),
+  ]);
+
+  if (totalPlays >= 10) earned.push("QUOTE_COLLECTOR");
+
+  const countries = new Set<string>();
+  for (const play of plays) {
+    try {
+      const parsed = JSON.parse(play.result) as { country?: string };
+      if (parsed.country) countries.add(parsed.country);
+    } catch {
+      // ignore malformed rows
+    }
+  }
+  if (countries.size >= 5) earned.push("WORLD_TRAVELER");
+
+  return earned;
+}
+
+export async function awardBadgesForWorldPuzzle(userId: string) {
+  const [gameBadges, crossGameBadges] = await Promise.all([
+    evaluateWorldPuzzle(userId),
+    evaluateCrossGame(userId),
+  ]);
+  return grant(userId, [...gameBadges, ...crossGameBadges]);
+}
+
 export async function awardBadgesForAnimalRunner(userId: string, result: AnimalRunnerResult) {
   const [gameBadges, crossGameBadges] = await Promise.all([
     evaluateAnimalRunner(result),

@@ -60,6 +60,10 @@ export const colorTheoryPlaySchema = z
     path: ["answers"],
   });
 
+export const worldPuzzlePlaySchema = z.object({
+  monumentId: z.string().min(1),
+});
+
 export const resetPasswordSchema = z
   .object({
     resetToken: z.string().trim().min(1),

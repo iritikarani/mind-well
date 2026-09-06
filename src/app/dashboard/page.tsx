@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
 import { GAMES, gameMeta } from "@/lib/games";
+import { monumentById } from "@/lib/worldPuzzleContent";
 import { AppHeader } from "@/components/app/AppHeader";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
@@ -23,6 +24,10 @@ function summarizePlay(game: string, resultJson: string): string {
     if (game === "COLOR_THEORY") {
       const color = result.color?.charAt(0).toUpperCase() + result.color?.slice(1);
       return `${color} · ${result.questionsAnswered}/${result.totalQuestions} answered`;
+    }
+    if (game === "WORLD_PUZZLE") {
+      const monument = monumentById(result.monumentId);
+      return monument ? `${monument.name}, ${monument.country}` : "Puzzle completed";
     }
     return "Played";
   } catch {

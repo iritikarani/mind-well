@@ -29,7 +29,7 @@ export const GAMES: GameMeta[] = [
     emoji: "🧩",
     href: "/games/world-puzzle",
     tagline: "Piece together a monument from around the world, at your own pace.",
-    playable: false,
+    playable: true,
   },
   {
     key: "COLOR_THEORY",
