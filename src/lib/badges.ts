@@ -183,6 +183,11 @@ export interface FindTheWordEntry {
   outcome: "yes" | "no" | "answered" | "skipped";
 }
 
+export interface AnagramsResult {
+  totalTimeMs: number;
+  usedUncommonWord: boolean;
+}
+
 const ALL_COLOR_KEYS = [
   "red",
   "orange",
@@ -365,6 +370,20 @@ export async function awardBadgesForFindTheWord(userId: string, wordsFound: Find
     evaluateCrossGame(userId),
   ]);
   return grant(userId, [...gameBadges, ...crossGameBadges]);
+}
+
+function evaluateAnagrams(result: AnagramsResult): BadgeKey[] {
+  const earned: BadgeKey[] = ["LEVEL_MASTER"];
+
+  if (result.totalTimeMs < 90_000) earned.push("SPEED_SOLVER");
+  if (result.usedUncommonWord) earned.push("WORDPLAY_GENIUS");
+
+  return earned;
+}
+
+export async function awardBadgesForAnagrams(userId: string, result: AnagramsResult) {
+  const crossGameBadges = await evaluateCrossGame(userId);
+  return grant(userId, [...evaluateAnagrams(result), ...crossGameBadges]);
 }
 
 export async function awardBadgesForAnimalRunner(userId: string, result: AnimalRunnerResult) {

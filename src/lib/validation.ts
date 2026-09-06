@@ -80,6 +80,11 @@ export const findTheWordPlaySchema = z.object({
     .length(3),
 });
 
+export const anagramsPlaySchema = z.object({
+  totalTimeMs: z.number().int().min(0),
+  usedUncommonWord: z.boolean(),
+});
+
 export const spinAndConnectPlaySchema = z.object({
   rounds: z
     .array(

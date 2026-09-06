@@ -36,6 +36,10 @@ function summarizePlay(game: string, resultJson: string): string {
       const words = (result.wordsFound ?? []).map((w: { word: string }) => w.word).join(", ");
       return words ? `Found ${words}` : "3 words found";
     }
+    if (game === "ANAGRAMS") {
+      const seconds = Math.round((result.totalTimeMs ?? 0) / 1000);
+      return `Solved all 3 levels in ${seconds}s${result.usedUncommonWord ? " · found an uncommon word" : ""}`;
+    }
     return "Played";
   } catch {
     return "Played";

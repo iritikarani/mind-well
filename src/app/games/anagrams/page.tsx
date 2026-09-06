@@ -1,16 +1,21 @@
-import { ComingSoonGamePage } from "@/components/games/ComingSoon";
-import { GAMES } from "@/lib/games";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth";
+import { AppHeader } from "@/components/app/AppHeader";
+import { AnagramsGame } from "@/components/games/anagrams/AnagramsGame";
+import { prisma } from "@/lib/prisma";
 
-export default function AnagramsPage() {
+export default async function AnagramsPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+
+  const streak = await prisma.streak.findUnique({ where: { userId: user.id } });
+
   return (
-    <ComingSoonGamePage
-      game={GAMES.find((g) => g.key === "ANAGRAMS")!}
-      plannedMechanics={[
-        "Level 1: rearrange a 4-letter word into two different new 4-letter words",
-        "Level 2: rearrange a 5-letter word into one new 5-letter word",
-        "Level 3: form a 4-letter word and a 5-letter word, sharing letters freely",
-        "A closing remark based on your speed and how creative your words were",
-      ]}
-    />
+    <>
+      <AppHeader name={user.name} streak={streak?.currentCount} />
+      <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-16 sm:px-10">
+        <AnagramsGame />
+      </main>
+    </>
   );
 }

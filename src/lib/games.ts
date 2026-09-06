@@ -65,7 +65,7 @@ export const GAMES: GameMeta[] = [
     emoji: "🔀",
     href: "/games/anagrams",
     tagline: "Rearrange letters into new words across three levels.",
-    playable: false,
+    playable: true,
   },
   {
     key: "THREE_THINGS",
