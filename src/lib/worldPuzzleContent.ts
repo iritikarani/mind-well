@@ -25,6 +25,7 @@ export const MONUMENTS: MonumentDef[] = [
   { id: "dome-of-the-rock", name: "Dome of the Rock", country: "Jerusalem", region: "Middle East", image: "/monuments/dome-of-the-rock.jpg" },
   { id: "burj-khalifa", name: "Burj Khalifa", country: "United Arab Emirates", region: "Middle East", image: "/monuments/burj-khalifa.jpg" },
   { id: "sheikh-zayed-mosque", name: "Sheikh Zayed Mosque", country: "United Arab Emirates", region: "Middle East", image: "/monuments/sheikh-zayed-mosque.jpg" },
+  { id: "persepolis", name: "Persepolis", country: "Iran", region: "Middle East", image: "/monuments/persepolis.jpg" },
   { id: "blue-mosque", name: "The Blue Mosque", country: "Turkey", region: "Middle East", image: "/monuments/blue-mosque.jpg" },
 
   // Europe
@@ -54,6 +55,7 @@ export const MONUMENTS: MonumentDef[] = [
   { id: "chichen-itza", name: "Chichen Itza", country: "Mexico", region: "Americas", image: "/monuments/chichen-itza.jpg" },
   { id: "golden-gate", name: "The Golden Gate Bridge", country: "United States", region: "Americas", image: "/monuments/golden-gate.jpg" },
   { id: "gateway-arch", name: "The Gateway Arch", country: "United States", region: "Americas", image: "/monuments/gateway-arch.jpg" },
+  { id: "cn-tower", name: "The CN Tower", country: "Canada", region: "Americas", image: "/monuments/cn-tower.jpg" },
   { id: "niagara-falls", name: "Niagara Falls", country: "Canada", region: "Americas", image: "/monuments/niagara-falls.jpg" },
   { id: "moai", name: "The Moai of Easter Island", country: "Chile", region: "Americas", image: "/monuments/moai.jpg" },
   { id: "teotihuacan", name: "Teotihuacan", country: "Mexico", region: "Americas", image: "/monuments/teotihuacan.jpg" },
@@ -62,6 +64,7 @@ export const MONUMENTS: MonumentDef[] = [
   { id: "sydney-opera-house", name: "The Sydney Opera House", country: "Australia", region: "Oceania", image: "/monuments/sydney-opera-house.jpg" },
   { id: "sydney-harbour-bridge", name: "The Sydney Harbour Bridge", country: "Australia", region: "Oceania", image: "/monuments/sydney-harbour-bridge.jpg" },
   { id: "uluru", name: "Uluru", country: "Australia", region: "Oceania", image: "/monuments/uluru.jpg" },
+  { id: "sky-tower", name: "The Sky Tower", country: "New Zealand", region: "Oceania", image: "/monuments/sky-tower.jpg" },
 ];
 
 export function monumentById(id: string): MonumentDef | undefined {
