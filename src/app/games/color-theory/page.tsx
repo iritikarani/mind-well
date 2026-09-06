@@ -1,16 +1,21 @@
-import { ComingSoonGamePage } from "@/components/games/ComingSoon";
-import { GAMES } from "@/lib/games";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth";
+import { AppHeader } from "@/components/app/AppHeader";
+import { ColorTheoryGame } from "@/components/games/color-theory/ColorTheoryGame";
+import { prisma } from "@/lib/prisma";
 
-export default function ColorTheoryPage() {
+export default async function ColorTheoryPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+
+  const streak = await prisma.streak.findUnique({ where: { userId: user.id } });
+
   return (
-    <ComingSoonGamePage
-      game={GAMES.find((g) => g.key === "COLOR_THEORY")!}
-      plannedMechanics={[
-        "Pick your favorite color from a basic palette",
-        "Answer 7 short, reflective questions tied to that color",
-        "A fixed starter set on your very first playthrough, then a fresh set every time after",
-        "A personalized closing affirmation tied to your chosen color",
-      ]}
-    />
+    <>
+      <AppHeader name={user.name} streak={streak?.currentCount} />
+      <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-16 sm:px-10">
+        <ColorTheoryGame />
+      </main>
+    </>
   );
 }

@@ -165,6 +165,25 @@ export interface ThreeThingsResult {
   entriesCount: number;
 }
 
+export interface ColorTheoryResult {
+  color: string;
+  questionsAnswered: number;
+  totalQuestions: number;
+}
+
+const ALL_COLOR_KEYS = [
+  "red",
+  "orange",
+  "yellow",
+  "green",
+  "blue",
+  "purple",
+  "pink",
+  "brown",
+  "black",
+  "white",
+];
+
 async function grant(userId: string, keys: BadgeKey[]) {
   if (keys.length === 0) return [] as BadgeKey[];
 
@@ -233,6 +252,36 @@ async function evaluateThreeThings(userId: string, result: ThreeThingsResult): P
   return earned;
 }
 
+async function evaluateColorTheory(userId: string, result: ColorTheoryResult): Promise<BadgeKey[]> {
+  const earned: BadgeKey[] = [];
+
+  if (result.questionsAnswered >= result.totalQuestions) earned.push("COLOR_CONNECTOR");
+
+  // Assumes the current session's GamePlay row has already been created,
+  // so it's naturally included in this count.
+  const plays = await prisma.gamePlay.findMany({
+    where: { userId, game: "COLOR_THEORY" },
+    select: { result: true },
+  });
+
+  const colorCounts = new Map<string, number>();
+  for (const play of plays) {
+    try {
+      const parsed = JSON.parse(play.result) as { color?: string };
+      if (parsed.color) {
+        colorCounts.set(parsed.color, (colorCounts.get(parsed.color) ?? 0) + 1);
+      }
+    } catch {
+      // ignore malformed rows
+    }
+  }
+
+  if ((colorCounts.get(result.color) ?? 0) >= 5) earned.push("COLOR_WHISPERER");
+  if (ALL_COLOR_KEYS.every((c) => colorCounts.has(c))) earned.push("RAINBOW_MIND");
+
+  return earned;
+}
+
 export async function awardBadgesForAnimalRunner(userId: string, result: AnimalRunnerResult) {
   const [gameBadges, crossGameBadges] = await Promise.all([
     evaluateAnimalRunner(result),
@@ -244,6 +293,14 @@ export async function awardBadgesForAnimalRunner(userId: string, result: AnimalR
 export async function awardBadgesForThreeThings(userId: string, result: ThreeThingsResult) {
   const [gameBadges, crossGameBadges] = await Promise.all([
     evaluateThreeThings(userId, result),
+    evaluateCrossGame(userId),
+  ]);
+  return grant(userId, [...gameBadges, ...crossGameBadges]);
+}
+
+export async function awardBadgesForColorTheory(userId: string, result: ColorTheoryResult) {
+  const [gameBadges, crossGameBadges] = await Promise.all([
+    evaluateColorTheory(userId, result),
     evaluateCrossGame(userId),
   ]);
   return grant(userId, [...gameBadges, ...crossGameBadges]);

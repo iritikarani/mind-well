@@ -38,7 +38,7 @@ export const GAMES: GameMeta[] = [
     emoji: "🎨",
     href: "/games/color-theory",
     tagline: "Pick a color, reflect a little, leave with an affirmation.",
-    playable: false,
+    playable: true,
   },
   {
     key: "SPIN_AND_CONNECT",

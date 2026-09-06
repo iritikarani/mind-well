@@ -38,6 +38,28 @@ export const journalSaveSchema = z.object({
   text: z.string().max(500),
 });
 
+export const colorTheoryPlaySchema = z
+  .object({
+    color: z.enum([
+      "red",
+      "orange",
+      "yellow",
+      "green",
+      "blue",
+      "purple",
+      "pink",
+      "brown",
+      "black",
+      "white",
+    ]),
+    questions: z.array(z.string()).min(1),
+    answers: z.array(z.string()),
+  })
+  .refine((data) => data.answers.length === data.questions.length, {
+    message: "Answers must match the number of questions",
+    path: ["answers"],
+  });
+
 export const resetPasswordSchema = z
   .object({
     resetToken: z.string().trim().min(1),

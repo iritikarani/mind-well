@@ -20,6 +20,10 @@ function summarizePlay(game: string, resultJson: string): string {
     if (game === "THREE_THINGS") {
       return `${result.entriesCount} thing${result.entriesCount === 1 ? "" : "s"} saved`;
     }
+    if (game === "COLOR_THEORY") {
+      const color = result.color?.charAt(0).toUpperCase() + result.color?.slice(1);
+      return `${color} · ${result.questionsAnswered}/${result.totalQuestions} answered`;
+    }
     return "Played";
   } catch {
     return "Played";
