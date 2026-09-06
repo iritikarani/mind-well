@@ -177,6 +177,12 @@ export interface SpinAndConnectRound {
   hintsUsed: number;
 }
 
+export interface FindTheWordEntry {
+  word: string;
+  variantIndex: number;
+  outcome: "yes" | "no" | "answered" | "skipped";
+}
+
 const ALL_COLOR_KEYS = [
   "red",
   "orange",
@@ -338,6 +344,27 @@ function evaluateSpinAndConnect(rounds: SpinAndConnectRound[]): BadgeKey[] {
 export async function awardBadgesForSpinAndConnect(userId: string, rounds: SpinAndConnectRound[]) {
   const crossGameBadges = await evaluateCrossGame(userId);
   return grant(userId, [...evaluateSpinAndConnect(rounds), ...crossGameBadges]);
+}
+
+async function evaluateFindTheWord(userId: string, wordsFound: FindTheWordEntry[]): Promise<BadgeKey[]> {
+  const earned: BadgeKey[] = ["SELF_AWARE"];
+
+  if (wordsFound.every((w) => w.outcome !== "skipped")) earned.push("HONEST_VOICE");
+
+  // Assumes the current session's GamePlay row has already been created,
+  // so it's naturally included in this count.
+  const totalPlays = await prisma.gamePlay.count({ where: { userId, game: "FIND_THE_WORD" } });
+  if (totalPlays >= 5) earned.push("RETURN_VISITOR");
+
+  return earned;
+}
+
+export async function awardBadgesForFindTheWord(userId: string, wordsFound: FindTheWordEntry[]) {
+  const [gameBadges, crossGameBadges] = await Promise.all([
+    evaluateFindTheWord(userId, wordsFound),
+    evaluateCrossGame(userId),
+  ]);
+  return grant(userId, [...gameBadges, ...crossGameBadges]);
 }
 
 export async function awardBadgesForAnimalRunner(userId: string, result: AnimalRunnerResult) {

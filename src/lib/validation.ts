@@ -64,6 +64,22 @@ export const worldPuzzlePlaySchema = z.object({
   monumentId: z.string().min(1),
 });
 
+export const findTheWordQuestionSchema = z.object({
+  word: z.string().min(1),
+});
+
+export const findTheWordPlaySchema = z.object({
+  wordsFound: z
+    .array(
+      z.object({
+        word: z.string().min(1),
+        variantIndex: z.number().int().min(0),
+        outcome: z.enum(["yes", "no", "answered", "skipped"]),
+      }),
+    )
+    .length(3),
+});
+
 export const spinAndConnectPlaySchema = z.object({
   rounds: z
     .array(

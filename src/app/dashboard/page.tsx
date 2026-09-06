@@ -32,6 +32,10 @@ function summarizePlay(game: string, resultJson: string): string {
     if (game === "SPIN_AND_CONNECT") {
       return `${result.totalCorrect}/${result.totalPossible} correct across ${result.rounds?.length ?? 5} rounds`;
     }
+    if (game === "FIND_THE_WORD") {
+      const words = (result.wordsFound ?? []).map((w: { word: string }) => w.word).join(", ");
+      return words ? `Found ${words}` : "3 words found";
+    }
     return "Played";
   } catch {
     return "Played";

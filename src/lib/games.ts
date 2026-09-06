@@ -56,7 +56,7 @@ export const GAMES: GameMeta[] = [
     emoji: "🔤",
     href: "/games/find-the-word",
     tagline: "Find a few words, answer a few gentle questions.",
-    playable: false,
+    playable: true,
   },
   {
     key: "ANAGRAMS",
