@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
@@ -17,10 +17,11 @@ import {
   type CategoryKey,
   type Tier,
 } from "@/lib/spinConnectContent";
+import { SpinWheel, computeWheelRotation, SPIN_DURATION_MS } from "./SpinWheel";
 
 const TOTAL_ROUNDS = 5;
-const SPIN_DURATION_MS = 900;
-const SPIN_TICK_MS = 70;
+const LETTER_COLORS: [string, string] = ["#FFE9F0", "#FFC7DD"];
+const CATEGORY_COLORS: [string, string] = ["#E3F8ED", "#BFEBD3"];
 
 type Stage = "spinning" | "landed" | "answering" | "round-result" | "closing";
 
@@ -47,19 +48,14 @@ export function SpinAndConnectGame() {
   // the client, so these values are never actually shown.
   const [letter, setLetter] = useState(LETTERS[0]);
   const [category, setCategory] = useState<CategoryKey>(CATEGORIES[0].key);
-  const [displayLetter, setDisplayLetter] = useState(letter);
-  const [displayCategory, setDisplayCategory] = useState<CategoryKey>(category);
-  const [spinning, setSpinning] = useState<{ letter: boolean; category: boolean }>({
-    letter: true,
-    category: true,
-  });
+  const [letterRotation, setLetterRotation] = useState(0);
+  const [categoryRotation, setCategoryRotation] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [hintsUsed, setHintsUsed] = useState(0);
   const [lastResults, setLastResults] = useState<boolean[]>([]);
   const [rounds, setRounds] = useState<RoundSummary[]>([]);
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
-  const spinTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const tierInfo = tierFor(category, letter);
 
@@ -71,26 +67,24 @@ export function SpinAndConnectGame() {
 
   function spinWheels(opts: { letter: boolean; category: boolean }) {
     setStage("spinning");
-    setSpinning(opts);
 
     const nextLetter = opts.letter ? randomLetterExcept(letter) : letter;
     const nextCategory = opts.category ? randomCategoryExcept(category) : category;
 
-    if (spinTimer.current) clearInterval(spinTimer.current);
-    const start = Date.now();
-    spinTimer.current = setInterval(() => {
-      if (opts.letter) setDisplayLetter(randomLetter());
-      if (opts.category) setDisplayCategory(randomCategory());
+    if (opts.letter) {
+      const idx = LETTERS.indexOf(nextLetter);
+      setLetterRotation((prev) => computeWheelRotation(prev, idx, LETTERS.length));
+    }
+    if (opts.category) {
+      const idx = CATEGORIES.findIndex((c) => c.key === nextCategory);
+      setCategoryRotation((prev) => computeWheelRotation(prev, idx, CATEGORIES.length));
+    }
 
-      if (Date.now() - start >= SPIN_DURATION_MS) {
-        if (spinTimer.current) clearInterval(spinTimer.current);
-        setLetter(nextLetter);
-        setCategory(nextCategory);
-        setDisplayLetter(nextLetter);
-        setDisplayCategory(nextCategory);
-        setStage("landed");
-      }
-    }, SPIN_TICK_MS);
+    setTimeout(() => {
+      setLetter(nextLetter);
+      setCategory(nextCategory);
+      setStage("landed");
+    }, SPIN_DURATION_MS);
   }
 
   function randomLetterExcept(exclude: string) {
@@ -172,7 +166,6 @@ export function SpinAndConnectGame() {
     spinWheels({ letter: true, category: true });
   }
 
-  const catDef = categoryByKey(displayCategory);
   const landedCatDef = categoryByKey(category);
 
   if (stage === "closing") {
@@ -216,18 +209,18 @@ export function SpinAndConnectGame() {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <Card
-          className={`flex flex-col items-center justify-center gap-2 py-8 ${spinning.letter && stage === "spinning" ? "animate-pulse" : ""}`}
-        >
+        <Card className="flex flex-col items-center gap-3 py-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted">Letter</p>
-          <p className="font-heading text-5xl font-bold text-heading">{displayLetter}</p>
+          <SpinWheel labels={LETTERS} rotation={letterRotation} size={180} colors={LETTER_COLORS} />
         </Card>
-        <Card
-          className={`flex flex-col items-center justify-center gap-2 py-8 ${spinning.category && stage === "spinning" ? "animate-pulse" : ""}`}
-        >
+        <Card className="flex flex-col items-center gap-3 py-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted">Category</p>
-          <p className="text-3xl">{catDef.emoji}</p>
-          <p className="font-heading text-lg font-bold text-heading">{catDef.label}</p>
+          <SpinWheel
+            labels={CATEGORIES.map((c) => c.emoji)}
+            rotation={categoryRotation}
+            size={180}
+            colors={CATEGORY_COLORS}
+          />
         </Card>
       </div>
 

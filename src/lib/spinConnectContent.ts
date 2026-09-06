@@ -6,23 +6,14 @@ export type CategoryKey =
   | "animals"
   | "birds"
   | "countries"
-  | "cities"
-  | "rivers"
-  | "mountains"
-  | "foods"
-  | "drinks"
   | "sports"
   | "movies"
-  | "music_genres"
   | "books"
   | "jobs"
   | "school_subjects"
   | "emotions"
   | "clothing"
-  | "household"
-  | "vehicles"
-  | "games"
-  | "instruments";
+  | "household";
 
 export interface CategoryDef {
   key: CategoryKey;
@@ -38,23 +29,14 @@ export const CATEGORIES: CategoryDef[] = [
   { key: "animals", label: "Animals", emoji: "🦁" },
   { key: "birds", label: "Birds", emoji: "🐦" },
   { key: "countries", label: "Countries", emoji: "🌍" },
-  { key: "cities", label: "Cities", emoji: "🏙️" },
-  { key: "rivers", label: "Rivers", emoji: "🌊" },
-  { key: "mountains", label: "Mountains", emoji: "⛰️" },
-  { key: "foods", label: "Foods / Dishes", emoji: "🍜" },
-  { key: "drinks", label: "Drinks", emoji: "🥤" },
   { key: "sports", label: "Sports", emoji: "⚽" },
   { key: "movies", label: "Movies", emoji: "🎬" },
-  { key: "music_genres", label: "Music Genres", emoji: "🎵" },
   { key: "books", label: "Books", emoji: "📚" },
   { key: "jobs", label: "Jobs / Professions", emoji: "💼" },
   { key: "school_subjects", label: "School Subjects", emoji: "📐" },
   { key: "emotions", label: "Emotions / Feelings", emoji: "💛" },
   { key: "clothing", label: "Clothing Items", emoji: "👕" },
   { key: "household", label: "Household Objects", emoji: "🪑" },
-  { key: "vehicles", label: "Vehicles / Transport", emoji: "🚗" },
-  { key: "games", label: "Board / Card Games", emoji: "🎲" },
-  { key: "instruments", label: "Musical Instruments", emoji: "🎸" },
 ];
 
 export function categoryByKey(key: string): CategoryDef {
@@ -120,43 +102,6 @@ export const WORDBANK: Record<CategoryKey, string[]> = {
     "Thailand", "Tunisia", "Turkey", "Uganda", "Ukraine", "Uruguay", "Venezuela", "Vietnam",
     "Yemen", "Zambia", "Zimbabwe",
   ],
-  cities: [
-    "Amsterdam", "Athens", "Atlanta", "Bangkok", "Barcelona", "Beijing", "Berlin", "Boston",
-    "Brussels", "Budapest", "Cairo", "Chicago", "Copenhagen", "Dallas", "Delhi", "Denver",
-    "Dubai", "Dublin", "Edinburgh", "Florence", "Geneva", "Hanoi", "Havana", "Helsinki",
-    "Houston", "Istanbul", "Jakarta", "Kyoto", "Lagos", "Lima", "Lisbon", "London",
-    "Madrid", "Manila", "Melbourne", "Miami", "Milan", "Montreal", "Moscow", "Mumbai",
-    "Nairobi", "Naples", "Oslo", "Paris", "Prague", "Quebec", "Rome", "Seattle", "Seoul",
-    "Shanghai", "Singapore", "Stockholm", "Sydney", "Tokyo", "Toronto", "Vancouver", "Venice",
-    "Vienna", "Warsaw", "Zurich",
-  ],
-  rivers: [
-    "Amazon", "Amur", "Brahmaputra", "Colorado", "Columbia", "Congo", "Danube", "Elbe",
-    "Euphrates", "Ganges", "Indus", "Irrawaddy", "Jordan", "Lena", "Loire", "Mackenzie",
-    "Mekong", "Mississippi", "Missouri", "Murray", "Niger", "Nile", "Ohio", "Orinoco",
-    "Paraguay", "Parana", "Rhine", "Rhone", "Salween", "Seine", "Tagus", "Thames", "Tiber",
-    "Tigris", "Ural", "Volga", "Volta", "Yangtze", "Yukon", "Zambezi",
-  ],
-  mountains: [
-    "Aconcagua", "Annapurna", "Blanc", "Cotopaxi", "Denali", "Elbrus", "Etna", "Everest",
-    "Fuji", "Himalaya", "Jungfrau", "Kilimanjaro", "Kosciuszko", "Logan", "Makalu",
-    "Matterhorn", "McKinley", "Olympus", "Popocatepetl", "Rainier", "Shasta", "Vesuvius",
-    "Whitney",
-  ],
-  foods: [
-    "Baklava", "Biryani", "Bibimbap", "Burger", "Burrito", "Calzone", "Casserole", "Chowder",
-    "Croissant", "Curry", "Dumpling", "Enchilada", "Falafel", "Fondue", "Goulash", "Gumbo",
-    "Hummus", "Kebab", "Lasagna", "Meatloaf", "Moussaka", "Nachos", "Noodles", "Omelette",
-    "Pancake", "Pasta", "Pierogi", "Pizza", "Quiche", "Ramen", "Risotto", "Salad", "Sandwich",
-    "Sashimi", "Souffle", "Soup", "Spaghetti", "Stew", "Sushi", "Taco", "Tempura", "Waffle",
-  ],
-  drinks: [
-    "Ale", "Beer", "Cappuccino", "Champagne", "Cider", "Cocoa", "Coffee", "Cola", "Cordial",
-    "Daiquiri", "Eggnog", "Espresso", "Gin", "Kombucha", "Lassi", "Latte", "Lemonade",
-    "Margarita", "Martini", "Milk", "Mocha", "Mojito", "Nectar", "Punch", "Rum", "Sake",
-    "Sangria", "Seltzer", "Smoothie", "Soda", "Tea", "Tequila", "Vodka", "Water", "Whiskey",
-    "Wine",
-  ],
   sports: [
     "Archery", "Athletics", "Badminton", "Baseball", "Basketball", "Biathlon", "Billiards",
     "Bobsled", "Bowling", "Boxing", "Canoeing", "Climbing", "Cricket", "Curling", "Cycling",
@@ -171,13 +116,6 @@ export const WORDBANK: Record<CategoryKey, string[]> = {
     "Grease", "Hairspray", "Hercules", "Inception", "Jaws", "Joker", "Juno", "Matrix",
     "Moana", "Ratatouille", "Rio", "Rocky", "Shrek", "Split", "Tangled", "Ted", "Titanic",
     "Up", "Vertigo", "Zootopia",
-  ],
-  music_genres: [
-    "Afrobeat", "Alternative", "Ambient", "Ballad", "Bluegrass", "Blues", "Calypso", "Chanson",
-    "Classical", "Country", "Dance", "Disco", "Dubstep", "Electronic", "Flamenco", "Folk",
-    "Funk", "Gospel", "Grunge", "Hip hop", "House", "Indie", "Jazz", "Klezmer", "Latin",
-    "Metal", "Motown", "Opera", "Pop", "Punk", "Ragtime", "Rap", "Reggae", "Reggaeton", "Rock",
-    "Salsa", "Samba", "Ska", "Soul", "Swing", "Tango", "Techno", "Trance", "Zydeco",
   ],
   books: [
     "Beloved", "Beowulf", "Candide", "Carrie", "Dracula", "Dune", "Emma", "Frankenstein",
@@ -229,26 +167,6 @@ export const WORDBANK: Record<CategoryKey, string[]> = {
     "Mop", "Napkin", "Oven", "Pan", "Pillow", "Plate", "Pot", "Rug", "Shelf", "Sofa",
     "Spoon", "Stool", "Table", "Television", "Thermometer", "Toaster", "Towel", "Vacuum",
     "Vase", "Wardrobe",
-  ],
-  vehicles: [
-    "Airplane", "Ambulance", "Bicycle", "Boat", "Bus", "Cab", "Canoe", "Car", "Caravan",
-    "Carriage", "Cart", "Catamaran", "Coach", "Ferry", "Forklift", "Gondola", "Helicopter",
-    "Jeep", "Jet", "Kayak", "Limousine", "Minivan", "Motorcycle", "Rickshaw", "Rocket",
-    "Sailboat", "Scooter", "Sedan", "Ship", "Skateboard", "Sled", "Snowmobile", "Submarine",
-    "Subway", "Tank", "Taxi", "Train", "Tram", "Trolley", "Truck", "Van", "Wagon", "Yacht",
-  ],
-  games: [
-    "Backgammon", "Bingo", "Blackjack", "Bridge", "Canasta", "Checkers", "Chess", "Clue",
-    "Cribbage", "Dominoes", "Euchre", "Go", "Hearts", "Jenga", "Life", "Ludo", "Mahjong",
-    "Monopoly", "Othello", "Pictionary", "Poker", "Rummy", "Scrabble", "Solitaire", "Sorry",
-    "Spades", "Uno", "War", "Yahtzee",
-  ],
-  instruments: [
-    "Accordion", "Bagpipes", "Banjo", "Bassoon", "Bongo", "Cello", "Clarinet", "Cymbals",
-    "Drums", "Dulcimer", "Flute", "Guitar", "Harmonica", "Harp", "Harpsichord", "Kazoo",
-    "Keyboard", "Lute", "Mandolin", "Maracas", "Marimba", "Oboe", "Organ", "Piano",
-    "Piccolo", "Recorder", "Saxophone", "Sitar", "Tambourine", "Timpani", "Triangle",
-    "Trombone", "Trumpet", "Tuba", "Ukulele", "Viola", "Violin", "Xylophone", "Zither",
   ],
 };
 
