@@ -13,13 +13,49 @@ function hashCode(code: string) {
   return crypto.createHash("sha256").update(code).digest("hex");
 }
 
-/**
- * Sends an OTP. No email provider is wired up yet, so the code is logged to
- * the server console; callers may also surface it in dev-only UI/response
- * fields until a real provider (Resend, SendGrid, etc.) is configured.
- */
-function deliverOtp(email: string, code: string, purpose: OtpPurpose) {
+const OTP_SUBJECT: Record<OtpPurpose, string> = {
+  SIGNUP: "Your Mind Well verification code",
+  PASSWORD_RESET: "Reset your Mind Well password",
+};
+
+const OTP_INTRO: Record<OtpPurpose, string> = {
+  SIGNUP: "Use this code to finish creating your Mind Well account:",
+  PASSWORD_RESET: "Use this code to reset your Mind Well password:",
+};
+
+/** Sends the OTP by email via Brevo's transactional email API. */
+async function deliverOtp(email: string, code: string, purpose: OtpPurpose) {
   console.log(`[OTP] ${purpose} code for ${email}: ${code}`);
+
+  const apiKey = process.env.BREVO_API_KEY;
+  const senderEmail = process.env.BREVO_SENDER_EMAIL;
+  if (!apiKey || !senderEmail) {
+    throw new Error("Email provider is not configured (BREVO_API_KEY / BREVO_SENDER_EMAIL missing)");
+  }
+
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "api-key": apiKey,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      sender: { name: "Mind Well", email: senderEmail },
+      to: [{ email }],
+      subject: OTP_SUBJECT[purpose],
+      htmlContent: `
+        <p>${OTP_INTRO[purpose]}</p>
+        <p style="font-size: 28px; font-weight: 700; letter-spacing: 4px;">${code}</p>
+        <p>This code expires in ${OTP_TTL_MINUTES} minutes. If you didn't request this, you can ignore this email.</p>
+      `,
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Brevo send failed (${res.status}): ${body}`);
+  }
 }
 
 export async function createSignupOtp(params: {
@@ -46,7 +82,7 @@ export async function createSignupOtp(params: {
     },
   });
 
-  deliverOtp(params.email, code, "SIGNUP");
+  await deliverOtp(params.email, code, "SIGNUP");
   return { otpId: otp.id, devCode: code };
 }
 
@@ -70,7 +106,7 @@ export async function createPasswordResetOtp(params: {
     },
   });
 
-  deliverOtp(params.email, code, "PASSWORD_RESET");
+  await deliverOtp(params.email, code, "PASSWORD_RESET");
   return { otpId: otp.id, devCode: code };
 }
 
