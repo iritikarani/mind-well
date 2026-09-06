@@ -6,6 +6,8 @@ import { awardBadgesForFindTheWord, BADGE_CATALOG, type BadgeKey } from "@/lib/b
 import { findTheWordPlaySchema } from "@/lib/validation";
 import { errorResponse, zodErrorResponse } from "@/lib/api-response";
 
+export const maxDuration = 30;
+
 export async function POST(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) return errorResponse("Not signed in", 401);

@@ -7,6 +7,8 @@ import { worldPuzzlePlaySchema } from "@/lib/validation";
 import { errorResponse, zodErrorResponse } from "@/lib/api-response";
 import { monumentById, randomQuote } from "@/lib/worldPuzzleContent";
 
+export const maxDuration = 30;
+
 export async function POST(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) return errorResponse("Not signed in", 401);

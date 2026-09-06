@@ -7,6 +7,8 @@ import { isPastOrToday, todayKey } from "@/lib/date";
 import { bumpStreakForPlay } from "@/lib/streak";
 import { awardBadgesForThreeThings, BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
 
+export const maxDuration = 30;
+
 export async function GET(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) return errorResponse("Not signed in", 401);

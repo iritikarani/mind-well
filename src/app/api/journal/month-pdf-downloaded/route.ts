@@ -3,6 +3,8 @@ import { getCurrentUser } from "@/lib/auth";
 import { errorResponse } from "@/lib/api-response";
 import { awardBadgeDirect, BADGE_CATALOG } from "@/lib/badges";
 
+export const maxDuration = 30;
+
 export async function POST() {
   const user = await getCurrentUser();
   if (!user) return errorResponse("Not signed in", 401);

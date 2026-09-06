@@ -5,6 +5,8 @@ import { verifyOtp } from "@/lib/otp";
 import { signupVerifySchema } from "@/lib/validation";
 import { errorResponse, zodErrorResponse } from "@/lib/api-response";
 
+export const maxDuration = 30;
+
 const REASON_MESSAGES: Record<string, string> = {
   not_found: "No pending verification for this email. Please sign up again.",
   expired: "That code has expired. Please sign up again to get a new one.",

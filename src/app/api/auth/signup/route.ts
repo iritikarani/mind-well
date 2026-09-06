@@ -5,6 +5,8 @@ import { createSignupOtp } from "@/lib/otp";
 import { signupSchema } from "@/lib/validation";
 import { errorResponse, zodErrorResponse, isDev } from "@/lib/api-response";
 
+export const maxDuration = 30;
+
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const parsed = signupSchema.safeParse(body);

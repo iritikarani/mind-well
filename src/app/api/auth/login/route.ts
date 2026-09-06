@@ -4,6 +4,8 @@ import { createSession, verifyPassword } from "@/lib/auth";
 import { loginSchema } from "@/lib/validation";
 import { errorResponse, zodErrorResponse } from "@/lib/api-response";
 
+export const maxDuration = 30;
+
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const parsed = loginSchema.safeParse(body);

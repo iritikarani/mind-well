@@ -4,6 +4,8 @@ import { createSession, hashPassword, verifyResetToken } from "@/lib/auth";
 import { resetPasswordSchema } from "@/lib/validation";
 import { errorResponse, zodErrorResponse } from "@/lib/api-response";
 
+export const maxDuration = 30;
+
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const parsed = resetPasswordSchema.safeParse(body);

@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { errorResponse } from "@/lib/api-response";
 import { MONUMENTS } from "@/lib/worldPuzzleContent";
 
+export const maxDuration = 30;
+
 export async function GET() {
   const user = await getCurrentUser();
   if (!user) return errorResponse("Not signed in", 401);

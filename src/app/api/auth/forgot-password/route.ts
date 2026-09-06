@@ -4,6 +4,8 @@ import { createPasswordResetOtp } from "@/lib/otp";
 import { forgotPasswordSchema } from "@/lib/validation";
 import { zodErrorResponse, isDev } from "@/lib/api-response";
 
+export const maxDuration = 30;
+
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const parsed = forgotPasswordSchema.safeParse(body);

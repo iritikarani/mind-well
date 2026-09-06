@@ -5,6 +5,8 @@ import { errorResponse, zodErrorResponse } from "@/lib/api-response";
 import { findTheWordQuestionSchema } from "@/lib/validation";
 import { pickVariantIndex, wordByName } from "@/lib/findTheWordContent";
 
+export const maxDuration = 30;
+
 export async function POST(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) return errorResponse("Not signed in", 401);

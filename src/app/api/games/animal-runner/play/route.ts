@@ -6,6 +6,8 @@ import { bumpStreakForPlay } from "@/lib/streak";
 import { awardBadgesForAnimalRunner, BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
 import { errorResponse, zodErrorResponse } from "@/lib/api-response";
 
+export const maxDuration = 30;
+
 const schema = z.object({
   survived: z.boolean(),
   heartsRemaining: z.number().int().min(0).max(10),
