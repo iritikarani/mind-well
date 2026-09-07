@@ -644,6 +644,17 @@ export const MONUMENTS: MonumentDef[] = [
   { id: "champagne-pool-nz", name: "The Champagne Pool", country: "New Zealand", region: "Oceania", image: "/monuments/champagne-pool-nz.jpg" },
   { id: "nan-madol", name: "Nan Madol", country: "Micronesia", region: "Oceania", image: "/monuments/nan-madol.jpg" },
   { id: "palau-jellyfish-lake", name: "Jellyfish Lake", country: "Palau", region: "Oceania", image: "/monuments/palau-jellyfish-lake.jpg" },
+  // --- retry pass ---
+  { id: "charminar", name: "Charminar", country: "India", region: "Asia", image: "/monuments/charminar.jpg" },
+  { id: "statue-of-unity", name: "The Statue of Unity", country: "India", region: "Asia", image: "/monuments/statue-of-unity.jpg" },
+  { id: "chittorgarh-fort", name: "Chittorgarh Fort", country: "India", region: "Asia", image: "/monuments/chittorgarh-fort.jpg" },
+  { id: "pushkar-lake", name: "Pushkar Lake", country: "India", region: "Asia", image: "/monuments/pushkar-lake.jpg" },
+  { id: "punakha-dzong", name: "Punakha Dzong", country: "Bhutan", region: "Asia", image: "/monuments/punakha-dzong.jpg" },
+  { id: "issyk-kul", name: "Issyk-Kul Lake", country: "Kyrgyzstan", region: "Asia", image: "/monuments/issyk-kul.jpg" },
+  { id: "luang-prabang", name: "Luang Prabang", country: "Laos", region: "Asia", image: "/monuments/luang-prabang.jpg" },
+  { id: "copper-canyon", name: "Copper Canyon", country: "Mexico", region: "Americas", image: "/monuments/copper-canyon.jpg" },
+  { id: "recoleta-cemetery", name: "Recoleta Cemetery", country: "Argentina", region: "Americas", image: "/monuments/recoleta-cemetery.jpg" },
+  { id: "queenstown-nz", name: "Queenstown", country: "New Zealand", region: "Oceania", image: "/monuments/queenstown-nz.jpg" },
 ];
 
 export function monumentById(id: string): MonumentDef | undefined {
