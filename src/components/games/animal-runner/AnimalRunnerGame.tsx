@@ -15,8 +15,8 @@ import {
 const GAME_DURATION_MS = 120_000;
 const FALL_DURATION_MS = 6000;
 const CATCH_LINE_PCT = 82; // how far down the track the basket sits
-const SPAWN_MIN_GAP_MS = 3400;
-const SPAWN_MAX_GAP_MS = 4600;
+const SPAWN_MIN_GAP_MS = 300;
+const SPAWN_MAX_GAP_MS = 700;
 const START_HEARTS = 10;
 const BASKET_MIN_X = 8;
 const BASKET_MAX_X = 88;
