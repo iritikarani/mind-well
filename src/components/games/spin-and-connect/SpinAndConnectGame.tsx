@@ -249,7 +249,7 @@ export function SpinAndConnectGame() {
               <p className="mt-3 text-muted">
                 {tierInfo.required > 1
                   ? `Name up to ${tierInfo.required} ${landedCatDef.label.toLowerCase()} starting with "${letter}".`
-                  : `Name one ${landedCatDef.label.toLowerCase()} answer starting with "${letter}".`}
+                  : `Name one ${landedCatDef.singular} starting with "${letter}".`}
               </p>
               <Button className="mt-4" onClick={startRound}>
                 Start round

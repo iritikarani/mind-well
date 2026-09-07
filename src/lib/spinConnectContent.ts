@@ -17,24 +17,26 @@ export type CategoryKey =
 export interface CategoryDef {
   key: CategoryKey;
   label: string;
+  /** Singular noun form, for phrasing like "Name one <singular>". */
+  singular: string;
   emoji: string;
 }
 
 export const CATEGORIES: CategoryDef[] = [
-  { key: "fruits", label: "Fruits", emoji: "🍎" },
-  { key: "vegetables", label: "Vegetables", emoji: "🥕" },
-  { key: "flowers", label: "Flowers", emoji: "🌸" },
-  { key: "colors", label: "Colors", emoji: "🎨" },
-  { key: "animals", label: "Animals", emoji: "🦁" },
-  { key: "birds", label: "Birds", emoji: "🐦" },
-  { key: "countries", label: "Countries", emoji: "🌍" },
-  { key: "sports", label: "Sports", emoji: "⚽" },
-  { key: "movies", label: "Movies", emoji: "🎬" },
-  { key: "jobs", label: "Jobs / Professions", emoji: "💼" },
-  { key: "school_subjects", label: "School Subjects", emoji: "📐" },
-  { key: "emotions", label: "Emotions / Feelings", emoji: "💛" },
-  { key: "clothing", label: "Clothing Items", emoji: "👕" },
-  { key: "household", label: "Household Objects", emoji: "🪑" },
+  { key: "fruits", label: "Fruits", singular: "fruit", emoji: "🍎" },
+  { key: "vegetables", label: "Vegetables", singular: "vegetable", emoji: "🥕" },
+  { key: "flowers", label: "Flowers", singular: "flower", emoji: "🌸" },
+  { key: "colors", label: "Colors", singular: "color", emoji: "🎨" },
+  { key: "animals", label: "Animals", singular: "animal", emoji: "🦁" },
+  { key: "birds", label: "Birds", singular: "bird", emoji: "🐦" },
+  { key: "countries", label: "Countries", singular: "country", emoji: "🌍" },
+  { key: "sports", label: "Sports", singular: "sport", emoji: "⚽" },
+  { key: "movies", label: "Movies", singular: "movie", emoji: "🎬" },
+  { key: "jobs", label: "Jobs / Professions", singular: "job or profession", emoji: "💼" },
+  { key: "school_subjects", label: "School Subjects", singular: "school subject", emoji: "📐" },
+  { key: "emotions", label: "Emotions / Feelings", singular: "emotion or feeling", emoji: "💛" },
+  { key: "clothing", label: "Clothing Items", singular: "clothing item", emoji: "👕" },
+  { key: "household", label: "Household Objects", singular: "household object", emoji: "🪑" },
 ];
 
 export function categoryByKey(key: string): CategoryDef {
