@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { format } from "date-fns";
 import { getCurrentUser } from "@/lib/auth";
+import { formatDateIST, formatDateTimeIST } from "@/lib/date";
 import { prisma } from "@/lib/prisma";
 import { BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
 import { GAMES, gameMeta } from "@/lib/games";
@@ -142,7 +142,7 @@ export default async function DashboardPage() {
                     <p className="font-heading font-semibold text-heading">🏅 {meta.label}</p>
                     <p className="mt-1 text-xs text-muted">{meta.description}</p>
                     <p className="mt-2 text-[11px] text-muted">
-                      Earned {format(b.earnedAt, "MMM d, yyyy")}
+                      Earned {formatDateIST(b.earnedAt)}
                     </p>
                   </Card>
                 );
@@ -170,7 +170,7 @@ export default async function DashboardPage() {
                         <p className="text-xs text-muted">{summarizePlay(play.game, play.result)}</p>
                       </div>
                     </div>
-                    <p className="text-xs text-muted">{format(play.playedAt, "MMM d, h:mm a")}</p>
+                    <p className="text-xs text-muted">{formatDateTimeIST(play.playedAt)}</p>
                   </div>
                 );
               })}
