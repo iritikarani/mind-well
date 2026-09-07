@@ -498,21 +498,36 @@ function levenshtein(a: string, b: string): number {
   return prevRow[b.length];
 }
 
+function wordMatches(reference: string, input: string): boolean {
+  if (reference === input) return true;
+
+  const refTokens = reference.split(" ");
+  if (refTokens.length > 1) {
+    // Multi-word answers (mostly country names) get a strict 1-edit-per-word
+    // budget — a wider one is enough for a real name to drift into a
+    // different one (e.g. "South America" sits only 2 edits from
+    // "South Africa"), which would wrongly credit a different answer.
+    const inputTokens = input.split(" ");
+    if (refTokens.length === inputTokens.length) {
+      return refTokens.every((t, i) => levenshtein(t, inputTokens[i]) <= 1);
+    }
+    // Token counts differ — most commonly a dropped space (e.g. "SouthAfrica").
+    // Still allow exactly one edit against the space-free forms.
+    return levenshtein(refTokens.join(""), input.replace(/ /g, "")) <= 1;
+  }
+
+  // A single-word answer can afford a slightly wider budget: common typos
+  // like a misplaced double letter ("Brocolli" for "Broccoli") are 2 edits
+  // apart but pose no real risk of drifting into an unrelated word.
+  const maxDistance = reference.length <= 4 ? 1 : 2;
+  return levenshtein(reference, input) <= maxDistance;
+}
+
 export function isValidAnswer(category: CategoryKey, letter: string, answer: string): boolean {
   const normalized = answer.trim().toLowerCase();
   if (!normalized) return false;
 
-  // A small typo shouldn't cost a correct answer — allow exactly one
-  // edit (insert/delete/substitute a letter), regardless of word length.
-  // A wider budget sounds more forgiving but risks the opposite problem:
-  // two edits is enough for one real word to drift into another (e.g.
-  // "South America" sits only 2 edits from "South Africa"), which would
-  // wrongly credit a genuinely different answer.
-  const maxDistance = 1;
-  return wordsFor(category, letter).some((w) => {
-    const lower = w.toLowerCase();
-    return lower === normalized || levenshtein(lower, normalized) <= maxDistance;
-  });
+  return wordsFor(category, letter).some((w) => wordMatches(w.toLowerCase(), normalized));
 }
 
 export function getHint(category: CategoryKey, letter: string, exclude: string[]): string | null {
