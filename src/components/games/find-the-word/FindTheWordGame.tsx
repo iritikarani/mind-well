@@ -50,13 +50,28 @@ export function FindTheWordGame() {
     setEntries([]);
     setNewBadges([]);
 
-    const words = pickGridWords(GRID_WORD_COUNT, GRID_SIZE);
-    const generated = generateGrid(GRID_SIZE, words.map((w) => w.word));
-    // Only list words that actually landed in the grid — a handful of
-    // attempts can occasionally fail to place one in a tight fit.
-    const placedWords = generated.placements
-      .map((p) => wordByName(p.word))
-      .filter((w): w is WordDef => !!w);
+    // An 8x8 grid gives long words very few valid lines, so a single
+    // attempt can occasionally seat only 7 of 8 by bad luck — retry with
+    // a fresh word pick/layout until all of them fit.
+    let generated = generateGrid(GRID_SIZE, []);
+    let placedWords: WordDef[] = [];
+    for (let attempt = 0; attempt < 20; attempt++) {
+      const words = pickGridWords(GRID_WORD_COUNT, GRID_SIZE);
+      const candidate = generateGrid(GRID_SIZE, words.map((w) => w.word));
+      if (candidate.placements.length >= GRID_WORD_COUNT) {
+        generated = candidate;
+        placedWords = candidate.placements
+          .map((p) => wordByName(p.word))
+          .filter((w): w is WordDef => !!w);
+        break;
+      }
+      if (candidate.placements.length > placedWords.length) {
+        generated = candidate;
+        placedWords = candidate.placements
+          .map((p) => wordByName(p.word))
+          .filter((w): w is WordDef => !!w);
+      }
+    }
     setGrid(generated);
     setGridWords(placedWords);
     setStage("searching");
@@ -217,7 +232,7 @@ export function FindTheWordGame() {
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:justify-center">
             <div
               className="grid select-none gap-[2px] rounded-2xl bg-white/60 p-2"
-              style={{ gridTemplateColumns: `repeat(${grid.size}, minmax(0, 1fr))`, maxWidth: 360 }}
+              style={{ gridTemplateColumns: `repeat(${grid.size}, minmax(0, 1fr))`, width: 320 }}
             >
               {grid.letters.map((rowLetters, row) =>
                 rowLetters.map((letter, col) => {
