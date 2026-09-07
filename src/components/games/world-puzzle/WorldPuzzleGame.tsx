@@ -7,14 +7,12 @@ import { cn } from "@/lib/cn";
 import { monumentById, type MonumentDef } from "@/lib/worldPuzzleContent";
 import { MonumentArt, ART_SIZE } from "./MonumentArt";
 
-const GRID = 3;
-const PIECE = ART_SIZE / GRID;
-const CELLS = GRID * GRID;
+const DEFAULT_GRID = 3;
 
 type Stage = "loading" | "preview" | "puzzle" | "solved" | "revealed";
 
-function shuffledSlots(): number[] {
-  const slots = Array.from({ length: CELLS }, (_, i) => i);
+function shuffledSlots(cells: number): number[] {
+  const slots = Array.from({ length: cells }, (_, i) => i);
   do {
     for (let i = slots.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -27,6 +25,7 @@ function shuffledSlots(): number[] {
 export function WorldPuzzleGame() {
   const [stage, setStage] = useState<Stage>("loading");
   const [monument, setMonument] = useState<MonumentDef | null>(null);
+  const [gridSize, setGridSize] = useState(DEFAULT_GRID);
   const [slots, setSlots] = useState<number[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
   const [quote, setQuote] = useState<string | null>(null);
@@ -38,8 +37,10 @@ export function WorldPuzzleGame() {
     const res = await fetch("/api/games/world-puzzle/monument");
     const data = await res.json();
     const def = monumentById(data.monumentId);
+    const size = data.gridSize ?? DEFAULT_GRID;
     setMonument(def ?? null);
-    setSlots(shuffledSlots());
+    setGridSize(size);
+    setSlots(shuffledSlots(size * size));
     setStage("preview");
   }
 
@@ -58,8 +59,10 @@ export function WorldPuzzleGame() {
       .then((data) => {
         if (ignore) return;
         const def = monumentById(data.monumentId);
+        const size = data.gridSize ?? DEFAULT_GRID;
         setMonument(def ?? null);
-        setSlots(shuffledSlots());
+        setGridSize(size);
+        setSlots(shuffledSlots(size * size));
         setStage("preview");
       });
     return () => {
@@ -138,6 +141,7 @@ export function WorldPuzzleGame() {
   }
 
   const solved = stage === "solved";
+  const piece = ART_SIZE / gridSize;
 
   if (stage === "puzzle" || stage === "solved") {
     return (
@@ -151,7 +155,7 @@ export function WorldPuzzleGame() {
 
         <div
           className="mx-auto grid gap-1 rounded-2xl bg-white/60 p-2"
-          style={{ gridTemplateColumns: `repeat(${GRID}, ${PIECE}px)`, width: "fit-content" }}
+          style={{ gridTemplateColumns: `repeat(${gridSize}, ${piece}px)`, width: "fit-content" }}
         >
           {slots.map((content, slotIndex) => (
             <button
@@ -162,13 +166,13 @@ export function WorldPuzzleGame() {
                 "relative overflow-hidden rounded-md shadow-sm transition",
                 selected === slotIndex && "ring-4 ring-blush-strong",
               )}
-              style={{ width: PIECE, height: PIECE }}
+              style={{ width: piece, height: piece }}
             >
               <div
                 style={{
                   position: "absolute",
-                  top: -Math.floor(content / GRID) * PIECE,
-                  left: -(content % GRID) * PIECE,
+                  top: -Math.floor(content / gridSize) * piece,
+                  left: -(content % gridSize) * piece,
                 }}
               >
                 <MonumentArt def={monument} />

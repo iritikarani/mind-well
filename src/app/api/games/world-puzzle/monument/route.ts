@@ -26,8 +26,12 @@ export async function GET() {
   }
 
   const remaining = MONUMENTS.filter((m) => !completedIds.has(m.id));
-  const pool = remaining.length > 0 ? remaining : MONUMENTS;
+  // Once every monument has been solved once, the pool starts recycling —
+  // from here on every pick is necessarily a repeat, so bump the puzzle up
+  // to a 4x4 grid instead of the first-pass 3x3.
+  const isRepeat = remaining.length === 0;
+  const pool = isRepeat ? MONUMENTS : remaining;
   const monument = pool[Math.floor(Math.random() * pool.length)];
 
-  return NextResponse.json({ monumentId: monument.id });
+  return NextResponse.json({ monumentId: monument.id, gridSize: isRepeat ? 4 : 3 });
 }
