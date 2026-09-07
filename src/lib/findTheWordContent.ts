@@ -317,10 +317,16 @@ export function wordByName(word: string): WordDef | undefined {
   return WORDS.find((w) => w.word === word);
 }
 
-/** Picks `count` grid words, balanced as evenly as possible between sentiments. */
-export function pickGridWords(count: number): WordDef[] {
-  const positives = shuffle(WORDS.filter((w) => w.sentiment === "positive"));
-  const negatives = shuffle(WORDS.filter((w) => w.sentiment === "negative"));
+/**
+ * Picks `count` grid words, balanced evenly between sentiments (half
+ * positive, half negative). `maxLength` excludes words that couldn't
+ * possibly fit in a square grid of that size, so every word handed back
+ * is guaranteed placeable.
+ */
+export function pickGridWords(count: number, maxLength?: number): WordDef[] {
+  const pool = maxLength ? WORDS.filter((w) => w.word.length <= maxLength) : WORDS;
+  const positives = shuffle(pool.filter((w) => w.sentiment === "positive"));
+  const negatives = shuffle(pool.filter((w) => w.sentiment === "negative"));
   const half = Math.ceil(count / 2);
   const picked = [...positives.slice(0, half), ...negatives.slice(0, count - half)];
   return shuffle(picked);

@@ -5,11 +5,11 @@ import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
 import { cn } from "@/lib/cn";
-import { pickGridWords, wordByName, type QuestionVariant } from "@/lib/findTheWordContent";
+import { pickGridWords, wordByName, type QuestionVariant, type WordDef } from "@/lib/findTheWordContent";
 import { generateGrid, lineBetween, type Cell, type WordSearchGrid } from "@/lib/wordSearchGrid";
 
-const GRID_SIZE = 12;
-const GRID_WORD_COUNT = 12;
+const GRID_SIZE = 8;
+const GRID_WORD_COUNT = 8;
 const TARGET_FOUND = 3;
 
 type Stage = "loading" | "searching" | "loading-question" | "question" | "remark" | "closing";
@@ -27,6 +27,7 @@ function cellKey(row: number, col: number) {
 export function FindTheWordGame() {
   const [stage, setStage] = useState<Stage>("loading");
   const [grid, setGrid] = useState<WordSearchGrid | null>(null);
+  const [gridWords, setGridWords] = useState<WordDef[]>([]);
   const [foundWords, setFoundWords] = useState<Set<string>>(new Set());
   const [foundCells, setFoundCells] = useState<Set<string>>(new Set());
   const [selStart, setSelStart] = useState<Cell | null>(null);
@@ -49,9 +50,15 @@ export function FindTheWordGame() {
     setEntries([]);
     setNewBadges([]);
 
-    const words = pickGridWords(GRID_WORD_COUNT);
+    const words = pickGridWords(GRID_WORD_COUNT, GRID_SIZE);
     const generated = generateGrid(GRID_SIZE, words.map((w) => w.word));
+    // Only list words that actually landed in the grid — a handful of
+    // attempts can occasionally fail to place one in a tight fit.
+    const placedWords = generated.placements
+      .map((p) => wordByName(p.word))
+      .filter((w): w is WordDef => !!w);
     setGrid(generated);
+    setGridWords(placedWords);
     setStage("searching");
   }
 
@@ -207,31 +214,61 @@ export function FindTheWordGame() {
           <p className="mb-4 text-center text-sm text-muted">
             Select two ends of a word — any direction. Find any 3 to finish.
           </p>
-          <div
-            className="mx-auto grid select-none gap-[2px] rounded-2xl bg-white/60 p-2"
-            style={{ gridTemplateColumns: `repeat(${grid.size}, minmax(0, 1fr))`, maxWidth: 480 }}
-          >
-            {grid.letters.map((rowLetters, row) =>
-              rowLetters.map((letter, col) => {
-                const key = cellKey(row, col);
-                const isFound = foundCells.has(key);
-                const isSelected = selStart?.row === row && selStart?.col === col;
-                return (
-                  <button
-                    key={key}
-                    onClick={() => handleCellClick(row, col)}
-                    disabled={stage !== "searching"}
-                    className={cn(
-                      "flex aspect-square items-center justify-center rounded-md text-xs font-semibold text-heading transition sm:text-sm",
-                      isFound ? "bg-mint text-mint-text" : "bg-surface hover:bg-blush/40",
-                      isSelected && "ring-2 ring-blush-strong",
-                    )}
-                  >
-                    {letter}
-                  </button>
-                );
-              }),
-            )}
+          <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:justify-center">
+            <div
+              className="grid select-none gap-[2px] rounded-2xl bg-white/60 p-2"
+              style={{ gridTemplateColumns: `repeat(${grid.size}, minmax(0, 1fr))`, maxWidth: 360 }}
+            >
+              {grid.letters.map((rowLetters, row) =>
+                rowLetters.map((letter, col) => {
+                  const key = cellKey(row, col);
+                  const isFound = foundCells.has(key);
+                  const isSelected = selStart?.row === row && selStart?.col === col;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => handleCellClick(row, col)}
+                      disabled={stage !== "searching"}
+                      className={cn(
+                        "flex aspect-square items-center justify-center rounded-md text-xs font-semibold text-heading transition sm:text-sm",
+                        isFound ? "bg-mint text-mint-text" : "bg-surface hover:bg-blush/40",
+                        isSelected && "ring-2 ring-blush-strong",
+                      )}
+                    >
+                      {letter}
+                    </button>
+                  );
+                }),
+              )}
+            </div>
+
+            <div className="w-full max-w-[220px] rounded-2xl bg-white/60 p-4 sm:w-44">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+                Words to find
+              </p>
+              <ul className="space-y-1.5">
+                {gridWords.map((w) => {
+                  const isFound = foundWords.has(w.word);
+                  return (
+                    <li
+                      key={w.word}
+                      className={cn(
+                        "flex items-center justify-between rounded-lg px-2 py-1 text-sm font-semibold",
+                        isFound ? "bg-mint/60 text-mint-text line-through" : "text-heading",
+                      )}
+                    >
+                      <span>{w.word}</span>
+                      <span
+                        className={cn(
+                          "ml-2 h-2 w-2 shrink-0 rounded-full",
+                          w.sentiment === "positive" ? "bg-mint-text/70" : "bg-blush-strong/70",
+                        )}
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </div>
         </>
       )}
