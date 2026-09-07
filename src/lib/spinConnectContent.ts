@@ -47,47 +47,52 @@ export const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 export const WORDBANK: Record<CategoryKey, string[]> = {
   fruits: [
-    "Apple", "Apricot", "Avocado", "Banana", "Blackberry", "Blueberry", "Cherry", "Cantaloupe",
-    "Coconut", "Cranberry", "Date", "Dragonfruit", "Elderberry", "Fig", "Grape", "Grapefruit",
-    "Guava", "Honeydew", "Jackfruit", "Kiwi", "Kumquat", "Lemon", "Lime", "Lychee", "Mango",
-    "Melon", "Mulberry", "Nectarine", "Orange", "Papaya", "Passionfruit", "Peach", "Pear",
-    "Persimmon", "Pineapple", "Plum", "Pomegranate", "Quince", "Raspberry", "Starfruit",
-    "Strawberry", "Tangerine", "Watermelon",
+    "Amla", "Apple", "Apricot", "Avocado", "Banana", "Ber", "Blackberry", "Blueberry",
+    "Cantaloupe", "Cherry", "Chikoo", "Coconut", "Cranberry", "Custardapple", "Date",
+    "Dragonfruit", "Elderberry", "Fig", "Grape", "Grapefruit", "Guava", "Honeydew",
+    "Jackfruit", "Jamun", "Kiwi", "Kumquat", "Lemon", "Lime", "Lychee", "Mango", "Melon",
+    "Mulberry", "Nectarine", "Orange", "Papaya", "Passionfruit", "Peach", "Pear",
+    "Persimmon", "Pineapple", "Plum", "Pomegranate", "Quince", "Raspberry", "Sapota",
+    "Starfruit", "Strawberry", "Tamarind", "Tangerine", "Watermelon",
   ],
   vegetables: [
-    "Artichoke", "Asparagus", "Beet", "Broccoli", "Cabbage", "Carrot", "Cauliflower", "Celery",
-    "Corn", "Cucumber", "Eggplant", "Fennel", "Garlic", "Ginger", "Kale", "Leek", "Lettuce",
+    "Artichoke", "Asparagus", "Beet", "Bittergourd", "Bottlegourd", "Broccoli", "Cabbage",
+    "Carrot", "Cauliflower", "Celery", "Colocasia", "Corn", "Cucumber", "Drumstick",
+    "Eggplant", "Fennel", "Fenugreek", "Garlic", "Ginger", "Kale", "Leek", "Lettuce",
     "Mushroom", "Okra", "Onion", "Parsnip", "Pea", "Pepper", "Potato", "Pumpkin", "Radish",
-    "Spinach", "Squash", "Tomato", "Turnip", "Yam", "Zucchini",
+    "Ridgegourd", "Spinach", "Squash", "Tomato", "Turnip", "Yam", "Zucchini",
   ],
   flowers: [
-    "Aster", "Azalea", "Begonia", "Carnation", "Chrysanthemum", "Daffodil", "Dahlia", "Daisy",
-    "Freesia", "Gardenia", "Geranium", "Hibiscus", "Hyacinth", "Iris", "Jasmine", "Lavender",
-    "Lilac", "Lily", "Magnolia", "Marigold", "Orchid", "Pansy", "Peony", "Petunia", "Poppy",
-    "Rose", "Snapdragon", "Sunflower", "Tulip", "Violet", "Wisteria", "Zinnia",
+    "Aster", "Azalea", "Begonia", "Carnation", "Champa", "Chrysanthemum", "Daffodil",
+    "Dahlia", "Daisy", "Freesia", "Gardenia", "Geranium", "Hibiscus", "Hyacinth", "Iris",
+    "Jasmine", "Lavender", "Lilac", "Lily", "Lotus", "Magnolia", "Marigold", "Mogra",
+    "Orchid", "Pansy", "Parijat", "Peony", "Petunia", "Poppy", "Rose", "Snapdragon",
+    "Sunflower", "Tulip", "Violet", "Wisteria", "Zinnia",
   ],
   colors: [
     "Amber", "Aqua", "Beige", "Black", "Blue", "Bronze", "Brown", "Burgundy", "Coral", "Crimson",
     "Cyan", "Emerald", "Gold", "Gray", "Green", "Indigo", "Ivory", "Jade", "Lavender", "Lilac",
     "Magenta", "Maroon", "Mint", "Navy", "Olive", "Orange", "Pink", "Purple", "Red", "Rose",
-    "Ruby", "Salmon", "Sapphire", "Scarlet", "Silver", "Tan", "Teal", "Turquoise", "Violet",
-    "White", "Yellow",
+    "Ruby", "Saffron", "Salmon", "Sapphire", "Scarlet", "Silver", "Tan", "Teal", "Turquoise",
+    "Vermilion", "Violet", "White", "Yellow",
   ],
   animals: [
-    "Alligator", "Antelope", "Bear", "Beaver", "Buffalo", "Camel", "Cheetah", "Cow", "Coyote",
-    "Deer", "Dolphin", "Donkey", "Elephant", "Ferret", "Fox", "Giraffe", "Goat", "Gorilla",
-    "Hedgehog", "Hippopotamus", "Horse", "Iguana", "Jaguar", "Kangaroo", "Koala", "Leopard",
-    "Lion", "Llama", "Lynx", "Meerkat", "Mole", "Monkey", "Moose", "Mouse", "Ocelot", "Otter",
-    "Panda", "Panther", "Pig", "Rabbit", "Raccoon", "Rhinoceros", "Seal", "Sheep", "Skunk",
-    "Sloth", "Squirrel", "Tiger", "Turtle", "Walrus", "Weasel", "Wolf", "Wombat", "Yak", "Zebra",
+    "Alligator", "Antelope", "Bear", "Beaver", "Blackbuck", "Buffalo", "Camel", "Cheetah",
+    "Cow", "Coyote", "Deer", "Dolphin", "Donkey", "Elephant", "Ferret", "Fox", "Gaur",
+    "Giraffe", "Goat", "Gorilla", "Hedgehog", "Hippopotamus", "Horse", "Iguana", "Jaguar",
+    "Kangaroo", "Koala", "Langur", "Leopard", "Lion", "Llama", "Lynx", "Meerkat", "Mole",
+    "Mongoose", "Monkey", "Moose", "Mouse", "Nilgai", "Ocelot", "Otter", "Panda", "Panther",
+    "Pig", "Rabbit", "Raccoon", "Rhinoceros", "Seal", "Sheep", "Skunk", "Sloth", "Squirrel",
+    "Tiger", "Turtle", "Walrus", "Weasel", "Wolf", "Wombat", "Yak", "Zebra",
   ],
   birds: [
-    "Albatross", "Blackbird", "Bluebird", "Canary", "Cardinal", "Chicken", "Condor", "Crane",
-    "Crow", "Cuckoo", "Dove", "Duck", "Eagle", "Egret", "Falcon", "Finch", "Flamingo", "Goose",
-    "Hawk", "Heron", "Hummingbird", "Ibis", "Jay", "Kingfisher", "Kiwi", "Kestrel", "Lark",
-    "Macaw", "Magpie", "Nightingale", "Ostrich", "Owl", "Parrot", "Peacock", "Pelican",
-    "Penguin", "Pigeon", "Puffin", "Quail", "Raven", "Robin", "Rooster", "Seagull", "Sparrow",
-    "Stork", "Swallow", "Swan", "Toucan", "Turkey", "Vulture", "Woodpecker", "Wren",
+    "Albatross", "Blackbird", "Bluebird", "Bulbul", "Canary", "Cardinal", "Chicken", "Condor",
+    "Crane", "Crow", "Cuckoo", "Dove", "Duck", "Eagle", "Egret", "Falcon", "Finch", "Flamingo",
+    "Goose", "Hawk", "Heron", "Hoopoe", "Hummingbird", "Ibis", "Jay", "Kestrel", "Kingfisher",
+    "Kiwi", "Koel", "Lark", "Macaw", "Magpie", "Myna", "Nightingale", "Ostrich", "Owl",
+    "Parakeet", "Parrot", "Peacock", "Pelican", "Penguin", "Pigeon", "Puffin", "Quail",
+    "Raven", "Robin", "Rooster", "Seagull", "Sparrow", "Stork", "Swallow", "Swan", "Toucan",
+    "Turkey", "Vulture", "Woodpecker", "Wren",
   ],
   countries: [
     "Afghanistan", "Albania", "Argentina", "Australia", "Austria", "Bangladesh", "Belgium",
@@ -105,22 +110,30 @@ export const WORDBANK: Record<CategoryKey, string[]> = {
   sports: [
     "Archery", "Athletics", "Badminton", "Baseball", "Basketball", "Biathlon", "Billiards",
     "Bobsled", "Bowling", "Boxing", "Canoeing", "Climbing", "Cricket", "Curling", "Cycling",
-    "Darts", "Diving", "Fencing", "Football", "Golf", "Gymnastics", "Handball", "Hockey",
-    "Judo", "Karate", "Lacrosse", "Netball", "Polo", "Rowing", "Rugby", "Sailing",
-    "Skateboarding", "Skiing", "Snowboarding", "Soccer", "Softball", "Squash", "Surfing",
-    "Swimming", "Taekwondo", "Tennis", "Triathlon", "Volleyball", "Wrestling", "Yoga",
+    "Darts", "Diving", "Fencing", "Football", "Gillidanda", "Golf", "Gymnastics", "Handball",
+    "Hockey", "Judo", "Kabaddi", "Karate", "Khokho", "Lacrosse", "Netball", "Polo", "Rowing",
+    "Rugby", "Sailing", "Skateboarding", "Skiing", "Snowboarding", "Soccer", "Softball",
+    "Squash", "Surfing", "Swimming", "Taekwondo", "Tennis", "Triathlon", "Volleyball",
+    "Wrestling", "Yoga",
   ],
   movies: [
-    "Aladdin", "Alien", "Amadeus", "Avatar", "Babe", "Batman", "Braveheart", "Casablanca",
-    "Cinderella", "Coco", "Dune", "Elf", "Encanto", "Fargo", "Frozen", "Ghost", "Gladiator",
-    "Grease", "Hairspray", "Hercules", "Inception", "Jaws", "Joker", "Juno", "Matrix",
-    "Moana", "Ratatouille", "Rio", "Rocky", "Shrek", "Split", "Tangled", "Ted", "Titanic",
-    "Up", "Vertigo", "Zootopia",
+    "Aandhi", "Agneepath", "Aladdin", "Alien", "Amadeus", "Anand", "Andaz", "Avatar", "Awaara",
+    "Baazigar", "Baahubali", "Babe", "Barfi", "Batman", "Bombay", "Braveheart",
+    "Casablanca", "Chandni", "Cinderella", "Coco", "Coolie", "Dabangg", "Dangal", "Devdas",
+    "Dhoom", "Dilwale", "Dostana", "Drishyam", "Dune", "Elf", "Encanto", "Fanaa", "Fargo",
+    "Frozen", "Gadar", "Ghajini", "Ghost", "Gladiator", "Grease", "Guide", "Hairspray",
+    "Hercules", "Herapheri", "Highway", "Housefull", "Inception", "Ishq", "Ittefaq", "Jaws",
+    "Joker", "Josh", "Juno", "Karz", "Kranti", "Lagaan", "Lakshya", "Masaan", "Matrix", "Moana",
+    "Mom", "Nayak", "Neerja", "Omkara", "Padmaavat", "Pathaan", "Piku", "PK", "Queen", "Raazi",
+    "Ratatouille", "Rio", "Rockstar", "Rocky", "Roja", "Sarfarosh", "Satya", "Sholay", "Shrek",
+    "Split", "Swades", "Talaash", "Tamasha", "Tangled", "Ted", "Titanic", "Udaan", "Up",
+    "Vertigo", "Yaadein", "Zanjeer", "Zootopia",
   ],
   books: [
     "Beloved", "Beowulf", "Candide", "Carrie", "Dracula", "Dune", "Emma", "Frankenstein",
-    "Hamlet", "Holes", "Ivanhoe", "Jaws", "Kim", "Matilda", "Misery", "Outliers", "Persuasion",
-    "Rebecca", "Room", "Sybil", "Ulysses", "Untamed", "Verity", "Watchmen", "Wonder", "Zorro",
+    "Gitanjali", "Godaan", "Hamlet", "Holes", "Ivanhoe", "Jaws", "Kim", "Malgudidays",
+    "Matilda", "Misery", "Outliers", "Panchatantra", "Persuasion", "Ramayana", "Rebecca",
+    "Room", "Sybil", "Ulysses", "Untamed", "Verity", "Watchmen", "Wonder", "Zorro",
   ],
   jobs: [
     "Accountant", "Actor", "Architect", "Artist", "Baker", "Barber", "Biologist", "Butcher",
@@ -129,17 +142,18 @@ export const WORDBANK: Record<CategoryKey, string[]> = {
     "Florist", "Gardener", "Geologist", "Hairdresser", "Illustrator", "Janitor",
     "Journalist", "Judge", "Lawyer", "Lecturer", "Librarian", "Lifeguard", "Locksmith",
     "Mechanic", "Musician", "Nurse", "Optician", "Painter", "Pharmacist", "Photographer",
-    "Pilot", "Plumber", "Professor", "Programmer", "Psychologist", "Receptionist", "Sailor",
-    "Scientist", "Sculptor", "Singer", "Surgeon", "Tailor", "Teacher", "Translator",
-    "Veterinarian", "Waiter", "Welder", "Writer", "Zoologist",
+    "Pilot", "Plumber", "Potter", "Priest", "Professor", "Programmer", "Psychologist",
+    "Receptionist", "Sailor", "Scientist", "Sculptor", "Singer", "Surgeon", "Tailor",
+    "Teacher", "Translator", "Veterinarian", "Waiter", "Welder", "Writer", "Zoologist",
   ],
   school_subjects: [
     "Algebra", "Art", "Biology", "Business", "Calculus", "Chemistry", "Civics",
     "Dance", "Drama", "Economics", "English", "Finance", "French", "Geography", "Geology",
-    "Geometry", "German", "Government", "Grammar", "Gym", "History", "Journalism", "Latin",
-    "Law", "Linguistics", "Literature", "Marketing", "Mathematics", "Music", "Nutrition",
-    "Philosophy", "Photography", "Physics", "Psychology", "Reading", "Religion", "Science",
-    "Sociology", "Spanish", "Statistics", "Theater", "Woodworking", "Writing", "Zoology",
+    "Geometry", "German", "Government", "Grammar", "Gym", "Hindi", "History", "Journalism",
+    "Latin", "Law", "Linguistics", "Literature", "Marketing", "Mathematics", "Music",
+    "Nutrition", "Philosophy", "Photography", "Physics", "Psychology", "Reading",
+    "Religion", "Sanskrit", "Science", "Sociology", "Spanish", "Statistics", "Theater",
+    "Woodworking", "Writing", "Zoology",
   ],
   emotions: [
     "Afraid", "Amused", "Angry", "Annoyed", "Anxious", "Ashamed", "Bored", "Calm", "Confident",
@@ -152,21 +166,22 @@ export const WORDBANK: Record<CategoryKey, string[]> = {
     "Vulnerable", "Worried",
   ],
   clothing: [
-    "Apron", "Blazer", "Blouse", "Boots", "Cape", "Cardigan", "Coat", "Dress", "Gloves",
-    "Gown", "Hat", "Hoodie", "Jacket", "Jeans", "Jersey", "Jumpsuit", "Kimono", "Leggings",
-    "Mittens", "Overalls", "Pajamas", "Pants", "Parka", "Poncho", "Robe", "Romper",
-    "Sandals", "Scarf", "Shirt", "Shorts", "Skirt", "Slippers", "Socks", "Suit", "Sweater",
+    "Apron", "Blazer", "Blouse", "Boots", "Cape", "Cardigan", "Churidar", "Coat", "Dhoti",
+    "Dress", "Dupatta", "Gloves", "Gown", "Hat", "Hoodie", "Jacket", "Jeans", "Jersey",
+    "Jumpsuit", "Jutti", "Kimono", "Kurta", "Leggings", "Lehenga", "Mittens", "Overalls",
+    "Pajamas", "Pants", "Parka", "Poncho", "Robe", "Romper", "Salwar", "Sandals", "Saree",
+    "Scarf", "Sherwani", "Shirt", "Shorts", "Skirt", "Slippers", "Socks", "Suit", "Sweater",
     "Swimsuit", "Tie", "Tights", "Trousers", "Tunic", "Turtleneck", "Underwear", "Uniform",
     "Vest", "Windbreaker",
   ],
   household: [
     "Armchair", "Basket", "Bed", "Blanket", "Blender", "Bookshelf", "Bowl", "Broom",
-    "Bucket", "Cabinet", "Calendar", "Candle", "Carpet", "Chair", "Clock", "Closet",
-    "Couch", "Cup", "Curtain", "Cushion", "Cutlery", "Desk", "Dresser", "Fan", "Fork",
-    "Fridge", "Hammer", "Kettle", "Ladder", "Lamp", "Mattress", "Microwave", "Mirror",
-    "Mop", "Napkin", "Oven", "Pan", "Pillow", "Plate", "Pot", "Rug", "Shelf", "Sofa",
-    "Spoon", "Stool", "Table", "Television", "Thermometer", "Toaster", "Towel", "Vacuum",
-    "Vase", "Wardrobe",
+    "Bucket", "Cabinet", "Calendar", "Candle", "Carpet", "Chair", "Chulha", "Clock",
+    "Closet", "Couch", "Cup", "Curtain", "Cushion", "Cutlery", "Desk", "Diya", "Dresser",
+    "Fan", "Fork", "Fridge", "Hammer", "Kettle", "Ladder", "Lamp", "Matka", "Mattress",
+    "Microwave", "Mirror", "Mop", "Napkin", "Oven", "Pan", "Pillow", "Plate", "Pot", "Rug",
+    "Shelf", "Sofa", "Spoon", "Stool", "Table", "Tawa", "Television", "Thali",
+    "Thermometer", "Tiffin", "Toaster", "Towel", "Vacuum", "Vase", "Wardrobe",
   ],
 };
 
@@ -193,10 +208,38 @@ export function tierFor(category: CategoryKey, letter: string): TierInfo {
   return { tier: "common", matchCount, required: 5 };
 }
 
+function levenshtein(a: string, b: string): number {
+  if (a === b) return 0;
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+
+  let prevRow = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const currentRow = [i];
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      currentRow[j] = Math.min(
+        currentRow[j - 1] + 1,
+        prevRow[j] + 1,
+        prevRow[j - 1] + cost,
+      );
+    }
+    prevRow = currentRow;
+  }
+  return prevRow[b.length];
+}
+
 export function isValidAnswer(category: CategoryKey, letter: string, answer: string): boolean {
   const normalized = answer.trim().toLowerCase();
   if (!normalized) return false;
-  return wordsFor(category, letter).some((w) => w.toLowerCase() === normalized);
+
+  // A small typo shouldn't cost a correct answer — allow 1 edit for short
+  // words and 2 for longer ones (insert/delete/substitute a letter).
+  const maxDistance = normalized.length <= 4 ? 1 : 2;
+  return wordsFor(category, letter).some((w) => {
+    const lower = w.toLowerCase();
+    return lower === normalized || levenshtein(lower, normalized) <= maxDistance;
+  });
 }
 
 export function getHint(category: CategoryKey, letter: string, exclude: string[]): string | null {
