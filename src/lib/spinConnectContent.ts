@@ -531,7 +531,7 @@ export function randomCategory(): CategoryKey {
 }
 
 export function closingRemark(totalCorrect: number, totalPossible: number): string {
-  if (totalPossible === 0) return "You made it through five rounds — that's the whole game.";
+  if (totalPossible === 0) return "You made it through nine rounds — that's the whole game.";
   const ratio = totalCorrect / totalPossible;
 
   if (ratio >= 0.75) {

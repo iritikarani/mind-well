@@ -19,7 +19,7 @@ import {
 } from "@/lib/spinConnectContent";
 import { SpinWheel, computeWheelRotation, SPIN_DURATION_MS } from "./SpinWheel";
 
-const TOTAL_ROUNDS = 5;
+const TOTAL_ROUNDS = 9;
 const LETTER_COLORS: [string, string] = ["#FFE9F0", "#FFC7DD"];
 const CATEGORY_COLORS: [string, string] = ["#E3F8ED", "#BFEBD3"];
 

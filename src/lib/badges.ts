@@ -61,12 +61,12 @@ export const BADGE_CATALOG = {
   },
   WORDSMITH: {
     label: "Wordsmith",
-    description: "Gave 5 correct answers in one common-category round",
+    description: "Answered every round correctly in a session",
     game: "SPIN_AND_CONNECT" as GameKey,
   },
   FIVE_ROUNDS_STRONG: {
-    label: "Five Rounds Strong",
-    description: "Completed a full 5-round session",
+    label: "Nine Rounds Strong",
+    description: "Completed a full 9-round session",
     game: "SPIN_AND_CONNECT" as GameKey,
   },
 
@@ -339,9 +339,9 @@ export async function awardBadgesForWorldPuzzle(userId: string) {
 function evaluateSpinAndConnect(rounds: SpinAndConnectRound[]): BadgeKey[] {
   const earned: BadgeKey[] = [];
 
-  if (rounds.length >= 5) earned.push("FIVE_ROUNDS_STRONG");
+  if (rounds.length >= 9) earned.push("FIVE_ROUNDS_STRONG");
   if (rounds.some((r) => r.hintsUsed === 0)) earned.push("QUICK_THINKER");
-  if (rounds.some((r) => r.tier === "common" && r.correctCount >= 3)) earned.push("WORDSMITH");
+  if (rounds.length > 0 && rounds.every((r) => r.correctCount >= 1)) earned.push("WORDSMITH");
 
   return earned;
 }
