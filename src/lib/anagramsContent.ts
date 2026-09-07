@@ -63,7 +63,7 @@ export const LEVEL3_PUZZLES: Level3Puzzle[] = [
     ],
     accepted5: [
       { word: "TEAMS" }, { word: "RATES" }, { word: "TEARS" }, { word: "TARES", uncommon: true },
-      { word: "STARE" }, { word: "MATES" }, { word: "SMEAR" },
+      { word: "STARE" }, { word: "MATES" }, { word: "SMEAR" }, { word: "STEAM" },
     ],
   },
   {
