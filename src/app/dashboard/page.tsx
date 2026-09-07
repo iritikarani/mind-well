@@ -90,7 +90,7 @@ export default async function DashboardPage() {
               Badges earned
             </p>
             <p className="mt-2 font-heading text-3xl font-bold text-heading">{badges.length}</p>
-            <p className="mt-1 text-sm text-muted">Out of {Object.keys(BADGE_CATALOG).length} total</p>
+            <p className="mt-1 text-sm text-muted">Keep playing to earn more</p>
           </Card>
           <Card>
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">
