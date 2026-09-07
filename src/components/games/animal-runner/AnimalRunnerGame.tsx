@@ -15,8 +15,8 @@ import {
 const GAME_DURATION_MS = 120_000;
 const FALL_DURATION_MS = 7200;
 const CATCH_LINE_PCT = 82; // how far down the track the basket sits
-const SPAWN_MIN_GAP_MS = 5400;
-const SPAWN_MAX_GAP_MS = 7200;
+const SPAWN_MIN_GAP_MS = 4200;
+const SPAWN_MAX_GAP_MS = 5600;
 const START_HEARTS = 10;
 const BASKET_MIN_X = 8;
 const BASKET_MAX_X = 88;
@@ -33,6 +33,7 @@ interface FallingRemark {
   sentiment: Sentiment;
   remark: string;
   resolved: boolean;
+  caught: boolean;
 }
 
 type Stage = "select" | "countdown" | "playing" | "result";
@@ -170,6 +171,7 @@ export function AnimalRunnerGame() {
   const resolveRemark = useCallback(
     (r: FallingRemark) => {
       const caught = Math.abs(r.x - basketXRef.current) <= CATCH_RADIUS;
+      r.caught = caught;
 
       if (r.sentiment === "positive") {
         if (caught) {
@@ -240,6 +242,7 @@ export function AnimalRunnerGame() {
           sentiment,
           remark: text,
           resolved: false,
+          caught: false,
         };
         remarkRef.current = next;
         setRemark(next);
@@ -258,7 +261,10 @@ export function AnimalRunnerGame() {
           resolveRemark(r);
         }
 
-        if (t >= FALL_DURATION_MS) {
+        // caught remarks vanish into the basket right away; missed ones keep
+        // falling until they reach the ground.
+        const shouldClear = r.resolved && r.caught ? true : t >= FALL_DURATION_MS;
+        if (shouldClear) {
           remarkRef.current = null;
           setRemark(null);
           nextSpawnAtRef.current =
@@ -410,11 +416,7 @@ export function AnimalRunnerGame() {
       >
         {remark && (
           <div
-            className={`absolute max-w-[180px] -translate-x-1/2 rounded-2xl px-3 py-2 text-center text-xs font-semibold shadow-md ${
-              remark.sentiment === "negative"
-                ? "bg-blush-strong/90 text-blush-text"
-                : "bg-mint/90 text-mint-text"
-            }`}
+            className="absolute max-w-[190px] -translate-x-1/2 rounded-2xl bg-surface/95 px-4 py-2 text-center text-sm font-semibold text-heading shadow-md"
             style={{ left: `${remark.x}%`, top: `${Math.min(remarkY, 100)}%` }}
           >
             &quot;{remark.remark}&quot;
