@@ -426,7 +426,7 @@ export function AnimalRunnerGame() {
       >
         {remark && (
           <div
-            className={`absolute flex w-[160px] min-h-[64px] -translate-x-1/2 items-center justify-center rounded-2xl px-3 py-2 text-center text-xs font-semibold shadow-md ${remark.colorClass}`}
+            className={`absolute flex w-[140px] min-h-[64px] -translate-x-1/2 items-center justify-center rounded-2xl px-3 py-2 text-center text-xs font-semibold shadow-md ${remark.colorClass}`}
             style={{ left: `${remark.x}%`, top: `${Math.min(remarkY, 100)}%` }}
           >
             &quot;{remark.remark}&quot;
@@ -438,14 +438,14 @@ export function AnimalRunnerGame() {
           style={{ left: `${basketX}%` }}
         >
           <AnimalAvatar animal={animal} size={72} />
-          <svg width="56" height="28" viewBox="0 0 56 28" className="-mt-2">
-            <path d="M4 8 L52 8 L44 26 L12 26 Z" fill="#C98A4B" stroke="#8A5A2B" strokeWidth="2" />
-            <path d="M4 8 L52 8" stroke="#8A5A2B" strokeWidth="3" strokeLinecap="round" />
+          <svg width="140" height="70" viewBox="0 0 140 70" className="-mt-3">
+            <path d="M10 20 L130 20 L110 65 L30 65 Z" fill="#C98A4B" stroke="#8A5A2B" strokeWidth="5" />
+            <path d="M10 20 L130 20" stroke="#8A5A2B" strokeWidth="7" strokeLinecap="round" />
             <path
-              d="M14 8 Q28 -6 42 8"
+              d="M35 20 Q70 -15 105 20"
               fill="none"
               stroke="#8A5A2B"
-              strokeWidth="3"
+              strokeWidth="7"
               strokeLinecap="round"
             />
           </svg>
