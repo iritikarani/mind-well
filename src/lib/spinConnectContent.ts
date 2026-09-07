@@ -8,7 +8,6 @@ export type CategoryKey =
   | "countries"
   | "sports"
   | "movies"
-  | "books"
   | "jobs"
   | "school_subjects"
   | "emotions"
@@ -31,7 +30,6 @@ export const CATEGORIES: CategoryDef[] = [
   { key: "countries", label: "Countries", emoji: "🌍" },
   { key: "sports", label: "Sports", emoji: "⚽" },
   { key: "movies", label: "Movies", emoji: "🎬" },
-  { key: "books", label: "Books", emoji: "📚" },
   { key: "jobs", label: "Jobs / Professions", emoji: "💼" },
   { key: "school_subjects", label: "School Subjects", emoji: "📐" },
   { key: "emotions", label: "Emotions / Feelings", emoji: "💛" },
@@ -356,25 +354,6 @@ export const WORDBANK: Record<CategoryKey, string[]> = {
     "Yehjawaanihaideewani", "Yehzindagikasafar", "Yesboss", "Yodha", "Yojimbo", "Yuva",
     "Yuvvraaj", "Zakhm", "Zakhmidil", "Zamaanadeewana", "Zanjeer", "Zarahatkezarabachke",
     "Zero", "Zindaginamilegidobara", "Zootopia", "Zubeidaa",
-  ],
-  books: [
-    "Alicesadventures", "Aneraofdarkness", "Annakarenina", "Asuitableboy", "Beloved",
-    "Beowulf", "Bravenewworld", "Candide", "Carrie", "Catch22", "Crimeandpunishment",
-    "Devdas", "Discoveryofindia", "Donquixote", "Dracula", "Dune", "Emma", "Faust",
-    "Fivepointsomeone", "Frankenstein", "Gaban", "Gitanjali", "Godaan", "Guide",
-    "Hamlet", "Harrypotter", "Holes", "Ignitedminds", "Iliad", "Interpreterofmaladies",
-    "Ivanhoe", "Jaws", "Kanthapura", "Karmabhoomi", "Kim", "Lesmiserables", "Lolita",
-    "Mahabharata", "Malgudidays", "Matilda", "Middlemarch", "Midnightschildren",
-    "Misery", "Mobydick", "Nirmala", "Norwegianwood", "Odyssey",
-    "Onehundredyearsofsolitude", "Onethousandandonenights", "Outliers", "Panchatantra",
-    "Persuasion", "Prideandprejudice", "Ramayana", "Rashmirathi", "Rebecca", "Room",
-    "Sevasadan", "Shantaram", "Siddhartha", "Slaughterhousefive", "Sybil", "Tamas",
-    "Thealchemist", "Thecatcherintherye", "Thediscoveryofindia", "Thegodofsmallthings",
-    "Thegreatgatsby", "Theguide", "Theimmortalsofmeluha", "Thekiterunner",
-    "Thelittleprince", "Themetamorphosis", "Thestranger", "Thetrial", "Thewhitetiger",
-    "Thingsfallapart", "Tokillamockingbird", "Traintopakistan", "Ulysses", "Untamed",
-    "Untouchable", "Vanityfair", "Verity", "Warandpeace", "Watchmen", "Wingsoffire",
-    "Wonder", "Wutheringheights", "Zorro",
   ],
   jobs: [
     "Accountant", "Actor", "Actuary", "Anesthesiologist", "Architect", "Archivist",
