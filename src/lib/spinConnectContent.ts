@@ -43,7 +43,7 @@ export function categoryByKey(key: string): CategoryDef {
   return CATEGORIES.find((c) => c.key === key) ?? CATEGORIES[0];
 }
 
-export const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+export const LETTERS = "ABCDEFGHIKLMNOPRSTUW".split("");
 
 export const WORDBANK: Record<CategoryKey, string[]> = {
   fruits: [
