@@ -416,7 +416,11 @@ export function AnimalRunnerGame() {
       >
         {remark && (
           <div
-            className="absolute max-w-[190px] -translate-x-1/2 rounded-2xl bg-surface/95 px-4 py-2 text-center text-sm font-semibold text-heading shadow-md"
+            className={`absolute max-w-[180px] -translate-x-1/2 rounded-2xl px-3 py-2 text-center text-xs font-semibold shadow-md ${
+              remark.sentiment === "negative"
+                ? "bg-blush-strong/90 text-blush-text"
+                : "bg-mint/90 text-mint-text"
+            }`}
             style={{ left: `${remark.x}%`, top: `${Math.min(remarkY, 100)}%` }}
           >
             &quot;{remark.remark}&quot;
