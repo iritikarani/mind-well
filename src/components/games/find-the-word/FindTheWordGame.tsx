@@ -210,7 +210,7 @@ export function FindTheWordGame() {
 
           {limitReached && (
             <p className="mt-4 text-sm text-muted">
-              That&apos;s your Find the Word for today — come back tomorrow for more.
+              You&apos;ve played the game today. Come back tomorrow.
             </p>
           )}
 

@@ -5,12 +5,10 @@ import type { GameMeta } from "@/lib/games";
 
 export function DailyLimitReachedPage({
   game,
-  limit,
   userName,
   streakCount,
 }: {
   game: GameMeta;
-  limit: number;
   userName: string;
   streakCount?: number;
 }) {
@@ -21,10 +19,7 @@ export function DailyLimitReachedPage({
         <Card className="text-center">
           <div className="text-5xl">🌙</div>
           <h1 className="mt-3 font-heading text-2xl font-bold text-heading">{game.label}</h1>
-          <p className="mt-2 text-muted">
-            You&apos;ve played {game.label} {limit === 1 ? "once" : `${limit} times`} today —
-            that&apos;s all for now. Come back tomorrow for {limit === 1 ? "another round" : "more"}.
-          </p>
+          <p className="mt-2 text-muted">You&apos;ve played the game today. Come back tomorrow.</p>
           <LinkButton href="/games" variant="ghost" className="mt-6">
             ← Back to games
           </LinkButton>

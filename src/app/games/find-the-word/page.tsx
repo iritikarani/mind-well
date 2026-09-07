@@ -5,7 +5,7 @@ import { FindTheWordGame } from "@/components/games/find-the-word/FindTheWordGam
 import { DailyLimitReachedPage } from "@/components/games/DailyLimitReached";
 import { prisma } from "@/lib/prisma";
 import { gameMeta } from "@/lib/games";
-import { DAILY_PLAY_LIMITS, hasReachedDailyLimit } from "@/lib/playLimit";
+import { hasReachedDailyLimit } from "@/lib/playLimit";
 
 export default async function FindTheWordPage() {
   const user = await getCurrentUser();
@@ -17,7 +17,6 @@ export default async function FindTheWordPage() {
     return (
       <DailyLimitReachedPage
         game={gameMeta("FIND_THE_WORD")!}
-        limit={DAILY_PLAY_LIMITS.FIND_THE_WORD!}
         userName={user.name}
         streakCount={streak?.currentCount}
       />

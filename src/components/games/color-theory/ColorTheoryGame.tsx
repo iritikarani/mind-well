@@ -180,7 +180,7 @@ export function ColorTheoryGame() {
 
           {limitReached && (
             <p className="mt-4 text-sm text-muted">
-              That&apos;s your Color Theory for today — come back tomorrow for another one.
+              You&apos;ve played the game today. Come back tomorrow.
             </p>
           )}
 

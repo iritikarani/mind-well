@@ -5,7 +5,7 @@ import { ColorTheoryGame } from "@/components/games/color-theory/ColorTheoryGame
 import { DailyLimitReachedPage } from "@/components/games/DailyLimitReached";
 import { prisma } from "@/lib/prisma";
 import { gameMeta } from "@/lib/games";
-import { DAILY_PLAY_LIMITS, hasReachedDailyLimit } from "@/lib/playLimit";
+import { hasReachedDailyLimit } from "@/lib/playLimit";
 
 export default async function ColorTheoryPage() {
   const user = await getCurrentUser();
@@ -17,7 +17,6 @@ export default async function ColorTheoryPage() {
     return (
       <DailyLimitReachedPage
         game={gameMeta("COLOR_THEORY")!}
-        limit={DAILY_PLAY_LIMITS.COLOR_THEORY!}
         userName={user.name}
         streakCount={streak?.currentCount}
       />
