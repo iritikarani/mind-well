@@ -20,7 +20,7 @@ const SPAWN_MAX_GAP_MS = 700;
 const START_HEARTS = 10;
 const BASKET_MIN_X = 8;
 const BASKET_MAX_X = 88;
-const CATCH_RADIUS = 10;
+const CATCH_RADIUS = 15;
 const KEY_MOVE_PCT_PER_SEC = 34;
 const BUTTON_NUDGE_PCT = 12;
 
