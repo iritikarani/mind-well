@@ -26,6 +26,14 @@ const BUTTON_NUDGE_PCT = 12;
 
 type Sentiment = "positive" | "negative";
 
+const BUBBLE_COLORS = [
+  "bg-blush/90 text-blush-text",
+  "bg-butter/90 text-butter-text",
+  "bg-sky/90 text-sky-text",
+  "bg-mint/90 text-mint-text",
+  "bg-peach/90 text-blush-text",
+] as const;
+
 interface FallingRemark {
   id: number;
   spawnedAt: number;
@@ -34,6 +42,7 @@ interface FallingRemark {
   remark: string;
   resolved: boolean;
   caught: boolean;
+  colorClass: string;
 }
 
 type Stage = "select" | "countdown" | "playing" | "result";
@@ -243,6 +252,7 @@ export function AnimalRunnerGame() {
           remark: text,
           resolved: false,
           caught: false,
+          colorClass: BUBBLE_COLORS[Math.floor(Math.random() * BUBBLE_COLORS.length)],
         };
         remarkRef.current = next;
         setRemark(next);
@@ -416,11 +426,7 @@ export function AnimalRunnerGame() {
       >
         {remark && (
           <div
-            className={`absolute max-w-[180px] -translate-x-1/2 rounded-2xl px-3 py-2 text-center text-xs font-semibold shadow-md ${
-              remark.sentiment === "negative"
-                ? "bg-blush-strong/90 text-blush-text"
-                : "bg-mint/90 text-mint-text"
-            }`}
+            className={`absolute max-w-[180px] -translate-x-1/2 rounded-2xl px-3 py-2 text-center text-xs font-semibold shadow-md ${remark.colorClass}`}
             style={{ left: `${remark.x}%`, top: `${Math.min(remarkY, 100)}%` }}
           >
             &quot;{remark.remark}&quot;
