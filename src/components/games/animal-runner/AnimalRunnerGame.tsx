@@ -13,10 +13,10 @@ import {
 } from "@/lib/animalRunnerContent";
 
 const GAME_DURATION_MS = 120_000;
-const FALL_DURATION_MS = 7200;
+const FALL_DURATION_MS = 6000;
 const CATCH_LINE_PCT = 82; // how far down the track the basket sits
-const SPAWN_MIN_GAP_MS = 4200;
-const SPAWN_MAX_GAP_MS = 5600;
+const SPAWN_MIN_GAP_MS = 3400;
+const SPAWN_MAX_GAP_MS = 4600;
 const START_HEARTS = 10;
 const BASKET_MIN_X = 8;
 const BASKET_MAX_X = 88;
@@ -426,7 +426,7 @@ export function AnimalRunnerGame() {
       >
         {remark && (
           <div
-            className={`absolute max-w-[180px] -translate-x-1/2 rounded-2xl px-3 py-2 text-center text-xs font-semibold shadow-md ${remark.colorClass}`}
+            className={`absolute flex w-[160px] min-h-[64px] -translate-x-1/2 items-center justify-center rounded-2xl px-3 py-2 text-center text-xs font-semibold shadow-md ${remark.colorClass}`}
             style={{ left: `${remark.x}%`, top: `${Math.min(remarkY, 100)}%` }}
           >
             &quot;{remark.remark}&quot;
