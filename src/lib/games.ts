@@ -15,11 +15,11 @@ export const GAME_CATEGORIES = ["Validation", "Threads", "Mind Flow", "Three Thi
 export const GAMES: GameMeta[] = [
   {
     key: "ANIMAL_RUNNER",
-    label: "Animal Runner",
+    label: "Animal Catcher",
     category: "Validation",
     emoji: "🦊",
     href: "/games/animal-runner",
-    tagline: "Choose a companion and let good remarks in, let the rest run past you.",
+    tagline: "Choose a companion and catch the good remarks as they fall.",
     playable: true,
   },
   {

@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import type { GameKey } from "@/generated/prisma/enums";
 
 export const BADGE_CATALOG = {
-  // Animal Runner
+  // Animal Catcher
   POSITIVITY_MAGNET: {
     label: "Positivity Magnet",
     description: "Absorbed mostly positive remarks in a single run",
