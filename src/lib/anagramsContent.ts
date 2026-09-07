@@ -1,3 +1,5 @@
+import ANAGRAM_WORDS from "./anagramWords.json";
+
 export interface AcceptedWord {
   word: string;
   uncommon?: boolean;
@@ -129,14 +131,29 @@ export interface CheckResult {
   uncommon: boolean;
 }
 
-function checkAgainstAccepted(answer: string, accepted: AcceptedWord[], validShape: boolean): CheckResult {
+/** Full 4-6 letter English dictionary, used so any real word made from the
+ * puzzle's letters is accepted rather than only ones we thought to list. */
+const DICTIONARY: ReadonlySet<string> = new Set(ANAGRAM_WORDS);
+
+/** Words already curated (and not flagged `uncommon`) across the puzzle
+ * lists below, used only to keep the "found an uncommon word" badge
+ * working — anything else that's dictionary-valid defaults to uncommon. */
+const COMMON_WORDS: ReadonlySet<string> = new Set(
+  [...LEVEL1_PUZZLES.flatMap((p) => p.accepted), ...LEVEL2_PUZZLES.flatMap((p) => p.accepted)]
+    .concat(LEVEL3_PUZZLES.flatMap((p) => [...p.accepted4, ...p.accepted5]))
+    .filter((a) => !a.uncommon)
+    .map((a) => a.word),
+);
+
+function checkWord(answer: string, validShape: boolean): CheckResult {
   if (!validShape) return { valid: false, uncommon: false };
-  const match = accepted.find((a) => a.word === normalize(answer));
-  return match ? { valid: true, uncommon: !!match.uncommon } : { valid: false, uncommon: false };
+  const word = normalize(answer);
+  if (!DICTIONARY.has(word)) return { valid: false, uncommon: false };
+  return { valid: true, uncommon: !COMMON_WORDS.has(word) };
 }
 
 export function checkAnagramAnswer(answer: string, puzzle: SimplePuzzle): CheckResult {
-  return checkAgainstAccepted(answer, puzzle.accepted, isExactAnagram(answer, puzzle.source));
+  return checkWord(answer, isExactAnagram(answer, puzzle.source));
 }
 
 export function checkLevel3Answer(
@@ -144,9 +161,8 @@ export function checkLevel3Answer(
   puzzle: Level3Puzzle,
   length: 4 | 5,
 ): CheckResult {
-  const accepted = length === 4 ? puzzle.accepted4 : puzzle.accepted5;
   const shapeOk = normalize(answer).length === length && isSubsetOf(answer, puzzle.source);
-  return checkAgainstAccepted(answer, accepted, shapeOk);
+  return checkWord(answer, shapeOk);
 }
 
 export function sameWord(a: string, b: string): boolean {
