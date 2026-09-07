@@ -6,12 +6,17 @@ import { awardBadgesForWorldPuzzle, BADGE_CATALOG, type BadgeKey } from "@/lib/b
 import { worldPuzzlePlaySchema } from "@/lib/validation";
 import { errorResponse, zodErrorResponse } from "@/lib/api-response";
 import { monumentById, randomQuote } from "@/lib/worldPuzzleContent";
+import { hasReachedDailyLimit } from "@/lib/playLimit";
 
 export const maxDuration = 30;
 
 export async function POST(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) return errorResponse("Not signed in", 401);
+
+  if (await hasReachedDailyLimit(user.id, "WORLD_PUZZLE")) {
+    return errorResponse("You've already played World Puzzle today", 429);
+  }
 
   const body = await req.json().catch(() => null);
   const parsed = worldPuzzlePlaySchema.safeParse(body);
@@ -39,5 +44,7 @@ export async function POST(req: NextRequest) {
     label: BADGE_CATALOG[key].label,
   }));
 
-  return NextResponse.json({ streak: streak.currentCount, newBadges, quote: randomQuote() });
+  const limitReached = await hasReachedDailyLimit(user.id, "WORLD_PUZZLE");
+
+  return NextResponse.json({ streak: streak.currentCount, newBadges, quote: randomQuote(), limitReached });
 }

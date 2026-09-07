@@ -5,12 +5,17 @@ import { bumpStreakForPlay } from "@/lib/streak";
 import { awardBadgesForFindTheWord, BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
 import { findTheWordPlaySchema } from "@/lib/validation";
 import { errorResponse, zodErrorResponse } from "@/lib/api-response";
+import { hasReachedDailyLimit } from "@/lib/playLimit";
 
 export const maxDuration = 30;
 
 export async function POST(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) return errorResponse("Not signed in", 401);
+
+  if (await hasReachedDailyLimit(user.id, "FIND_THE_WORD")) {
+    return errorResponse("You've already played Find the Word twice today", 429);
+  }
 
   const body = await req.json().catch(() => null);
   const parsed = findTheWordPlaySchema.safeParse(body);
@@ -37,5 +42,7 @@ export async function POST(req: NextRequest) {
     label: BADGE_CATALOG[key].label,
   }));
 
-  return NextResponse.json({ streak: streak.currentCount, newBadges });
+  const limitReached = await hasReachedDailyLimit(user.id, "FIND_THE_WORD");
+
+  return NextResponse.json({ streak: streak.currentCount, newBadges, limitReached });
 }

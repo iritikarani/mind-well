@@ -16,6 +16,7 @@ export function ColorTheoryGame() {
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
   const [newBadges, setNewBadges] = useState<string[]>([]);
+  const [limitReached, setLimitReached] = useState(false);
 
   async function chooseColor(key: ColorKey) {
     setColor(key);
@@ -54,8 +55,11 @@ export function ColorTheoryGame() {
         body: JSON.stringify({ color, questions, answers: finalAnswers }),
       });
       const data = await res.json();
-      if (res.ok && data.newBadges?.length) {
-        setNewBadges(data.newBadges.map((b: { label: string }) => b.label));
+      if (res.ok) {
+        setLimitReached(!!data.limitReached);
+        if (data.newBadges?.length) {
+          setNewBadges(data.newBadges.map((b: { label: string }) => b.label));
+        }
       }
     } finally {
       setSaving(false);
@@ -174,10 +178,18 @@ export function ColorTheoryGame() {
             </div>
           )}
 
+          {limitReached && (
+            <p className="mt-4 text-sm text-muted">
+              That&apos;s your Color Theory for today — come back tomorrow for another one.
+            </p>
+          )}
+
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Button variant="soft" onClick={playAgain}>
-              Play again
-            </Button>
+            {!limitReached && (
+              <Button variant="soft" onClick={playAgain}>
+                Play again
+              </Button>
+            )}
             <LinkButton href="/dashboard">Back to dashboard</LinkButton>
           </div>
         </Card>

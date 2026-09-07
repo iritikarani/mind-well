@@ -5,12 +5,17 @@ import { bumpStreakForPlay } from "@/lib/streak";
 import { awardBadgesForColorTheory, BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
 import { colorTheoryPlaySchema } from "@/lib/validation";
 import { errorResponse, zodErrorResponse } from "@/lib/api-response";
+import { hasReachedDailyLimit } from "@/lib/playLimit";
 
 export const maxDuration = 30;
 
 export async function POST(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) return errorResponse("Not signed in", 401);
+
+  if (await hasReachedDailyLimit(user.id, "COLOR_THEORY")) {
+    return errorResponse("You've already played Color Theory today", 429);
+  }
 
   const body = await req.json().catch(() => null);
   const parsed = colorTheoryPlaySchema.safeParse(body);
@@ -42,5 +47,7 @@ export async function POST(req: NextRequest) {
     label: BADGE_CATALOG[key].label,
   }));
 
-  return NextResponse.json({ streak: streak.currentCount, newBadges });
+  const limitReached = await hasReachedDailyLimit(user.id, "COLOR_THEORY");
+
+  return NextResponse.json({ streak: streak.currentCount, newBadges, limitReached });
 }

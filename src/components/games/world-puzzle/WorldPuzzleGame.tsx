@@ -32,6 +32,7 @@ export function WorldPuzzleGame() {
   const [quote, setQuote] = useState<string | null>(null);
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [limitReached, setLimitReached] = useState(false);
 
   async function applyFetchedMonument() {
     const res = await fetch("/api/games/world-puzzle/monument");
@@ -98,6 +99,7 @@ export function WorldPuzzleGame() {
       const data = await res.json();
       if (res.ok) {
         setQuote(data.quote);
+        setLimitReached(!!data.limitReached);
         if (data.newBadges?.length) {
           setNewBadges(data.newBadges.map((b: { label: string }) => b.label));
         }
@@ -203,10 +205,18 @@ export function WorldPuzzleGame() {
           </div>
         )}
 
+        {limitReached && (
+          <p className="mt-4 text-sm text-muted">
+            That&apos;s your World Puzzle for today — come back tomorrow for another one.
+          </p>
+        )}
+
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Button variant="soft" onClick={loadMonument}>
-            Next monument
-          </Button>
+          {!limitReached && (
+            <Button variant="soft" onClick={loadMonument}>
+              Next monument
+            </Button>
+          )}
           <LinkButton href="/dashboard">Back to dashboard</LinkButton>
         </div>
       </Card>

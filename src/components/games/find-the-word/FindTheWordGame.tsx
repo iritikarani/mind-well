@@ -41,6 +41,7 @@ export function FindTheWordGame() {
 
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [limitReached, setLimitReached] = useState(false);
 
   function newGame() {
     setStage("loading");
@@ -168,8 +169,11 @@ export function FindTheWordGame() {
         body: JSON.stringify({ wordsFound: entries }),
       });
       const data = await res.json();
-      if (res.ok && data.newBadges?.length) {
-        setNewBadges(data.newBadges.map((b: { label: string }) => b.label));
+      if (res.ok) {
+        setLimitReached(!!data.limitReached);
+        if (data.newBadges?.length) {
+          setNewBadges(data.newBadges.map((b: { label: string }) => b.label));
+        }
       }
     } finally {
       setSaving(false);
@@ -204,10 +208,18 @@ export function FindTheWordGame() {
             </div>
           )}
 
+          {limitReached && (
+            <p className="mt-4 text-sm text-muted">
+              That&apos;s your Find the Word for today — come back tomorrow for more.
+            </p>
+          )}
+
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Button variant="soft" onClick={newGame} disabled={saving}>
-              Play again
-            </Button>
+            {!limitReached && (
+              <Button variant="soft" onClick={newGame} disabled={saving}>
+                Play again
+              </Button>
+            )}
             <LinkButton href="/dashboard">Back to dashboard</LinkButton>
           </div>
         </Card>
