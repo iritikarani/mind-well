@@ -354,14 +354,20 @@ function wordsFor(category: CategoryKey, letter: string): string[] {
   return WORDBANK[category].filter((w) => w[0].toUpperCase() === upper);
 }
 
+// Only these letters ever ask for more than one answer — everything else
+// is a quick single-answer round, no matter how many words match.
+const MULTI_ANSWER_LETTERS = new Set(["A", "B", "C", "M", "P", "S", "T"]);
+
 export function tierFor(category: CategoryKey, letter: string): TierInfo {
   const matches = wordsFor(category, letter);
   const matchCount = matches.length;
 
   if (matchCount === 0) return { tier: "none", matchCount, required: 0 };
-  if (matchCount <= 2) return { tier: "rare", matchCount, required: 1 };
-  if (matchCount <= 7) return { tier: "medium", matchCount, required: 3 };
-  return { tier: "common", matchCount, required: 5 };
+  if (!MULTI_ANSWER_LETTERS.has(letter.toUpperCase())) {
+    return { tier: "rare", matchCount, required: 1 };
+  }
+  if (matchCount <= 7) return { tier: "medium", matchCount, required: 2 };
+  return { tier: "common", matchCount, required: 3 };
 }
 
 function levenshtein(a: string, b: string): number {

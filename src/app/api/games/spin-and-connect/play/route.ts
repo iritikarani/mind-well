@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   const { rounds } = parsed.data;
   const totalCorrect = rounds.reduce((sum, r) => sum + r.correctCount, 0);
-  const totalPossible = rounds.reduce((sum, r) => sum + (r.tier === "rare" ? 1 : r.tier === "medium" ? 3 : 5), 0);
+  const totalPossible = rounds.reduce((sum, r) => sum + (r.tier === "rare" ? 1 : r.tier === "medium" ? 2 : 3), 0);
 
   await prisma.gamePlay.create({
     data: {

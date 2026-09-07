@@ -314,7 +314,7 @@ export function SpinAndConnectGame() {
 
 function requiredFor(tier: Tier): number {
   if (tier === "rare") return 1;
-  if (tier === "medium") return 3;
-  if (tier === "common") return 5;
+  if (tier === "medium") return 2;
+  if (tier === "common") return 3;
   return 0;
 }

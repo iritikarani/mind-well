@@ -341,7 +341,7 @@ function evaluateSpinAndConnect(rounds: SpinAndConnectRound[]): BadgeKey[] {
 
   if (rounds.length >= 5) earned.push("FIVE_ROUNDS_STRONG");
   if (rounds.some((r) => r.hintsUsed === 0)) earned.push("QUICK_THINKER");
-  if (rounds.some((r) => r.tier === "common" && r.correctCount >= 5)) earned.push("WORDSMITH");
+  if (rounds.some((r) => r.tier === "common" && r.correctCount >= 3)) earned.push("WORDSMITH");
 
   return earned;
 }
