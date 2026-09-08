@@ -3,7 +3,8 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { journalSaveSchema } from "@/lib/validation";
 import { errorResponse, zodErrorResponse } from "@/lib/api-response";
-import { isPastOrToday, todayKey } from "@/lib/date";
+import { isPastOrToday, todayKeyInZone } from "@/lib/date";
+import { getUserTimeZone } from "@/lib/timezone";
 import { bumpStreakForPlay } from "@/lib/streak";
 import { awardBadgesForThreeThings, BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
 
@@ -35,7 +36,8 @@ export async function PUT(req: NextRequest) {
   if (!parsed.success) return zodErrorResponse(parsed.error);
 
   const { date, slot, text } = parsed.data;
-  if (!isPastOrToday(date)) {
+  const timeZone = await getUserTimeZone();
+  if (!isPastOrToday(date, timeZone)) {
     return errorResponse("You can only journal for today or past dates", 422);
   }
 
@@ -63,7 +65,7 @@ export async function PUT(req: NextRequest) {
 
   if (entries.length > 0) {
     const [streak, newBadgeKeys] = await Promise.all([
-      date === todayKey() ? bumpStreakForPlay(user.id) : null,
+      date === todayKeyInZone(timeZone) ? bumpStreakForPlay(user.id) : null,
       awardBadgesForThreeThings(user.id, { date, entriesCount: entries.length }),
     ]);
     streakCount = streak?.currentCount;

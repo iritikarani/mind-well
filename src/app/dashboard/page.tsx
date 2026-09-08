@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
-import { formatDateIST, formatDateTimeIST } from "@/lib/date";
+import { formatDateInZone, formatDateTimeInZone } from "@/lib/date";
+import { getUserTimeZone } from "@/lib/timezone";
 import { prisma } from "@/lib/prisma";
 import { BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
 import { GAMES, gameMeta } from "@/lib/games";
@@ -50,7 +51,8 @@ export default async function DashboardPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const [streak, badges, plays, totalPlays] = await Promise.all([
+  const [timeZone, streak, badges, plays, totalPlays] = await Promise.all([
+    getUserTimeZone(),
     prisma.streak.findUnique({ where: { userId: user.id } }),
     prisma.userBadge.findMany({
       where: { userId: user.id },
@@ -142,7 +144,7 @@ export default async function DashboardPage() {
                     <p className="font-heading font-semibold text-heading">🏅 {meta.label}</p>
                     <p className="mt-1 text-xs text-muted">{meta.description}</p>
                     <p className="mt-2 text-[11px] text-muted">
-                      Earned {formatDateIST(b.earnedAt)}
+                      Earned {formatDateInZone(b.earnedAt, timeZone)}
                     </p>
                   </Card>
                 );
@@ -170,7 +172,7 @@ export default async function DashboardPage() {
                         <p className="text-xs text-muted">{summarizePlay(play.game, play.result)}</p>
                       </div>
                     </div>
-                    <p className="text-xs text-muted">{formatDateTimeIST(play.playedAt)}</p>
+                    <p className="text-xs text-muted">{formatDateTimeInZone(play.playedAt, timeZone)}</p>
                   </div>
                 );
               })}
