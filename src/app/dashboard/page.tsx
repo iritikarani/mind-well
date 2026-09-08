@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
-import { formatDateInZone, formatDateTimeInZone } from "@/lib/date";
+import { formatDateInZone, formatDateTimeInZone, startOfDayInZone } from "@/lib/date";
 import { getUserTimeZone } from "@/lib/timezone";
 import { prisma } from "@/lib/prisma";
 import { BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
@@ -51,8 +51,10 @@ export default async function DashboardPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const [timeZone, streak, badges, plays, totalPlays] = await Promise.all([
-    getUserTimeZone(),
+  const timeZone = await getUserTimeZone();
+  const dayStart = startOfDayInZone(timeZone);
+
+  const [streak, badges, plays, playsToday] = await Promise.all([
     prisma.streak.findUnique({ where: { userId: user.id } }),
     prisma.userBadge.findMany({
       where: { userId: user.id },
@@ -63,7 +65,7 @@ export default async function DashboardPage() {
       orderBy: { playedAt: "desc" },
       take: 8,
     }),
-    prisma.gamePlay.count({ where: { userId: user.id } }),
+    prisma.gamePlay.count({ where: { userId: user.id, playedAt: { gte: dayStart } } }),
   ]);
 
   return (
@@ -96,9 +98,9 @@ export default async function DashboardPage() {
           </Card>
           <Card>
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">
-              Games played
+              Games played today
             </p>
-            <p className="mt-2 font-heading text-3xl font-bold text-heading">{totalPlays}</p>
+            <p className="mt-2 font-heading text-3xl font-bold text-heading">{playsToday}</p>
             <p className="mt-1 text-sm text-muted">Recent activity below</p>
           </Card>
         </div>
