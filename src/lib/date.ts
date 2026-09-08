@@ -1,5 +1,14 @@
+const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000; // UTC+5:30
+
+/** Today's date as seen in IST, so all "daily" resets flip at 12 AM IST. */
 export function todayKey() {
-  return new Date().toISOString().slice(0, 10); // YYYY-MM-DD (UTC)
+  return new Date(Date.now() + IST_OFFSET_MS).toISOString().slice(0, 10); // YYYY-MM-DD (IST)
+}
+
+/** The exact UTC instant of 12 AM IST today — for building precise time windows. */
+export function startOfTodayIST(): Date {
+  const istMidnightAsUTC = new Date(`${todayKey()}T00:00:00.000Z`).getTime();
+  return new Date(istMidnightAsUTC - IST_OFFSET_MS);
 }
 
 export function isPastOrToday(dateKey: string) {
