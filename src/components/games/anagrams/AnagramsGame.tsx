@@ -11,7 +11,7 @@ import {
   anagramsClosingRemark,
   checkAnagramAnswer,
   checkLevel3Answer,
-  randomPuzzle,
+  pickNextPuzzle,
   sameWord,
   type Level3Puzzle,
   type SimplePuzzle,
@@ -48,7 +48,7 @@ export function AnagramsGame() {
   const usedUncommonRef = useRef(false);
   const startedAtRef = useRef(0);
 
-  function newGame() {
+  async function newGame() {
     setStage("loading");
     setAnswer1a("");
     setAnswer1b("");
@@ -62,9 +62,25 @@ export function AnagramsGame() {
     setFinalUsedUncommon(false);
     usedUncommonRef.current = false;
 
-    setPuzzle1(randomPuzzle(LEVEL1_PUZZLES));
-    setPuzzle2(randomPuzzle(LEVEL2_PUZZLES));
-    setPuzzle3(randomPuzzle(LEVEL3_PUZZLES));
+    let next1 = pickNextPuzzle(LEVEL1_PUZZLES, []);
+    let next2 = pickNextPuzzle(LEVEL2_PUZZLES, []);
+    let next3 = pickNextPuzzle(LEVEL3_PUZZLES, []);
+
+    try {
+      const res = await fetch("/api/games/anagrams/next");
+      const data = await res.json();
+      if (res.ok) {
+        next1 = LEVEL1_PUZZLES.find((p) => p.source === data.level1) ?? next1;
+        next2 = LEVEL2_PUZZLES.find((p) => p.source === data.level2) ?? next2;
+        next3 = LEVEL3_PUZZLES.find((p) => p.source === data.level3) ?? next3;
+      }
+    } catch {
+      // Server pick failed — fall back to the local random puzzles above.
+    }
+
+    setPuzzle1(next1);
+    setPuzzle2(next2);
+    setPuzzle3(next3);
     startedAtRef.current = now();
     setStage("level1");
   }
@@ -125,12 +141,17 @@ export function AnagramsGame() {
   }
 
   async function finishSession(elapsed: number) {
+    if (!puzzle1 || !puzzle2 || !puzzle3) return;
     setSaving(true);
     try {
       const res = await fetch("/api/games/anagrams/play", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ totalTimeMs: elapsed, usedUncommonWord: usedUncommonRef.current }),
+        body: JSON.stringify({
+          totalTimeMs: elapsed,
+          usedUncommonWord: usedUncommonRef.current,
+          sources: { level1: puzzle1.source, level2: puzzle2.source, level3: puzzle3.source },
+        }),
       });
       const data = await res.json();
       if (res.ok && data.newBadges?.length) {

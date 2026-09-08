@@ -186,6 +186,7 @@ export interface FindTheWordEntry {
 export interface AnagramsResult {
   totalTimeMs: number;
   usedUncommonWord: boolean;
+  sources?: { level1: string; level2: string; level3: string };
 }
 
 const ALL_COLOR_KEYS = [

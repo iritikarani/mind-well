@@ -83,6 +83,13 @@ export const findTheWordPlaySchema = z.object({
 export const anagramsPlaySchema = z.object({
   totalTimeMs: z.number().int().min(0),
   usedUncommonWord: z.boolean(),
+  sources: z
+    .object({
+      level1: z.string(),
+      level2: z.string(),
+      level3: z.string(),
+    })
+    .optional(),
 });
 
 export const spinAndConnectPlaySchema = z.object({

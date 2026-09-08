@@ -16,13 +16,13 @@ export async function POST(req: NextRequest) {
   const parsed = anagramsPlaySchema.safeParse(body);
   if (!parsed.success) return zodErrorResponse(parsed.error);
 
-  const { totalTimeMs, usedUncommonWord } = parsed.data;
+  const { totalTimeMs, usedUncommonWord, sources } = parsed.data;
 
   await prisma.gamePlay.create({
     data: {
       userId: user.id,
       game: "ANAGRAMS",
-      result: JSON.stringify({ totalTimeMs, usedUncommonWord }),
+      result: JSON.stringify({ totalTimeMs, usedUncommonWord, sources }),
       score: usedUncommonWord ? 1 : 0,
     },
   });

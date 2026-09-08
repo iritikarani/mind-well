@@ -169,8 +169,19 @@ export function sameWord(a: string, b: string): boolean {
   return normalize(a) === normalize(b);
 }
 
-export function randomPuzzle<T>(pool: T[]): T {
-  return pool[Math.floor(Math.random() * pool.length)];
+/**
+ * Picks a puzzle from `pool`, avoiding whichever sources were played most
+ * recently (most-recent-first in `recentSources`) so a player cycles through
+ * every puzzle in a level before any repeat. Never excludes the whole pool.
+ */
+export function pickNextPuzzle<T extends { source: string }>(
+  pool: T[],
+  recentSources: string[],
+): T {
+  const excludeCount = Math.min(pool.length - 1, recentSources.length);
+  const excluded = new Set(recentSources.slice(0, excludeCount));
+  const candidates = pool.filter((p) => !excluded.has(p.source));
+  return candidates[Math.floor(Math.random() * candidates.length)];
 }
 
 export function anagramsClosingRemark(totalTimeMs: number, usedUncommon: boolean): string {
