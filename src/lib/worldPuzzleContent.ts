@@ -894,6 +894,43 @@ export const MONUMENTS: MonumentDef[] = [
   { id: "yasawa-islands", name: "The Yasawa Islands", country: "Fiji", region: "Oceania", image: "/monuments/yasawa-islands.jpg" },
   { id: "marovo-lagoon", name: "Marovo Lagoon", country: "Solomon Islands", region: "Oceania", image: "/monuments/marovo-lagoon.jpg" },
   { id: "moorea", name: "Moorea", country: "French Polynesia", region: "Oceania", image: "/monuments/moorea.jpg" },
+  // --- batch 3 retry pass ---
+  // Asia (batch 3 retry)
+  { id: "longmen-grottoes", name: "The Longmen Grottoes", country: "China", region: "Asia", image: "/monuments/longmen-grottoes.jpg" },
+  { id: "chitwan-national-park", name: "Chitwan National Park", country: "Nepal", region: "Asia", image: "/monuments/chitwan-national-park.jpg" },
+  { id: "ala-kul-lake", name: "Ala-Kul Lake", country: "Kyrgyzstan", region: "Asia", image: "/monuments/ala-kul-lake.jpg" },
+  // Middle East (batch 3 retry)
+  { id: "corniche-doha", name: "The Corniche, Doha", country: "Qatar", region: "Middle East", image: "/monuments/corniche-doha.jpg" },
+  { id: "bahai-gardens", name: "The Shrine of the Báb", country: "Israel", region: "Middle East", image: "/monuments/bahai-gardens.jpg" },
+  { id: "grand-mosque-kuwait", name: "The Grand Mosque of Kuwait", country: "Kuwait", region: "Middle East", image: "/monuments/grand-mosque-kuwait.jpg" },
+  // Europe (batch 3 retry)
+  { id: "seven-rila-lakes", name: "The Seven Rila Lakes", country: "Bulgaria", region: "Europe", image: "/monuments/seven-rila-lakes.jpg" },
+  { id: "porto-ribeira", name: "Livraria Lello", country: "Portugal", region: "Europe", image: "/monuments/porto-ribeira.jpg" },
+  { id: "givernys-garden", name: "Monet's Garden at Giverny", country: "France", region: "Europe", image: "/monuments/givernys-garden.jpg" },
+  { id: "valley-of-the-temples", name: "The Valley of the Temples", country: "Italy", region: "Europe", image: "/monuments/valley-of-the-temples.jpg" },
+  { id: "monte-carlo-casino", name: "The Prince's Palace of Monaco", country: "Monaco", region: "Europe", image: "/monuments/monte-carlo-casino.jpg" },
+  { id: "titano-fortress", name: "The Guaita Tower", country: "San Marino", region: "Europe", image: "/monuments/titano-fortress.jpg" },
+  { id: "blue-eye-spring", name: "The Blue Eye Spring", country: "Albania", region: "Europe", image: "/monuments/blue-eye-spring.jpg" },
+  { id: "warsaw-old-town", name: "The Royal Castle, Warsaw", country: "Poland", region: "Europe", image: "/monuments/warsaw-old-town.jpg" },
+  { id: "atlantic-ocean-road", name: "The Storseisundet Bridge", country: "Norway", region: "Europe", image: "/monuments/atlantic-ocean-road.jpg" },
+  { id: "isle-of-skye", name: "The Old Man of Storr", country: "United Kingdom", region: "Europe", image: "/monuments/isle-of-skye.jpg" },
+  { id: "hadrians-wall", name: "Housesteads Roman Fort", country: "United Kingdom", region: "Europe", image: "/monuments/hadrians-wall.jpg" },
+  // Americas (batch 3 retry)
+  { id: "cenote-dos-ojos", name: "Dos Ojos Cenote", country: "Mexico", region: "Americas", image: "/monuments/cenote-dos-ojos.jpg" },
+  { id: "caracol", name: "Caracol", country: "Belize", region: "Americas", image: "/monuments/caracol.jpg" },
+  { id: "ometepe-island", name: "Concepción Volcano", country: "Nicaragua", region: "Americas", image: "/monuments/ometepe-island.jpg" },
+  { id: "el-penol", name: "El Peñón de Guatapé", country: "Colombia", region: "Americas", image: "/monuments/el-penol.jpg" },
+  // Africa (batch 3 retry)
+  { id: "selous-game-reserve", name: "Nyerere National Park", country: "Tanzania", region: "Africa", image: "/monuments/selous-game-reserve.jpg" },
+  { id: "zomba-plateau", name: "The Zomba Plateau", country: "Malawi", region: "Africa", image: "/monuments/zomba-plateau.jpg" },
+  { id: "vallee-de-mai", name: "Vallée de Mai", country: "Seychelles", region: "Africa", image: "/monuments/vallee-de-mai.jpg" },
+  { id: "garden-route", name: "The Garden Route", country: "South Africa", region: "Africa", image: "/monuments/garden-route.jpg" },
+  // Oceania (batch 3 retry)
+  { id: "lord-howe-island", name: "Lord Howe Island", country: "Australia", region: "Oceania", image: "/monuments/lord-howe-island.jpg" },
+  { id: "litchfield-national-park", name: "Litchfield National Park", country: "Australia", region: "Oceania", image: "/monuments/litchfield-national-park.jpg" },
+  { id: "haamonga-a-maui", name: "Ha'amonga 'a Maui", country: "Tonga", region: "Oceania", image: "/monuments/haamonga-a-maui.jpg" },
+  { id: "bikini-atoll", name: "Bikini Atoll", country: "Marshall Islands", region: "Oceania", image: "/monuments/bikini-atoll.jpg" },
+  { id: "the-kimberley", name: "Windjana Gorge", country: "Australia", region: "Oceania", image: "/monuments/the-kimberley.jpg" },
 ];
 
 export function monumentById(id: string): MonumentDef | undefined {
