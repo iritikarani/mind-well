@@ -17,8 +17,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/cn";
-
-type MonthEntries = Record<string, { slot: number; text: string }[]>;
+import { generateThreeThingsPdf, type MonthEntries } from "@/lib/threeThingsPdf";
 
 function dateKey(d: Date) {
   return format(d, "yyyy-MM-dd");
@@ -35,7 +34,6 @@ export function ThreeThingsGame() {
   const [monthEntries, setMonthEntries] = useState<MonthEntries>({});
   const [slots, setSlots] = useState<[string, string, string]>(["", "", ""]);
   const [loadingDay, setLoadingDay] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [exporting, setExporting] = useState(false);
 
@@ -80,23 +78,18 @@ export function ThreeThingsGame() {
   }, [visibleMonth]);
 
   async function saveSlot(slotIndex: number, text: string) {
-    setSaving(true);
     setNewBadges([]);
-    try {
-      const res = await fetch("/api/journal/day", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date: selectedDate, slot: slotIndex + 1, text }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setMonthEntries((prev) => ({ ...prev, [selectedDate]: data.entries }));
-        if (data.newBadges?.length) {
-          setNewBadges(data.newBadges.map((b: { label: string }) => b.label));
-        }
+    const res = await fetch("/api/journal/day", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date: selectedDate, slot: slotIndex + 1, text }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      setMonthEntries((prev) => ({ ...prev, [selectedDate]: data.entries }));
+      if (data.newBadges?.length) {
+        setNewBadges(data.newBadges.map((b: { label: string }) => b.label));
       }
-    } finally {
-      setSaving(false);
     }
   }
 
@@ -107,36 +100,7 @@ export function ThreeThingsGame() {
       const data = await res.json();
       const entries: MonthEntries = data.entries ?? {};
 
-      const { jsPDF } = await import("jspdf");
-      const doc = new jsPDF();
-      const title = `Three Things — ${format(visibleMonth, "MMMM yyyy")}`;
-      doc.setFontSize(18);
-      doc.text(title, 14, 18);
-      doc.setFontSize(11);
-
-      let y = 32;
-      const dates = Object.keys(entries).sort();
-      if (dates.length === 0) {
-        doc.text("No entries this month yet.", 14, y);
-      }
-      for (const d of dates) {
-        if (y > 275) {
-          doc.addPage();
-          y = 20;
-        }
-        doc.setFont("helvetica", "bold");
-        doc.text(format(new Date(d), "EEEE, MMMM d"), 14, y);
-        y += 7;
-        doc.setFont("helvetica", "normal");
-        for (const entry of entries[d].sort((a, b) => a.slot - b.slot)) {
-          const lines = doc.splitTextToSize(`• ${entry.text}`, 180);
-          doc.text(lines, 18, y);
-          y += 6 * lines.length;
-        }
-        y += 4;
-      }
-
-      doc.save(`mind-well-three-things-${monthKey(visibleMonth)}.pdf`);
+      await generateThreeThingsPdf(format(visibleMonth, "MMMM yyyy"), monthKey(visibleMonth), entries);
 
       const res2 = await fetch("/api/journal/month-pdf-downloaded", { method: "POST" });
       const data2 = await res2.json();
@@ -239,7 +203,7 @@ export function ThreeThingsGame() {
               key={`${selectedDate}-${i}`}
               index={i}
               value={text}
-              disabled={loadingDay || saving}
+              disabled={loadingDay}
               onSave={(value) => saveSlot(i, value)}
             />
           ))}
