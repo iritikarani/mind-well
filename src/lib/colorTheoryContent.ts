@@ -146,11 +146,21 @@ function shuffle<T>(arr: T[]): T[] {
   return copy;
 }
 
-/** Picks 7 fresh questions, avoiding the previous session's set where possible. */
+/** Picks `count` fresh questions, avoiding previously-asked ones where possible.
+ *  Explicitly deduplicates so the same question can never appear twice in one set. */
 export function pickQuestions(previous: string[] = [], count = 7): string[] {
   const pool = questionPool();
   const previousSet = new Set(previous);
   const fresh = pool.filter((q) => !previousSet.has(q));
   const source = fresh.length >= count ? fresh : pool;
-  return shuffle(source).slice(0, count);
+
+  const picked: string[] = [];
+  const seen = new Set<string>();
+  for (const q of shuffle(source)) {
+    if (seen.has(q)) continue;
+    seen.add(q);
+    picked.push(q);
+    if (picked.length === count) break;
+  }
+  return picked;
 }
