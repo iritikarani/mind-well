@@ -28,6 +28,7 @@ export function WorldPuzzleGame() {
   const [gridSize, setGridSize] = useState(DEFAULT_GRID);
   const [slots, setSlots] = useState<number[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
+  const [hintedSlot, setHintedSlot] = useState<number | null>(null);
   const [quote, setQuote] = useState<string | null>(null);
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
@@ -90,6 +91,23 @@ export function WorldPuzzleGame() {
     }
   }
 
+  function handleHint() {
+    const targetIdx = slots.findIndex((content, idx) => content !== idx);
+    if (targetIdx === -1) return;
+    const sourceIdx = slots.indexOf(targetIdx);
+
+    const next = [...slots];
+    [next[targetIdx], next[sourceIdx]] = [next[sourceIdx], next[targetIdx]];
+    setSlots(next);
+    setSelected(null);
+    setHintedSlot(targetIdx);
+    setTimeout(() => setHintedSlot(null), 900);
+
+    if (next.every((content, idx) => content === idx)) {
+      setStage("solved");
+    }
+  }
+
   async function flip() {
     if (!monument) return;
     setSaving(true);
@@ -146,11 +164,16 @@ export function WorldPuzzleGame() {
   if (stage === "puzzle" || stage === "solved") {
     return (
       <div className="mx-auto max-w-md text-center">
-        <div className="mb-4 flex items-center justify-center gap-3">
+        <div className="mb-4 flex flex-wrap items-center justify-center gap-3">
           <div className="overflow-hidden rounded-lg border border-black/5">
             <MonumentArt def={monument} size={64} />
           </div>
           <p className="text-sm text-muted">Tap two pieces to swap them.</p>
+          {!solved && (
+            <Button variant="sky" className="px-4 py-1.5 text-xs" onClick={handleHint}>
+              Hint
+            </Button>
+          )}
         </div>
 
         <div
@@ -165,6 +188,7 @@ export function WorldPuzzleGame() {
               className={cn(
                 "relative overflow-hidden rounded-md shadow-sm transition",
                 selected === slotIndex && "ring-4 ring-blush-strong",
+                hintedSlot === slotIndex && "ring-4 ring-sky",
               )}
               style={{ width: piece, height: piece }}
             >
