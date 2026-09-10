@@ -41,3 +41,20 @@ export function isStreakActive(lastPlayedDate: string | null, timeZone: string) 
   const gap = daysBetween(lastPlayedDate, todayKeyInZone(timeZone));
   return gap <= 1;
 }
+
+/**
+ * Reads the streak for display. `currentCount` in the database only changes
+ * on a play, so a user who simply stops playing keeps showing their last
+ * count forever unless we check activity here at read time.
+ */
+export async function getEffectiveStreak(userId: string): Promise<{
+  currentCount: number;
+  longestCount: number;
+}> {
+  const timeZone = await getUserTimeZone();
+  const streak = await prisma.streak.findUnique({ where: { userId } });
+  if (!streak) return { currentCount: 0, longestCount: 0 };
+
+  const currentCount = isStreakActive(streak.lastPlayedDate, timeZone) ? streak.currentCount : 0;
+  return { currentCount, longestCount: streak.longestCount };
+}

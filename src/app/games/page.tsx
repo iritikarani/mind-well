@@ -4,17 +4,17 @@ import { getCurrentUser } from "@/lib/auth";
 import { GAME_CATEGORIES, GAMES } from "@/lib/games";
 import { AppHeader } from "@/components/app/AppHeader";
 import { Pill } from "@/components/ui/Pill";
-import { prisma } from "@/lib/prisma";
+import { getEffectiveStreak } from "@/lib/streak";
 
 export default async function GamesPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const streak = await prisma.streak.findUnique({ where: { userId: user.id } });
+  const streak = await getEffectiveStreak(user.id);
 
   return (
     <>
-      <AppHeader name={user.name} streak={streak?.currentCount} />
+      <AppHeader name={user.name} streak={streak.currentCount} />
       <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-16 sm:px-10">
         <h1 className="font-heading text-3xl font-bold text-heading">Games</h1>
         <p className="mt-1 text-muted">Pick whatever fits your mood right now.</p>

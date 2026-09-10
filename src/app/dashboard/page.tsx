@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { formatDateInZone, formatDateTimeInZone, startOfDayInZone } from "@/lib/date";
 import { getUserTimeZone } from "@/lib/timezone";
+import { getEffectiveStreak } from "@/lib/streak";
 import { prisma } from "@/lib/prisma";
 import { BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
 import { GAMES, gameMeta } from "@/lib/games";
@@ -55,7 +56,7 @@ export default async function DashboardPage() {
   const dayStart = startOfDayInZone(timeZone);
 
   const [streak, badges, plays, playsToday] = await Promise.all([
-    prisma.streak.findUnique({ where: { userId: user.id } }),
+    getEffectiveStreak(user.id),
     prisma.userBadge.findMany({
       where: { userId: user.id },
       orderBy: { earnedAt: "desc" },
@@ -70,7 +71,7 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <AppHeader name={user.name} streak={streak?.currentCount} />
+      <AppHeader name={user.name} streak={streak.currentCount} />
       <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-16 sm:px-10">
         <h1 className="font-heading text-3xl font-bold text-heading">
           Welcome back, {user.name.split(" ")[0]}
@@ -83,10 +84,10 @@ export default async function DashboardPage() {
               Current streak
             </p>
             <p className="mt-2 font-heading text-3xl font-bold text-heading">
-              {streak?.currentCount ?? 0} 🔥
+              {streak.currentCount} 🔥
             </p>
             <p className="mt-1 text-sm text-muted">
-              Longest: {streak?.longestCount ?? 0} day{streak?.longestCount === 1 ? "" : "s"}
+              Longest: {streak.longestCount} day{streak.longestCount === 1 ? "" : "s"}
             </p>
           </Card>
           <Card>
