@@ -9,7 +9,7 @@ export const signupSchema = z
     username: z
       .string()
       .trim()
-      .regex(usernamePattern, "3-20 letters, numbers, or underscores"),
+      .regex(usernamePattern, "Username must be 3-20 letters, numbers, or underscores"),
     password: z.string().min(8, "At least 8 characters"),
     confirmPassword: z.string(),
   })
