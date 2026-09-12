@@ -128,8 +128,10 @@ export default function SignupPage() {
             id="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            placeholder="No email, spaces, or symbols"
             required
           />
+          <p className="mt-1.5 text-xs text-muted">3-20 letters, numbers, or underscores</p>
         </div>
         <div>
           <Label htmlFor="password">Password</Label>
@@ -152,8 +154,8 @@ export default function SignupPage() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
-          <FieldError>{error}</FieldError>
         </div>
+        <FieldError>{error}</FieldError>
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? "Sending code…" : "Sign up"}
         </Button>
