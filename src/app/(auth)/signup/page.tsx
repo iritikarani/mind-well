@@ -106,7 +106,7 @@ export default function SignupPage() {
   }
 
   return (
-    <AuthShell title="Create your account" subtitle="A quiet corner for your mind, just for you.">
+    <AuthShell title="Create your little space ♡" subtitle="A small pixelated world for your mental health.">
       <form onSubmit={handleSignup} className="space-y-4">
         <div>
           <Label htmlFor="name">Name</Label>
@@ -162,7 +162,7 @@ export default function SignupPage() {
       </form>
       <p className="mt-6 text-center text-sm text-muted">
         Already have an account?{" "}
-        <Link href="/login" className="font-semibold text-blush-text hover:underline">
+        <Link href="/login" className="font-semibold text-purple-text hover:underline">
           Log in
         </Link>
       </p>

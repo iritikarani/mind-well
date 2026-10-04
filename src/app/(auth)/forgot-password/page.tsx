@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/Button";
 import { Input, Label, FieldError } from "@/components/ui/Input";
+import { PixelHeart } from "@/components/pixel/PixelArt";
 
 type Step = "email" | "otp" | "password" | "done";
 
@@ -89,8 +90,10 @@ export default function ForgotPasswordPage() {
 
   if (step === "done") {
     return (
-      <AuthShell title="Password updated" subtitle="Taking you to your dashboard…">
-        <div className="text-center text-4xl">🌿</div>
+      <AuthShell title="Password updated ♡" subtitle="Taking you to your dashboard…">
+        <div className="flex justify-center">
+          <PixelHeart size={40} />
+        </div>
       </AuthShell>
     );
   }
@@ -181,7 +184,7 @@ export default function ForgotPasswordPage() {
       </form>
       <p className="mt-6 text-center text-sm text-muted">
         Remembered it?{" "}
-        <Link href="/login" className="font-semibold text-blush-text hover:underline">
+        <Link href="/login" className="font-semibold text-purple-text hover:underline">
           Log in
         </Link>
       </p>

@@ -36,7 +36,7 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthShell title="Welcome back" subtitle="Glad you're here again.">
+    <AuthShell title="Welcome back ♡" subtitle="Glad you're here again.">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label htmlFor="identifier">Username or email</Label>
@@ -62,7 +62,7 @@ export default function LoginPage() {
         <div className="text-right">
           <Link
             href="/forgot-password"
-            className="text-xs font-semibold text-muted hover:text-blush-text"
+            className="text-xs font-semibold text-muted hover:text-purple-text"
           >
             Forgot password?
           </Link>
@@ -73,7 +73,7 @@ export default function LoginPage() {
       </form>
       <p className="mt-6 text-center text-sm text-muted">
         New here?{" "}
-        <Link href="/signup" className="font-semibold text-blush-text hover:underline">
+        <Link href="/signup" className="font-semibold text-purple-text hover:underline">
           Create an account
         </Link>
       </p>
