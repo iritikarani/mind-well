@@ -91,3 +91,11 @@ export const GAMES: GameMeta[] = [
 export function gameMeta(key: GameKey) {
   return GAMES.find((g) => g.key === key);
 }
+
+/** Stable anchor id for a category, e.g. "Mind Flow" -> "mind-flow". */
+export function categorySlug(category: string): string {
+  return category
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
