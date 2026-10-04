@@ -34,9 +34,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${nunito.variable} ${quicksand.variable} ${pixelFont.variable} h-full antialiased`}
+      className={`${nunito.variable} ${quicksand.variable} ${pixelFont.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-dvh flex flex-col">
         <TimezoneSync />
         {children}
       </body>

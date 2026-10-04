@@ -83,7 +83,7 @@ html {
 
 body {
   background: linear-gradient(160deg, var(--color-bg-top) 0%, var(--color-bg-bottom) 100%);
-  background-attachment: fixed;
+  background-repeat: no-repeat;
   color: var(--color-heading);
   font-family: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
   min-height: 100dvh;
