@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Nunito, Quicksand } from "next/font/google";
+import { Nunito, Quicksand, Press_Start_2P } from "next/font/google";
 import { TimezoneSync } from "@/components/app/TimezoneSync";
 import "./globals.css";
 
@@ -15,17 +15,26 @@ const quicksand = Quicksand({
   weight: ["500", "600", "700"],
 });
 
+// Used sparingly — brand wordmark and short hero labels only. Never for
+// paragraph text: an 8-bit monospace face is a readability/accessibility
+// liability at body-copy length.
+const pixelFont = Press_Start_2P({
+  variable: "--font-pixel",
+  subsets: ["latin"],
+  weight: "400",
+});
+
 export const metadata: Metadata = {
-  title: "Mind Well — A quiet corner for your mind",
+  title: "Happy Space ♡ — A small place for your mental health",
   description:
-    "Ease your mind and reflect through short therapeutic games and light journaling.",
+    "Emotions are valued and validated. A small pixelated world for your mental health — play, reflect, and feel a little lighter.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${nunito.variable} ${quicksand.variable} h-full antialiased`}
+      className={`${nunito.variable} ${quicksand.variable} ${pixelFont.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <TimezoneSync />

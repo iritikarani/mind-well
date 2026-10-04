@@ -6,7 +6,9 @@ const tones = {
   butter: "bg-butter text-butter-text",
   sky: "bg-sky text-sky-text",
   mint: "bg-mint text-mint-text",
-  peach: "bg-peach text-blush-text",
+  peach: "bg-peach text-peach-text",
+  lavender: "bg-lavender text-lavender-text",
+  purple: "bg-purple text-white",
   muted: "bg-white/70 text-muted",
 };
 

@@ -1,38 +1,56 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg-top: #fdeef4;
-  --color-bg-bottom: #f3effb;
+  --color-bg-top: #f3ecfc;
+  --color-bg-bottom: #fff6ea;
 
-  --color-surface: #fffdfb;
+  --color-surface: #fffdf8;
 
-  --color-blush: #ffe3ee;
-  --color-blush-strong: #ffc7dd;
-  --color-blush-text: #7a3b57;
+  --color-lavender: #e6daf8;
+  --color-lavender-strong: #c9aef2;
+  --color-lavender-text: #4a3a78;
 
-  --color-butter: #ffe9c7;
+  --color-purple: #7b5bc7;
+  --color-purple-soft: #ad8ce8;
+  --color-purple-text: #4a3a73;
+
+  --color-blush: #ffdcee;
+  --color-blush-strong: #ffabd4;
+  --color-blush-text: #8a3b63;
+
+  --color-butter: #ffe9b8;
   --color-butter-soft: #fff3d6;
   --color-butter-text: #8a6a2b;
 
-  --color-sky: #e3f2ff;
-  --color-sky-text: #2f5d82;
+  --color-sky: #cdecfb;
+  --color-sky-text: #35658a;
 
-  --color-mint: #dff5ea;
-  --color-mint-text: #2f6b4a;
+  --color-mint: #d7f2de;
+  --color-mint-text: #2f7a4c;
 
-  --color-peach: #ffd7c2;
+  --color-peach: #ffd2b8;
+  --color-peach-text: #7a4420;
 
-  --color-heading: #6b5b73;
-  --color-muted: #a69aa8;
+  --color-heading: #5b4b73;
+  --color-muted: #7d7090;
 }
 
 @theme inline {
   --font-heading: var(--font-quicksand);
+  --font-display: var(--font-pixel);
   --font-sans: var(--font-nunito);
 
   --color-bg-top: var(--color-bg-top);
   --color-bg-bottom: var(--color-bg-bottom);
   --color-surface: var(--color-surface);
+
+  --color-lavender: var(--color-lavender);
+  --color-lavender-strong: var(--color-lavender-strong);
+  --color-lavender-text: var(--color-lavender-text);
+
+  --color-purple: var(--color-purple);
+  --color-purple-soft: var(--color-purple-soft);
+  --color-purple-text: var(--color-purple-text);
 
   --color-blush: var(--color-blush);
   --color-blush-strong: var(--color-blush-strong);
@@ -49,21 +67,61 @@
   --color-mint-text: var(--color-mint-text);
 
   --color-peach: var(--color-peach);
+  --color-peach-text: var(--color-peach-text);
 
   --color-heading: var(--color-heading);
   --color-muted: var(--color-muted);
 }
 
+* {
+  min-width: 0;
+}
+
+html {
+  overflow-x: hidden;
+}
+
 body {
-  background: linear-gradient(180deg, var(--color-bg-top) 0%, var(--color-bg-bottom) 100%);
+  background: linear-gradient(160deg, var(--color-bg-top) 0%, var(--color-bg-bottom) 100%);
   background-attachment: fixed;
   color: var(--color-heading);
   font-family: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
   min-height: 100dvh;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, .font-heading {
   font-family: var(--font-quicksand), var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-pixel {
+  font-family: var(--font-pixel), var(--font-quicksand), ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+/* A chunky stepped "pixel panel" border, built from solid box-shadow layers
+ * instead of a border-image sprite sheet — keeps every card/button looking
+ * hand-pixelled without shipping image assets. */
+.pixel-panel {
+  box-shadow:
+    0 -4px 0 0 rgba(255, 255, 255, 0.6) inset,
+    0 4px 0 0 rgba(90, 71, 137, 0.12) inset,
+    0 3px 0 0 rgba(90, 71, 137, 0.18);
+}
+
+.pixel-pressable {
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.pixel-pressable:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 0 rgba(90, 71, 137, 0.18);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-purple);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 @keyframes float-slow {
@@ -76,9 +134,24 @@ h1, h2, h3, h4, .font-heading {
   50% { transform: translateY(-22px) translateX(-10px); }
 }
 
+@keyframes drift-right {
+  0% { transform: translateX(-10%); }
+  100% { transform: translateX(10%); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.35; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
 @keyframes breathe {
   0%, 100% { transform: scale(1); opacity: 0.85; }
   50% { transform: scale(1.08); opacity: 1; }
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
 .animate-float-slow {
@@ -89,8 +162,20 @@ h1, h2, h3, h4, .font-heading {
   animation: float-slower 10s ease-in-out infinite;
 }
 
+.animate-drift {
+  animation: drift-right 40s ease-in-out infinite alternate;
+}
+
+.animate-twinkle {
+  animation: twinkle 2.4s ease-in-out infinite;
+}
+
 .animate-breathe {
   animation: breathe 5s ease-in-out infinite;
+}
+
+.animate-bob {
+  animation: bob 2.6s ease-in-out infinite;
 }
 
 @keyframes runner-bounce {
@@ -117,7 +202,10 @@ h1, h2, h3, h4, .font-heading {
 @media (prefers-reduced-motion: reduce) {
   .animate-float-slow,
   .animate-float-slower,
+  .animate-drift,
+  .animate-twinkle,
   .animate-breathe,
+  .animate-bob,
   [class*="runner-"] {
     animation: none !important;
   }
