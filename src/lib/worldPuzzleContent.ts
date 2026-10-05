@@ -963,3 +963,20 @@ export const UPLIFTING_QUOTES: string[] = [
 export function randomQuote(): string {
   return UPLIFTING_QUOTES[Math.floor(Math.random() * UPLIFTING_QUOTES.length)];
 }
+
+const POSTCARD_NOTE_TEMPLATES: ((m: MonumentDef) => string)[] = [
+  (m) => `${m.name} is tucked away in ${m.country} — one of countless beautiful corners of this world.`,
+  (m) => `Somewhere in ${m.country}, ${m.name} is standing quietly, the same way it was before you ever pieced it together.`,
+  (m) => `${m.name} joins your collection from ${m.country} — a small reminder of how big and varied the world is.`,
+  (m) => `People travel a long way to stand in front of ${m.name}. Today, you built it one piece at a time instead.`,
+  (m) => `${m.country} holds ${m.name} the way your collection now holds this postcard.`,
+];
+
+/** A warm, non-factual postcard note — deliberately not a trivia claim,
+ *  since we can't verify a specific historical fact for every destination
+ *  in a library this size. */
+export function postcardNote(monument: MonumentDef): string {
+  const template =
+    POSTCARD_NOTE_TEMPLATES[Math.floor(Math.random() * POSTCARD_NOTE_TEMPLATES.length)];
+  return template(monument);
+}

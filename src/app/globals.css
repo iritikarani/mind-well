@@ -118,6 +118,37 @@ h1, h2, h3, h4, .font-heading {
   box-shadow: 0 1px 0 0 rgba(90, 71, 137, 0.18);
 }
 
+.postcard-scene {
+  perspective: 1600px;
+}
+
+.postcard-flipper {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.postcard-flipper.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.postcard-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.postcard-face-back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .postcard-flipper {
+    transition: none;
+  }
+}
+
 :focus-visible {
   outline: 3px solid var(--color-purple);
   outline-offset: 2px;

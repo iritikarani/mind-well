@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/cn";
-import { monumentById, type MonumentDef } from "@/lib/worldPuzzleContent";
+import { monumentById, postcardNote, type MonumentDef } from "@/lib/worldPuzzleContent";
 import { MonumentArt, ART_SIZE } from "./MonumentArt";
 
 const DEFAULT_GRID = 3;
@@ -30,9 +30,11 @@ export function WorldPuzzleGame() {
   const [selected, setSelected] = useState<number | null>(null);
   const [hintedSlot, setHintedSlot] = useState<number | null>(null);
   const [quote, setQuote] = useState<string | null>(null);
+  const [note, setNote] = useState<string | null>(null);
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [limitReached, setLimitReached] = useState(false);
+  const [postcardFlipped, setPostcardFlipped] = useState(false);
 
   async function applyFetchedMonument() {
     const res = await fetch("/api/games/world-puzzle/monument");
@@ -48,8 +50,10 @@ export function WorldPuzzleGame() {
   function loadMonument() {
     setStage("loading");
     setQuote(null);
+    setNote(null);
     setNewBadges([]);
     setSelected(null);
+    setPostcardFlipped(false);
     applyFetchedMonument();
   }
 
@@ -120,6 +124,7 @@ export function WorldPuzzleGame() {
       const data = await res.json();
       if (res.ok) {
         setQuote(data.quote);
+        setNote(postcardNote(monument));
         setLimitReached(!!data.limitReached);
         if (data.newBadges?.length) {
           setNewBadges(data.newBadges.map((b: { label: string }) => b.label));
@@ -143,7 +148,12 @@ export function WorldPuzzleGame() {
   if (stage === "preview") {
     return (
       <div className="mx-auto max-w-md text-center">
-        <h1 className="font-heading text-3xl font-bold text-heading">World Puzzle</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="font-heading text-3xl font-bold text-heading">World Puzzle</h1>
+          <LinkButton href="/games/world-puzzle/my-world" variant="ghost" className="px-3 py-1.5 text-sm">
+            My World 🗺️
+          </LinkButton>
+        </div>
         <p className="mt-2 text-muted">
           No timer, no move count — just piece this together at your own pace.
         </p>
@@ -220,12 +230,37 @@ export function WorldPuzzleGame() {
   return (
     <div className="mx-auto max-w-lg text-center">
       <Card className="p-8">
-        <div className="overflow-hidden rounded-2xl">
-          <MonumentArt def={monument} size={220} />
+        <div className="postcard-scene mx-auto h-[300px] w-full max-w-[280px] sm:h-[340px] sm:max-w-[320px]">
+          <div
+            className={cn(
+              "postcard-flipper relative h-full w-full",
+              postcardFlipped && "is-flipped",
+            )}
+          >
+            <div className="postcard-face absolute inset-0 overflow-hidden rounded-2xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={monument.image}
+                alt={monument.name}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="postcard-face postcard-face-back flex flex-col items-center justify-center rounded-2xl bg-lavender p-5 text-center">
+              <h2 className="font-heading text-xl font-bold text-heading">{monument.name}</h2>
+              <p className="text-sm text-muted">{monument.country}</p>
+              <p className="mt-3 text-sm text-heading">{note}</p>
+              <p className="mt-3 text-xs italic text-purple-text">{quote}</p>
+            </div>
+          </div>
         </div>
-        <h1 className="mt-5 font-heading text-2xl font-bold text-heading">{monument.name}</h1>
-        <p className="text-sm text-muted">{monument.country}</p>
-        <p className="mt-4 text-muted">{quote}</p>
+
+        <Button
+          variant="outline"
+          className="mt-5"
+          onClick={() => setPostcardFlipped((v) => !v)}
+        >
+          {postcardFlipped ? "Flip back" : "Flip postcard"}
+        </Button>
 
         {newBadges.length > 0 && (
           <div className="mt-4 rounded-xl bg-butter px-4 py-2 text-sm font-semibold text-butter-text">
@@ -245,6 +280,9 @@ export function WorldPuzzleGame() {
               Next monument
             </Button>
           )}
+          <LinkButton href="/games/world-puzzle/my-world" variant="lavender">
+            My World 🗺️
+          </LinkButton>
           <LinkButton href="/dashboard">Back to dashboard</LinkButton>
         </div>
       </Card>
