@@ -23,7 +23,7 @@ const TOTAL_ROUNDS = 5;
 const LETTER_COLORS: [string, string] = ["#FFE9F0", "#FFC7DD"];
 const CATEGORY_COLORS: [string, string] = ["#E3F8ED", "#BFEBD3"];
 
-type Stage = "spinning" | "landed" | "answering" | "round-result" | "closing";
+type Stage = "spinning" | "landed" | "answering" | "checking" | "round-result" | "closing";
 
 interface RoundSummary {
   letter: string;
@@ -118,8 +118,25 @@ export function SpinAndConnectGame() {
     setHintsUsed((h) => h + 1);
   }
 
-  function submitRound() {
-    const results = answers.map((a) => isValidAnswer(category, letter, a));
+  async function submitRound() {
+    setStage("checking");
+
+    let results: boolean[];
+    try {
+      const res = await fetch("/api/games/spin-and-connect/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category, letter, answers }),
+      });
+      const data = await res.json();
+      if (!res.ok || !Array.isArray(data.results)) throw new Error("bad response");
+      results = data.results;
+    } catch {
+      // Couldn't reach our own validate endpoint at all — fall back to the
+      // instant local word-bank check so the round never gets stuck.
+      results = answers.map((a) => isValidAnswer(category, letter, a));
+    }
+
     const correctCount = results.filter(Boolean).length;
     setLastResults(results);
 
@@ -312,6 +329,16 @@ export function SpinAndConnectGame() {
             </button>
             <Button onClick={submitRound}>Submit round</Button>
           </div>
+        </Card>
+      )}
+
+      {stage === "checking" && (
+        <Card className="mt-6 flex flex-col items-center gap-3 py-10 text-center">
+          <div className="h-10 w-10 animate-pulse rounded-full bg-blush" />
+          <p className="text-sm text-muted">
+            Checking your answers — anything our list doesn&apos;t recognize gets a quick look on
+            Wikipedia…
+          </p>
         </Card>
       )}
 
