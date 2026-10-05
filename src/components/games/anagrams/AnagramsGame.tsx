@@ -10,10 +10,8 @@ import {
   LEVEL3_PUZZLES,
   anagramsClosingRemark,
   checkAnagramAnswer,
-  checkLevel3Answer,
   pickNextPuzzle,
   sameWord,
-  type Level3Puzzle,
   type SimplePuzzle,
 } from "@/lib/anagramsContent";
 
@@ -27,7 +25,7 @@ export function AnagramsGame() {
   const [stage, setStage] = useState<Stage>("loading");
   const [puzzle1, setPuzzle1] = useState<SimplePuzzle | null>(null);
   const [puzzle2, setPuzzle2] = useState<SimplePuzzle | null>(null);
-  const [puzzle3, setPuzzle3] = useState<Level3Puzzle | null>(null);
+  const [puzzle3, setPuzzle3] = useState<SimplePuzzle | null>(null);
 
   const [answer1a, setAnswer1a] = useState("");
   const [answer1b, setAnswer1b] = useState("");
@@ -38,8 +36,7 @@ export function AnagramsGame() {
   const [answer2b, setAnswer2b] = useState("");
   const [error2, setError2] = useState<string | null>(null);
 
-  const [answer3a, setAnswer3a] = useState("");
-  const [answer3b, setAnswer3b] = useState("");
+  const [answer3, setAnswer3] = useState("");
   const [error3, setError3] = useState<string | null>(null);
 
   const [newBadges, setNewBadges] = useState<string[]>([]);
@@ -59,8 +56,7 @@ export function AnagramsGame() {
     setAnswer2a("");
     setAnswer2b("");
     setError2(null);
-    setAnswer3a("");
-    setAnswer3b("");
+    setAnswer3("");
     setError3(null);
     setNewBadges([]);
     setFinalUsedUncommon(false);
@@ -135,15 +131,14 @@ export function AnagramsGame() {
 
   async function submitLevel3() {
     if (!puzzle3) return;
-    const r4 = checkLevel3Answer(answer3a, puzzle3, 4);
-    const r5 = checkLevel3Answer(answer3b, puzzle3, 5);
+    const result = checkAnagramAnswer(answer3, puzzle3);
 
-    if (!r4.valid || !r5.valid) {
-      setError3("Make sure you have a real 4-letter word and a real 5-letter word from those letters.");
+    if (!result.valid) {
+      setError3("That needs to be a real, different word made from those same letters.");
       return;
     }
 
-    if (r4.uncommon || r5.uncommon) usedUncommonRef.current = true;
+    if (result.uncommon) usedUncommonRef.current = true;
     setError3(null);
 
     const elapsed = now() - startedAtRef.current;
@@ -311,21 +306,13 @@ export function AnagramsGame() {
             {puzzle3.source}
           </p>
           <p className="mt-3 text-muted">
-            Form a 4-letter word and a 5-letter word from those letters — you can reuse letters
-            between the two.
+            Rearrange those letters into one new 6-letter word.
           </p>
           <div className="mt-5 space-y-2">
             <input
-              value={answer3a}
-              onChange={(e) => setAnswer3a(e.target.value)}
-              placeholder="4-letter word"
-              maxLength={12}
-              className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple/60"
-            />
-            <input
-              value={answer3b}
-              onChange={(e) => setAnswer3b(e.target.value)}
-              placeholder="5-letter word"
+              value={answer3}
+              onChange={(e) => setAnswer3(e.target.value)}
+              placeholder="New word"
               maxLength={12}
               className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple/60"
             />
