@@ -230,15 +230,6 @@ h1, h2, h3, h4, .font-heading {
   50% { transform: translateY(-2px); }
 }
 
-@keyframes ground-scroll {
-  0% { background-position-x: 0; }
-  100% { background-position-x: -32px; }
-}
-
-.animate-ground-scroll {
-  animation: ground-scroll 0.7s linear infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .animate-float-slow,
   .animate-float-slower,
@@ -246,7 +237,6 @@ h1, h2, h3, h4, .font-heading {
   .animate-twinkle,
   .animate-breathe,
   .animate-bob,
-  .animate-ground-scroll,
   [class*="runner-"] {
     animation: none !important;
   }
