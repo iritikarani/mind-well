@@ -4,10 +4,11 @@ import { useState } from "react";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { COLORS, colorByKey, type ColorKey } from "@/lib/colorTheoryContent";
+import { downloadColorBadge } from "@/lib/colorBadge";
 
 type Stage = "select" | "loading" | "questions" | "closing";
 
-export function ColorTheoryGame() {
+export function ColorTheoryGame({ userName }: { userName: string }) {
   const [stage, setStage] = useState<Stage>("select");
   const [color, setColor] = useState<ColorKey | null>(null);
   const [questions, setQuestions] = useState<string[]>([]);
@@ -75,9 +76,14 @@ export function ColorTheoryGame() {
   if (stage === "select") {
     return (
       <div className="mx-auto max-w-2xl text-center">
-        <h1 className="font-heading text-3xl font-bold text-heading">Pick your favorite color</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="font-heading text-3xl font-bold text-heading">Color Connection</h1>
+          <LinkButton href="/games/color-theory/my-colors" variant="ghost" className="px-3 py-1.5 text-sm">
+            My Colors 🎨
+          </LinkButton>
+        </div>
         <p className="mt-2 text-muted">
-          You&apos;ll answer 7 short reflective questions, then leave with an affirmation.
+          Pick a color, answer a few reflective questions, and leave with a little keepsake badge.
         </p>
         <div className="mt-8 grid grid-cols-3 gap-4 sm:grid-cols-5">
           {COLORS.map((c) => (
@@ -185,12 +191,38 @@ export function ColorTheoryGame() {
           )}
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Button
+              variant="lavender"
+              onClick={() =>
+                downloadColorBadge({
+                  colorLabel: def.label,
+                  colorHex: def.hex,
+                  textHex: def.textHex,
+                  userName,
+                  dateLabel: new Date().toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  }),
+                  quote: def.affirmation,
+                })
+              }
+            >
+              Download badge ♡
+            </Button>
             {!limitReached && (
               <Button variant="soft" onClick={playAgain}>
                 Play again
               </Button>
             )}
-            <LinkButton href="/dashboard">Back to dashboard</LinkButton>
+          </div>
+          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <LinkButton href="/games/color-theory/my-colors" variant="ghost" className="px-3 py-1.5 text-sm">
+              My Colors 🎨
+            </LinkButton>
+            <LinkButton href="/dashboard" variant="ghost" className="px-3 py-1.5 text-sm">
+              Back to dashboard
+            </LinkButton>
           </div>
         </Card>
       </div>

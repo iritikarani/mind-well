@@ -27,7 +27,7 @@ export default async function ColorTheoryPage() {
     <>
       <AppHeader name={user.name} streak={streak.currentCount} />
       <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-16 sm:px-10">
-        <ColorTheoryGame />
+        <ColorTheoryGame userName={user.name} />
       </main>
     </>
   );

@@ -8,7 +8,9 @@ export type ColorKey =
   | "pink"
   | "brown"
   | "black"
-  | "white";
+  | "white"
+  | "lavender"
+  | "teal";
 
 export interface ColorDef {
   key: ColorKey;
@@ -30,6 +32,8 @@ export const COLORS: ColorDef[] = [
   { key: "brown", label: "Brown", hex: "#8B5E3C", textHex: "#FFFFFF", affirmation: "You are as steady as brown." },
   { key: "black", label: "Black", hex: "#2B2B2B", textHex: "#FFFFFF", affirmation: "You are as strong as black." },
   { key: "white", label: "White", hex: "#F7F5F0", textHex: "#6B5B73", border: true, affirmation: "You are as peaceful as white." },
+  { key: "lavender", label: "Lavender", hex: "#C9AEF2", textHex: "#4A3A78", affirmation: "You are as gentle as lavender." },
+  { key: "teal", label: "Teal", hex: "#1F7A70", textHex: "#FFFFFF", affirmation: "You are as refreshing as teal." },
 ];
 
 export function colorByKey(key: string): ColorDef {
