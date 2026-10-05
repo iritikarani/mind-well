@@ -10,6 +10,12 @@ export interface SimplePuzzle {
   accepted: AcceptedWord[];
 }
 
+export interface Level3Puzzle {
+  source: string;
+  accepted4: AcceptedWord[];
+  accepted5: AcceptedWord[];
+}
+
 /** Level 1: a 4-letter word; player finds three different new 4-letter anagrams of it. */
 export const LEVEL1_PUZZLES: SimplePuzzle[] = [
   { source: "MEAN", accepted: [{ word: "AMEN" }, { word: "MANE" }, { word: "NAME" }] },
@@ -36,13 +42,57 @@ export const LEVEL2_PUZZLES: SimplePuzzle[] = [
   { source: "DIETS", accepted: [{ word: "TIDES" }, { word: "EDITS" }, { word: "SITED", uncommon: true }] },
 ];
 
-/** Level 3: a 6-letter word; player finds one different new 6-letter anagram of it. */
-export const LEVEL3_PUZZLES: SimplePuzzle[] = [
-  { source: "STREAM", accepted: [{ word: "MASTER" }, { word: "TAMERS", uncommon: true }] },
-  { source: "ARREST", accepted: [{ word: "RAREST" }, { word: "RASTER", uncommon: true }] },
-  { source: "ENTERS", accepted: [{ word: "RESENT" }, { word: "NESTER", uncommon: true }] },
-  { source: "REACTS", accepted: [{ word: "TRACES" }, { word: "CRATES" }, { word: "RECAST" }] },
-  { source: "POINTS", accepted: [{ word: "PISTON" }, { word: "PINTOS" }, { word: "PITONS", uncommon: true }] },
+/**
+ * Level 3: a 6-letter word; player forms one 4-letter word and one 5-letter
+ * word drawn from its letters. Each answer is checked independently against
+ * the source's letters — they may freely share/reuse letters between them.
+ */
+export const LEVEL3_PUZZLES: Level3Puzzle[] = [
+  {
+    source: "GARDEN",
+    accepted4: [
+      { word: "RANG" }, { word: "DARE" }, { word: "DEAR" }, { word: "READ" }, { word: "RAGE" },
+      { word: "GEAR" }, { word: "NEAR" }, { word: "EARN" }, { word: "DRAG" },
+    ],
+    accepted5: [{ word: "ANGER" }, { word: "RANGE" }, { word: "GRAND" }],
+  },
+  {
+    source: "STREAM",
+    accepted4: [
+      { word: "MAST" }, { word: "MATE" }, { word: "TEAM" }, { word: "TEAR" }, { word: "TARS", uncommon: true },
+      { word: "RATE" }, { word: "STAR" }, { word: "ARTS" }, { word: "EARS" }, { word: "SEAT" },
+      { word: "MARE" }, { word: "REST" }, { word: "RATS" },
+    ],
+    accepted5: [
+      { word: "TEAMS" }, { word: "RATES" }, { word: "TEARS" }, { word: "TARES", uncommon: true },
+      { word: "STARE" }, { word: "MATES" }, { word: "SMEAR" }, { word: "STEAM" },
+    ],
+  },
+  {
+    source: "PLANET",
+    accepted4: [
+      { word: "PLAN" }, { word: "LEAN" }, { word: "LANE" }, { word: "PALE" }, { word: "PEAL", uncommon: true },
+      { word: "PLEA" }, { word: "NEAT" }, { word: "ANTE", uncommon: true }, { word: "PANT" }, { word: "PANE" },
+      { word: "PEAT", uncommon: true }, { word: "TALE" }, { word: "TEAL" }, { word: "LATE" },
+    ],
+    accepted5: [{ word: "PLANE" }, { word: "PLATE" }, { word: "PANEL" }, { word: "PLEAT", uncommon: true }],
+  },
+  {
+    source: "SILENT",
+    accepted4: [
+      { word: "LENS" }, { word: "TENS" }, { word: "NEST" }, { word: "LEST" }, { word: "LINT" },
+      { word: "TILE" }, { word: "LITE" }, { word: "SENT" }, { word: "LIEN", uncommon: true }, { word: "NITS" },
+    ],
+    accepted5: [{ word: "TINES", uncommon: true }, { word: "LIENS", uncommon: true }],
+  },
+  {
+    source: "ORANGE",
+    accepted4: [
+      { word: "ROAN", uncommon: true }, { word: "RANG" }, { word: "GEAR" }, { word: "RAGE" }, { word: "NEAR" },
+      { word: "EARN" }, { word: "GONE" }, { word: "GORE" }, { word: "AEON", uncommon: true },
+    ],
+    accepted5: [{ word: "ORGAN" }, { word: "RANGE" }, { word: "GROAN" }],
+  },
 ];
 
 function normalize(word: string): string {
@@ -68,6 +118,14 @@ function isExactAnagram(answer: string, source: string): boolean {
   return [...letters].every((l) => (aCounts[l] ?? 0) === (sCounts[l] ?? 0));
 }
 
+function isSubsetOf(answer: string, source: string): boolean {
+  const a = normalize(answer);
+  const s = normalize(source);
+  const aCounts = letterCounts(a);
+  const sCounts = letterCounts(s);
+  return Object.entries(aCounts).every(([letter, count]) => count <= (sCounts[letter] ?? 0));
+}
+
 export interface CheckResult {
   valid: boolean;
   uncommon: boolean;
@@ -81,8 +139,8 @@ const DICTIONARY: ReadonlySet<string> = new Set(ANAGRAM_WORDS);
  * lists below, used only to keep the "found an uncommon word" badge
  * working — anything else that's dictionary-valid defaults to uncommon. */
 const COMMON_WORDS: ReadonlySet<string> = new Set(
-  [...LEVEL1_PUZZLES, ...LEVEL2_PUZZLES, ...LEVEL3_PUZZLES]
-    .flatMap((p) => p.accepted)
+  [...LEVEL1_PUZZLES.flatMap((p) => p.accepted), ...LEVEL2_PUZZLES.flatMap((p) => p.accepted)]
+    .concat(LEVEL3_PUZZLES.flatMap((p) => [...p.accepted4, ...p.accepted5]))
     .filter((a) => !a.uncommon)
     .map((a) => a.word),
 );
@@ -96,6 +154,15 @@ function checkWord(answer: string, validShape: boolean): CheckResult {
 
 export function checkAnagramAnswer(answer: string, puzzle: SimplePuzzle): CheckResult {
   return checkWord(answer, isExactAnagram(answer, puzzle.source));
+}
+
+export function checkLevel3Answer(
+  answer: string,
+  puzzle: Level3Puzzle,
+  length: 4 | 5,
+): CheckResult {
+  const shapeOk = normalize(answer).length === length && isSubsetOf(answer, puzzle.source);
+  return checkWord(answer, shapeOk);
 }
 
 export function sameWord(a: string, b: string): boolean {
