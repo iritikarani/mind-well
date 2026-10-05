@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { LinkButton } from "@/components/ui/Button";
 import { PixelHeart } from "@/components/pixel/PixelArt";
+import { MobileNavCategory } from "@/components/app/MobileNavCategory";
 
 const NAV_LINKS = [
   { href: "#top", label: "Home" },
@@ -12,6 +13,8 @@ const NAV_LINKS = [
   { href: "#mind-flow", label: "Mind Flow" },
   { href: "#3-things", label: "3 Things" },
 ];
+
+const NAV_CATEGORIES = ["Validation?", "Threads", "Mind Flow", "3 Things"];
 
 export function PublicNav({ loggedIn }: { loggedIn: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -65,15 +68,19 @@ export function PublicNav({ loggedIn }: { loggedIn: boolean }) {
           className="pixel-panel absolute left-4 right-4 top-full mt-2 rounded-2xl bg-surface p-4 lg:hidden"
         >
           <nav className="flex flex-col gap-1" aria-label="Main">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="min-h-11 rounded-xl px-3 py-2.5 font-heading text-sm font-semibold text-heading hover:bg-lavender/40"
-              >
-                {link.label}
-              </a>
+            <a
+              href="#top"
+              onClick={() => setMenuOpen(false)}
+              className="min-h-11 rounded-xl px-3 py-2.5 font-heading text-sm font-semibold text-heading hover:bg-lavender/40"
+            >
+              Home
+            </a>
+            {NAV_CATEGORIES.map((category) => (
+              <MobileNavCategory
+                key={category}
+                label={category}
+                onNavigate={() => setMenuOpen(false)}
+              />
             ))}
             <Link
               href={loggedIn ? "/dashboard" : "/login"}
