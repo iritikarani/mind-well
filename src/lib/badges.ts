@@ -99,18 +99,28 @@ export const BADGE_CATALOG = {
 
   // Anagrams
   SPEED_SOLVER: {
-    label: "Speed Solver",
+    label: "Brain Spark",
     description: "Completed all 3 levels quickly",
     game: "ANAGRAMS" as GameKey,
   },
   WORDPLAY_GENIUS: {
-    label: "Wordplay Genius",
+    label: "Word Wizard",
     description: "Formed an uncommon/unique word",
     game: "ANAGRAMS" as GameKey,
   },
   LEVEL_MASTER: {
-    label: "Level Master",
-    description: "Completed Level 3",
+    label: "Word Explorer",
+    description: "Completed a full Anagrams session",
+    game: "ANAGRAMS" as GameKey,
+  },
+  SHARP_THINKER: {
+    label: "Sharp Thinker",
+    description: "Solved every level with only common words",
+    game: "ANAGRAMS" as GameKey,
+  },
+  WORD_MASTER: {
+    label: "Word Master",
+    description: "Completed 10 Anagrams sessions",
     game: "ANAGRAMS" as GameKey,
   },
 
@@ -384,18 +394,30 @@ export async function awardBadgesForFindTheWord(userId: string, wordsFound: Find
   return grant(userId, [...gameBadges, ...crossGameBadges]);
 }
 
-function evaluateAnagrams(result: AnagramsResult): BadgeKey[] {
+async function evaluateAnagrams(userId: string, result: AnagramsResult): Promise<BadgeKey[]> {
   const earned: BadgeKey[] = ["LEVEL_MASTER"];
 
   if (result.totalTimeMs < 90_000) earned.push("SPEED_SOLVER");
-  if (result.usedUncommonWord) earned.push("WORDPLAY_GENIUS");
+  if (result.usedUncommonWord) {
+    earned.push("WORDPLAY_GENIUS");
+  } else {
+    earned.push("SHARP_THINKER");
+  }
+
+  // Assumes the current session's GamePlay row has already been created,
+  // so it's naturally included in this count.
+  const totalPlays = await prisma.gamePlay.count({ where: { userId, game: "ANAGRAMS" } });
+  if (totalPlays >= 10) earned.push("WORD_MASTER");
 
   return earned;
 }
 
 export async function awardBadgesForAnagrams(userId: string, result: AnagramsResult) {
-  const crossGameBadges = await evaluateCrossGame(userId);
-  return grant(userId, [...evaluateAnagrams(result), ...crossGameBadges]);
+  const [gameBadges, crossGameBadges] = await Promise.all([
+    evaluateAnagrams(userId, result),
+    evaluateCrossGame(userId),
+  ]);
+  return grant(userId, [...gameBadges, ...crossGameBadges]);
 }
 
 export async function awardBadgesForAnimalRunner(userId: string, result: AnimalRunnerResult) {

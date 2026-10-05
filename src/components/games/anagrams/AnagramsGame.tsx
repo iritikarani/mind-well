@@ -31,9 +31,11 @@ export function AnagramsGame() {
 
   const [answer1a, setAnswer1a] = useState("");
   const [answer1b, setAnswer1b] = useState("");
+  const [answer1c, setAnswer1c] = useState("");
   const [error1, setError1] = useState<string | null>(null);
 
-  const [answer2, setAnswer2] = useState("");
+  const [answer2a, setAnswer2a] = useState("");
+  const [answer2b, setAnswer2b] = useState("");
   const [error2, setError2] = useState<string | null>(null);
 
   const [answer3a, setAnswer3a] = useState("");
@@ -52,8 +54,10 @@ export function AnagramsGame() {
     setStage("loading");
     setAnswer1a("");
     setAnswer1b("");
+    setAnswer1c("");
     setError1(null);
-    setAnswer2("");
+    setAnswer2a("");
+    setAnswer2b("");
     setError2(null);
     setAnswer3a("");
     setAnswer3b("");
@@ -92,31 +96,39 @@ export function AnagramsGame() {
 
   function submitLevel1() {
     if (!puzzle1) return;
-    const r1 = checkAnagramAnswer(answer1a, puzzle1);
-    const r2 = checkAnagramAnswer(answer1b, puzzle1);
+    const answers = [answer1a, answer1b, answer1c];
+    const results = answers.map((a) => checkAnagramAnswer(a, puzzle1));
 
-    if (!r1.valid || !r2.valid) {
-      setError1("Both need to be real, different words made from those same letters.");
+    if (results.some((r) => !r.valid)) {
+      setError1("All three need to be real, different words made from those same letters.");
       return;
     }
-    if (sameWord(answer1a, answer1b)) {
-      setError1("Give two different words, not the same one twice.");
+    const hasDuplicate = answers.some((a, i) => answers.some((b, j) => i < j && sameWord(a, b)));
+    if (hasDuplicate) {
+      setError1("Give three different words, not repeats of each other.");
       return;
     }
 
-    if (r1.uncommon || r2.uncommon) usedUncommonRef.current = true;
+    if (results.some((r) => r.uncommon)) usedUncommonRef.current = true;
     setError1(null);
     setStage("level2");
   }
 
   function submitLevel2() {
     if (!puzzle2) return;
-    const r = checkAnagramAnswer(answer2, puzzle2);
-    if (!r.valid) {
-      setError2("That's not quite a real word using all those letters. Try another arrangement.");
+    const r1 = checkAnagramAnswer(answer2a, puzzle2);
+    const r2 = checkAnagramAnswer(answer2b, puzzle2);
+
+    if (!r1.valid || !r2.valid) {
+      setError2("Both need to be real, different words made from those same letters.");
       return;
     }
-    if (r.uncommon) usedUncommonRef.current = true;
+    if (sameWord(answer2a, answer2b)) {
+      setError2("Give two different words, not the same one twice.");
+      return;
+    }
+
+    if (r1.uncommon || r2.uncommon) usedUncommonRef.current = true;
     setError2(null);
     setStage("level3");
   }
@@ -211,6 +223,16 @@ export function AnagramsGame() {
         <Pill tone="sky">Level {levelNumber} of 3</Pill>
       </div>
 
+      <div className="mb-4 flex justify-center gap-4 text-sm font-semibold text-muted">
+        <span className={levelNumber > 1 ? "text-mint-text" : "text-heading"}>
+          Level 1 {levelNumber > 1 ? "✓" : "○"}
+        </span>
+        <span className={levelNumber > 2 ? "text-mint-text" : levelNumber === 2 ? "text-heading" : ""}>
+          Level 2 {levelNumber > 2 ? "✓" : "○"}
+        </span>
+        <span className={levelNumber === 3 ? "text-heading" : ""}>Level 3 ○</span>
+      </div>
+
       {stage === "level1" && (
         <Card className="text-center">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted">Level 1</p>
@@ -218,7 +240,7 @@ export function AnagramsGame() {
             {puzzle1.source}
           </p>
           <p className="mt-3 text-muted">
-            Rearrange those same letters into two different new 4-letter words.
+            Rearrange those same letters into three different new 4-letter words.
           </p>
           <div className="mt-5 space-y-2">
             <input
@@ -226,14 +248,21 @@ export function AnagramsGame() {
               onChange={(e) => setAnswer1a(e.target.value)}
               placeholder="First word"
               maxLength={12}
-              className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-blush-strong/60"
+              className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple/60"
             />
             <input
               value={answer1b}
               onChange={(e) => setAnswer1b(e.target.value)}
               placeholder="Second word"
               maxLength={12}
-              className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-blush-strong/60"
+              className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple/60"
+            />
+            <input
+              value={answer1c}
+              onChange={(e) => setAnswer1c(e.target.value)}
+              placeholder="Third word"
+              maxLength={12}
+              className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple/60"
             />
           </div>
           {error1 && <p className="mt-2 text-xs font-medium text-rose-500">{error1}</p>}
@@ -249,14 +278,23 @@ export function AnagramsGame() {
           <p className="mt-2 font-heading text-4xl font-bold tracking-widest text-heading">
             {puzzle2.source}
           </p>
-          <p className="mt-3 text-muted">Rearrange those letters into one new 5-letter word.</p>
-          <div className="mt-5">
+          <p className="mt-3 text-muted">
+            Rearrange those letters into two different new 5-letter words.
+          </p>
+          <div className="mt-5 space-y-2">
             <input
-              value={answer2}
-              onChange={(e) => setAnswer2(e.target.value)}
-              placeholder="Your word"
+              value={answer2a}
+              onChange={(e) => setAnswer2a(e.target.value)}
+              placeholder="First word"
               maxLength={12}
-              className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-blush-strong/60"
+              className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple/60"
+            />
+            <input
+              value={answer2b}
+              onChange={(e) => setAnswer2b(e.target.value)}
+              placeholder="Second word"
+              maxLength={12}
+              className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple/60"
             />
           </div>
           {error2 && <p className="mt-2 text-xs font-medium text-rose-500">{error2}</p>}
@@ -282,14 +320,14 @@ export function AnagramsGame() {
               onChange={(e) => setAnswer3a(e.target.value)}
               placeholder="4-letter word"
               maxLength={12}
-              className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-blush-strong/60"
+              className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple/60"
             />
             <input
               value={answer3b}
               onChange={(e) => setAnswer3b(e.target.value)}
               placeholder="5-letter word"
               maxLength={12}
-              className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-blush-strong/60"
+              className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple/60"
             />
           </div>
           {error3 && <p className="mt-2 text-xs font-medium text-rose-500">{error3}</p>}

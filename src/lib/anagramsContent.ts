@@ -16,9 +16,9 @@ export interface Level3Puzzle {
   accepted5: AcceptedWord[];
 }
 
-/** Level 1: a 4-letter word; player finds two different new 4-letter anagrams of it. */
+/** Level 1: a 4-letter word; player finds three different new 4-letter anagrams of it. */
 export const LEVEL1_PUZZLES: SimplePuzzle[] = [
-  { source: "LOOP", accepted: [{ word: "POOL" }, { word: "POLO" }] },
+  { source: "MEAN", accepted: [{ word: "AMEN" }, { word: "MANE" }, { word: "NAME" }] },
   { source: "CARE", accepted: [{ word: "RACE" }, { word: "ACRE", uncommon: true }] },
   { source: "TEAM", accepted: [{ word: "MATE" }, { word: "MEAT" }, { word: "TAME" }] },
   { source: "LIVE", accepted: [{ word: "VEIL" }, { word: "EVIL" }, { word: "VILE" }] },
@@ -30,12 +30,12 @@ export const LEVEL1_PUZZLES: SimplePuzzle[] = [
   { source: "EAST", accepted: [{ word: "EATS" }, { word: "SEAT" }, { word: "TEAS" }, { word: "SATE", uncommon: true }] },
 ];
 
-/** Level 2: a 5-letter word; player finds one new 5-letter anagram of it. */
+/** Level 2: a 5-letter word; player finds two different new 5-letter anagrams of it. */
 export const LEVEL2_PUZZLES: SimplePuzzle[] = [
   { source: "STARE", accepted: [{ word: "RATES" }, { word: "TEARS" }, { word: "TARES", uncommon: true }, { word: "ASTER", uncommon: true }] },
   { source: "EARTH", accepted: [{ word: "HEART" }, { word: "HATER" }] },
-  { source: "NIGHT", accepted: [{ word: "THING" }] },
-  { source: "LEMON", accepted: [{ word: "MELON" }] },
+  { source: "TRACE", accepted: [{ word: "CRATE" }, { word: "REACT" }, { word: "CATER" }] },
+  { source: "SNARE", accepted: [{ word: "NEARS" }, { word: "EARNS" }, { word: "SANER", uncommon: true }] },
   { source: "STEAM", accepted: [{ word: "MEATS" }, { word: "TEAMS" }, { word: "MATES" }, { word: "TAMES" }] },
   { source: "SPARE", accepted: [{ word: "PARSE" }, { word: "PEARS" }, { word: "REAPS" }] },
   { source: "TONES", accepted: [{ word: "STONE" }, { word: "NOTES" }, { word: "ONSET" }, { word: "STENO", uncommon: true }] },
