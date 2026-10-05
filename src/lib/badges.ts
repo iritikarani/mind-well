@@ -58,20 +58,25 @@ export const BADGE_CATALOG = {
     game: "COLOR_THEORY" as GameKey,
   },
 
-  // Spin and Connect
+  // Spin & Connect
   QUICK_THINKER: {
     label: "Quick Thinker",
     description: "Completed a round with zero hints used",
     game: "SPIN_AND_CONNECT" as GameKey,
   },
   WORDSMITH: {
-    label: "Wordsmith",
+    label: "Brilliant Connector",
     description: "Answered every round correctly in a session",
     game: "SPIN_AND_CONNECT" as GameKey,
   },
   FIVE_ROUNDS_STRONG: {
-    label: "Nine Rounds Strong",
-    description: "Completed a full 9-round session",
+    label: "Connection Genius",
+    description: "Completed a full 5-round session",
+    game: "SPIN_AND_CONNECT" as GameKey,
+  },
+  CREATIVE_THINKER: {
+    label: "Creative Thinker",
+    description: "Found a valid answer for a rare combo",
     game: "SPIN_AND_CONNECT" as GameKey,
   },
 
@@ -345,9 +350,10 @@ export async function awardBadgesForWorldPuzzle(userId: string) {
 function evaluateSpinAndConnect(rounds: SpinAndConnectRound[]): BadgeKey[] {
   const earned: BadgeKey[] = [];
 
-  if (rounds.length >= 9) earned.push("FIVE_ROUNDS_STRONG");
+  if (rounds.length >= 5) earned.push("FIVE_ROUNDS_STRONG");
   if (rounds.some((r) => r.hintsUsed === 0)) earned.push("QUICK_THINKER");
   if (rounds.length > 0 && rounds.every((r) => r.correctCount >= 1)) earned.push("WORDSMITH");
+  if (rounds.some((r) => r.tier === "rare" && r.correctCount >= 1)) earned.push("CREATIVE_THINKER");
 
   return earned;
 }

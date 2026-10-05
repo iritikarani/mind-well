@@ -5,7 +5,7 @@ import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
 import { cn } from "@/lib/cn";
-import { pickGridWords, wordByName, type QuestionVariant, type WordDef } from "@/lib/findTheWordContent";
+import { pickGridWords, wordByName, type QuestionVariant } from "@/lib/findTheWordContent";
 import { generateGrid, lineBetween, type Cell, type WordSearchGrid } from "@/lib/wordSearchGrid";
 
 const GRID_SIZE = 8;
@@ -24,10 +24,9 @@ function cellKey(row: number, col: number) {
   return `${row},${col}`;
 }
 
-export function FindTheWordGame() {
+export function FindTheWordGame({ playsRemaining }: { playsRemaining?: number }) {
   const [stage, setStage] = useState<Stage>("loading");
   const [grid, setGrid] = useState<WordSearchGrid | null>(null);
-  const [gridWords, setGridWords] = useState<WordDef[]>([]);
   const [foundWords, setFoundWords] = useState<Set<string>>(new Set());
   const [foundCells, setFoundCells] = useState<Set<string>>(new Set());
   const [selStart, setSelStart] = useState<Cell | null>(null);
@@ -55,26 +54,17 @@ export function FindTheWordGame() {
     // attempt can occasionally seat only 7 of 8 by bad luck — retry with
     // a fresh word pick/layout until all of them fit.
     let generated = generateGrid(GRID_SIZE, []);
-    let placedWords: WordDef[] = [];
+    let bestPlacedCount = 0;
     for (let attempt = 0; attempt < 20; attempt++) {
       const words = pickGridWords(GRID_WORD_COUNT, GRID_SIZE);
       const candidate = generateGrid(GRID_SIZE, words.map((w) => w.word));
-      if (candidate.placements.length >= GRID_WORD_COUNT) {
+      if (candidate.placements.length > bestPlacedCount) {
         generated = candidate;
-        placedWords = candidate.placements
-          .map((p) => wordByName(p.word))
-          .filter((w): w is WordDef => !!w);
-        break;
+        bestPlacedCount = candidate.placements.length;
       }
-      if (candidate.placements.length > placedWords.length) {
-        generated = candidate;
-        placedWords = candidate.placements
-          .map((p) => wordByName(p.word))
-          .filter((w): w is WordDef => !!w);
-      }
+      if (bestPlacedCount >= GRID_WORD_COUNT) break;
     }
     setGrid(generated);
-    setGridWords(placedWords);
     setStage("searching");
   }
 
@@ -194,12 +184,12 @@ export function FindTheWordGame() {
     return (
       <div className="mx-auto max-w-lg text-center">
         <Card className="p-8">
-          <div className="text-5xl">🎉</div>
+          <div className="text-5xl">🫶</div>
           <h1 className="mt-4 font-heading text-2xl font-bold text-heading">
-            You found 3 words! You got 3 remarks!
+            Yay! You took some time for yourself.
           </h1>
           <p className="mt-3 text-muted">
-            {entries.map((e) => e.word).join(", ")}
+            You found: {entries.map((e) => e.word).join(", ")}
           </p>
 
           {newBadges.length > 0 && (
@@ -210,7 +200,8 @@ export function FindTheWordGame() {
 
           {limitReached && (
             <p className="mt-4 text-sm text-muted">
-              You&apos;ve played the game today. Come back tomorrow.
+              You&apos;ve taken enough time for yourself today. <span aria-hidden>♡</span> Come back
+              tomorrow.
             </p>
           )}
 
@@ -231,17 +222,24 @@ export function FindTheWordGame() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h1 className="font-heading text-2xl font-bold text-heading">Find the Word</h1>
-        <Pill tone="sky">{entries.length}/3 found</Pill>
+        <div className="flex items-center gap-2">
+          {typeof playsRemaining === "number" && (
+            <Pill tone="lavender">
+              {playsRemaining} play{playsRemaining === 1 ? "" : "s"} left today
+            </Pill>
+          )}
+          <Pill tone="sky">{entries.length}/3 found</Pill>
+        </div>
       </div>
 
       {(stage === "searching" || stage === "loading-question") && (
         <>
           <p className="mb-4 text-center text-sm text-muted">
-            Select two ends of a word — any direction. Find any 3 to finish.
+            Select two ends of a word — any direction. No list this time: just see what you find.
           </p>
-          <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:justify-center">
+          <div className="flex justify-center">
             <div
               className="grid select-none gap-[2px] rounded-2xl bg-white/60 p-2"
               style={{ gridTemplateColumns: `repeat(${grid.size}, minmax(0, 1fr))`, width: 320 }}
@@ -267,34 +265,6 @@ export function FindTheWordGame() {
                   );
                 }),
               )}
-            </div>
-
-            <div className="w-full max-w-[220px] rounded-2xl bg-white/60 p-4 sm:w-44">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
-                Words to find
-              </p>
-              <ul className="space-y-1.5">
-                {gridWords.map((w) => {
-                  const isFound = foundWords.has(w.word);
-                  return (
-                    <li
-                      key={w.word}
-                      className={cn(
-                        "flex items-center justify-between rounded-lg px-2 py-1 text-sm font-semibold",
-                        isFound ? "bg-mint/60 text-mint-text line-through" : "text-heading",
-                      )}
-                    >
-                      <span>{w.word}</span>
-                      <span
-                        className={cn(
-                          "ml-2 h-2 w-2 shrink-0 rounded-full",
-                          w.sentiment === "positive" ? "bg-mint-text/70" : "bg-blush-strong/70",
-                        )}
-                      />
-                    </li>
-                  );
-                })}
-              </ul>
             </div>
           </div>
         </>

@@ -19,7 +19,7 @@ import {
 } from "@/lib/spinConnectContent";
 import { SpinWheel, computeWheelRotation, SPIN_DURATION_MS } from "./SpinWheel";
 
-const TOTAL_ROUNDS = 9;
+const TOTAL_ROUNDS = 5;
 const LETTER_COLORS: [string, string] = ["#FFE9F0", "#FFC7DD"];
 const CATEGORY_COLORS: [string, string] = ["#E3F8ED", "#BFEBD3"];
 
@@ -56,6 +56,7 @@ export function SpinAndConnectGame() {
   const [rounds, setRounds] = useState<RoundSummary[]>([]);
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [respinUsed, setRespinUsed] = useState(false);
 
   const tierInfo = tierFor(category, letter);
 
@@ -67,6 +68,7 @@ export function SpinAndConnectGame() {
 
   function spinWheels(opts: { letter: boolean; category: boolean }) {
     setStage("spinning");
+    if (opts.letter && opts.category) setRespinUsed(false);
 
     const nextLetter = opts.letter ? randomLetterExcept(letter) : letter;
     const nextCategory = opts.category ? randomCategoryExcept(category) : category;
@@ -202,7 +204,7 @@ export function SpinAndConnectGame() {
   return (
     <div className="mx-auto max-w-xl">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="font-heading text-2xl font-bold text-heading">Spin and Connect</h1>
+        <h1 className="font-heading text-2xl font-bold text-heading">Spin &amp; Connect</h1>
         <Pill tone="sky">
           Round {roundIndex + 1} of {TOTAL_ROUNDS}
         </Pill>
@@ -229,16 +231,38 @@ export function SpinAndConnectGame() {
           {tierInfo.tier === "none" ? (
             <>
               <p className="font-semibold text-heading">
-                No valid answers for {letter} + {landedCatDef.label}. Pick a wheel to re-spin.
+                No valid answers for {letter} + {landedCatDef.label}.
+                {respinUsed
+                  ? " That's okay — this one just won't have an answer this round."
+                  : " Pick a wheel to re-spin (one re-spin per round)."}
               </p>
-              <div className="mt-4 flex justify-center gap-3">
-                <Button variant="sky" onClick={() => spinWheels({ letter: true, category: false })}>
-                  Re-spin letter
+              {!respinUsed && (
+                <div className="mt-4 flex justify-center gap-3">
+                  <Button
+                    variant="sky"
+                    onClick={() => {
+                      setRespinUsed(true);
+                      spinWheels({ letter: true, category: false });
+                    }}
+                  >
+                    Re-spin letter
+                  </Button>
+                  <Button
+                    variant="mint"
+                    onClick={() => {
+                      setRespinUsed(true);
+                      spinWheels({ letter: false, category: true });
+                    }}
+                  >
+                    Re-spin category
+                  </Button>
+                </div>
+              )}
+              {respinUsed && (
+                <Button className="mt-4" onClick={nextRoundOrFinish} disabled={saving}>
+                  {roundIndex + 1 >= TOTAL_ROUNDS ? "See results" : "Skip to next round"}
                 </Button>
-                <Button variant="mint" onClick={() => spinWheels({ letter: false, category: true })}>
-                  Re-spin category
-                </Button>
-              </div>
+              )}
             </>
           ) : (
             <>
@@ -275,14 +299,14 @@ export function SpinAndConnectGame() {
                   setAnswers(next);
                 }}
                 placeholder={`Answer ${i + 1}`}
-                className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-blush-strong/60"
+                className="w-full rounded-2xl border border-black/5 bg-white/80 px-4 py-2.5 text-sm text-heading placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple/60"
               />
             ))}
           </div>
           <div className="mt-4 flex items-center justify-between">
             <button
               onClick={useHint}
-              className="text-sm font-semibold text-muted hover:text-blush-text"
+              className="text-sm font-semibold text-muted hover:text-purple-text"
             >
               💡 Hint (no penalty)
             </button>

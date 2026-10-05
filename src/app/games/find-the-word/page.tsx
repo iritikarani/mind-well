@@ -5,7 +5,7 @@ import { FindTheWordGame } from "@/components/games/find-the-word/FindTheWordGam
 import { DailyLimitReachedPage } from "@/components/games/DailyLimitReached";
 import { getEffectiveStreak } from "@/lib/streak";
 import { gameMeta } from "@/lib/games";
-import { hasReachedDailyLimit } from "@/lib/playLimit";
+import { DAILY_PLAY_LIMITS, getPlaysToday, hasReachedDailyLimit } from "@/lib/playLimit";
 
 export default async function FindTheWordPage() {
   const user = await getCurrentUser();
@@ -23,11 +23,14 @@ export default async function FindTheWordPage() {
     );
   }
 
+  const playsToday = await getPlaysToday(user.id, "FIND_THE_WORD");
+  const playsRemaining = DAILY_PLAY_LIMITS.FIND_THE_WORD! - playsToday;
+
   return (
     <>
       <AppHeader name={user.name} streak={streak.currentCount} />
       <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-16 sm:px-10">
-        <FindTheWordGame />
+        <FindTheWordGame playsRemaining={playsRemaining} />
       </main>
     </>
   );
