@@ -5,14 +5,14 @@ import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
 import { cn } from "@/lib/cn";
-import { pickGridWords, wordByName, type QuestionVariant } from "@/lib/findTheWordContent";
+import { pickGridWords, pickVariantIndex, wordByName, type QuestionVariant } from "@/lib/findTheWordContent";
 import { generateGrid, lineBetween, type Cell, type WordSearchGrid } from "@/lib/wordSearchGrid";
 
 const GRID_SIZE = 8;
 const GRID_WORD_COUNT = 8;
 const TARGET_FOUND = 3;
 
-type Stage = "loading" | "searching" | "loading-question" | "question" | "remark" | "closing";
+type Stage = "loading" | "searching" | "question" | "remark" | "closing";
 
 type YesNoOutcome = "yes" | "a_little" | "not_really" | "unsure";
 
@@ -26,7 +26,13 @@ function cellKey(row: number, col: number) {
   return `${row},${col}`;
 }
 
-export function FindTheWordGame({ playsRemaining }: { playsRemaining?: number }) {
+export function FindTheWordGame({
+  playsRemaining,
+  lastVariantByWord,
+}: {
+  playsRemaining?: number;
+  lastVariantByWord: Record<string, number>;
+}) {
   const [stage, setStage] = useState<Stage>("loading");
   const [grid, setGrid] = useState<WordSearchGrid | null>(null);
   const [foundWords, setFoundWords] = useState<Set<string>>(new Set());
@@ -43,6 +49,7 @@ export function FindTheWordGame({ playsRemaining }: { playsRemaining?: number })
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [limitReached, setLimitReached] = useState(false);
+  const [lastVariants, setLastVariants] = useState(lastVariantByWord);
 
   function newGame() {
     setStage("loading");
@@ -75,7 +82,7 @@ export function FindTheWordGame({ playsRemaining }: { playsRemaining?: number })
     return () => clearTimeout(id);
   }, []);
 
-  async function handleCellClick(row: number, col: number) {
+  function handleCellClick(row: number, col: number) {
     if (!grid || stage !== "searching") return;
 
     if (!selStart) {
@@ -106,16 +113,13 @@ export function FindTheWordGame({ playsRemaining }: { playsRemaining?: number })
     match.cells.forEach((c) => nextFoundCells.add(cellKey(c.row, c.col)));
     setFoundCells(nextFoundCells);
 
-    setStage("loading-question");
-    const res = await fetch("/api/games/find-the-word/question", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ word: match.word }),
-    });
-    const data = await res.json();
+    const def = wordByName(match.word);
+    if (!def) return;
+    const variantIndex = pickVariantIndex(match.word, lastVariants[match.word] ?? null);
+    setLastVariants((prev) => ({ ...prev, [match.word]: variantIndex }));
     setCurrentWord(match.word);
-    setCurrentVariantIndex(data.variantIndex);
-    setCurrentVariant(data.variant);
+    setCurrentVariantIndex(variantIndex);
+    setCurrentVariant(def.questions[variantIndex]);
     setAnswerDraft("");
     setStage("question");
   }
@@ -242,7 +246,7 @@ export function FindTheWordGame({ playsRemaining }: { playsRemaining?: number })
         </div>
       </div>
 
-      {(stage === "searching" || stage === "loading-question") && (
+      {stage === "searching" && (
         <>
           <p className="mb-4 text-center text-sm text-muted">
             Select two ends of a word — any direction. No list this time: just see what you find.

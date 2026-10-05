@@ -64,10 +64,6 @@ export const worldPuzzlePlaySchema = z.object({
   monumentId: z.string().min(1),
 });
 
-export const findTheWordQuestionSchema = z.object({
-  word: z.string().min(1),
-});
-
 export const findTheWordPlaySchema = z.object({
   wordsFound: z
     .array(
