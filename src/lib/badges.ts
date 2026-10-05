@@ -2,20 +2,25 @@ import { prisma } from "@/lib/prisma";
 import type { GameKey } from "@/generated/prisma/enums";
 
 export const BADGE_CATALOG = {
-  // Animal Catcher
+  // Animal Runner
   POSITIVITY_MAGNET: {
-    label: "Positivity Magnet",
-    description: "Absorbed mostly positive remarks in a single run",
+    label: "Kind Heart",
+    description: "Caught mostly kind remarks in a single run",
     game: "ANIMAL_RUNNER" as GameKey,
   },
   CLEAN_DODGE: {
-    label: "Clean Dodge",
-    description: "Avoided a high percentage of negative remarks",
+    label: "Brave Runner",
+    description: "Let most of the unkind remarks pass right by",
     game: "ANIMAL_RUNNER" as GameKey,
   },
   SURVIVOR: {
-    label: "Survivor",
-    description: "Survived the full 2 minutes",
+    label: "Little Survivor",
+    description: "Made it through the full two minutes",
+    game: "ANIMAL_RUNNER" as GameKey,
+  },
+  KEEP_GOING: {
+    label: "Keep Going",
+    description: "Finished a run, start to end",
     game: "ANIMAL_RUNNER" as GameKey,
   },
 
@@ -242,7 +247,7 @@ async function evaluateCrossGame(userId: string): Promise<BadgeKey[]> {
 }
 
 async function evaluateAnimalRunner(result: AnimalRunnerResult): Promise<BadgeKey[]> {
-  const earned: BadgeKey[] = [];
+  const earned: BadgeKey[] = ["KEEP_GOING"];
 
   if (result.survived) earned.push("SURVIVOR");
   if (result.positiveAbsorbed > result.negativeAbsorbed) earned.push("POSITIVITY_MAGNET");

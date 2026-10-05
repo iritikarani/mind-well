@@ -47,6 +47,14 @@ interface FallingRemark {
 
 type Stage = "select" | "countdown" | "playing" | "result";
 
+const ENVIRONMENTS = [
+  { name: "meadow", sky: "from-sky/60 to-mint/40" },
+  { name: "forest", sky: "from-mint/60 to-lavender/40" },
+  { name: "beach", sky: "from-sky/70 to-butter/40" },
+  { name: "night sky", sky: "from-lavender/70 to-blush/30" },
+  { name: "garden", sky: "from-blush/50 to-mint/40" },
+] as const;
+
 function pickRemark(sentiment: Sentiment, used: Set<string>) {
   const pool = sentiment === "positive" ? POSITIVE_REMARKS : NEGATIVE_REMARKS;
   const available = pool.filter((r) => !used.has(r));
@@ -63,6 +71,7 @@ function clampBasketX(x: number) {
 export function AnimalRunnerGame() {
   const [stage, setStage] = useState<Stage>("select");
   const [animal, setAnimal] = useState<AnimalKey>("fox");
+  const [environment, setEnvironment] = useState<(typeof ENVIRONMENTS)[number]>(ENVIRONMENTS[0]);
   const [hearts, setHearts] = useState(START_HEARTS);
   const [timeLeftMs, setTimeLeftMs] = useState(GAME_DURATION_MS);
   const [basketX, setBasketX] = useState(50);
@@ -292,6 +301,7 @@ export function AnimalRunnerGame() {
   }, [stage, finishGame, resolveRemark, setBasketXBoth]);
 
   function startGame() {
+    setEnvironment(ENVIRONMENTS[Math.floor(Math.random() * ENVIRONMENTS.length)]);
     heartsRef.current = START_HEARTS;
     statsRef.current = {
       positiveAbsorbed: 0,
@@ -335,7 +345,7 @@ export function AnimalRunnerGame() {
               key={a.key}
               onClick={() => setAnimal(a.key)}
               className={`flex flex-col items-center gap-2 rounded-2xl p-3 transition ${
-                animal === a.key ? "bg-blush shadow-sm" : "bg-white/50 hover:bg-white/80"
+                animal === a.key ? "bg-lavender shadow-sm ring-2 ring-purple" : "bg-white/50 hover:bg-white/80"
               }`}
             >
               <AnimalAvatar animal={a.key} size={64} />
@@ -365,9 +375,17 @@ export function AnimalRunnerGame() {
     return (
       <div className="mx-auto max-w-lg text-center">
         <Card className="p-8">
-          <div className="text-5xl">{finalSurvived ? "🌤️" : "🌧️"}</div>
+          <div className="text-5xl">{finalSurvived ? "🌤️" : "🌙"}</div>
           <h1 className="mt-4 font-heading text-2xl font-bold text-heading">
-            {finalSurvived ? "You made it through" : "Game over"}
+            {finalSurvived ? (
+              <>
+                YOU MADE IT! <span aria-hidden>♡</span>
+              </>
+            ) : (
+              <>
+                You took a little break <span aria-hidden>♡</span>
+              </>
+            )}
           </h1>
           <p className="mt-3 text-muted">
             {finalSurvived
@@ -404,12 +422,17 @@ export function AnimalRunnerGame() {
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-4 flex items-center justify-between">
-        <div className="flex gap-0.5" aria-label={`${hearts} of 10 hearts`}>
-          {Array.from({ length: 10 }).map((_, i) => (
-            <span key={i} className={i < hearts ? "text-blush-strong" : "text-black/10"}>
-              ●
-            </span>
-          ))}
+        <div className="flex items-center gap-2">
+          <span className="font-heading text-xs font-bold uppercase tracking-wide text-heading">
+            <span aria-hidden>♡</span> Energy
+          </span>
+          <div className="flex gap-0.5" aria-label={`${hearts} of 10 energy`}>
+            {Array.from({ length: 10 }).map((_, i) => (
+              <span key={i} className={i < hearts ? "text-blush-strong" : "text-black/10"}>
+                ●
+              </span>
+            ))}
+          </div>
         </div>
         <p className="font-heading text-lg font-bold text-heading">
           {Math.floor(secondsLeft / 60)}:{String(secondsLeft % 60).padStart(2, "0")}
@@ -420,7 +443,7 @@ export function AnimalRunnerGame() {
         ref={trackRef}
         onPointerMove={handlePointerMove}
         style={{ touchAction: "none" }}
-        className={`relative h-96 overflow-hidden rounded-[24px] border border-black/5 bg-gradient-to-b from-sky/60 to-mint/40 transition ${
+        className={`relative h-96 overflow-hidden rounded-[24px] border border-black/5 bg-gradient-to-b ${environment.sky} transition ${
           flash === "bad" ? "ring-4 ring-blush-strong" : flash === "good" ? "ring-4 ring-mint" : ""
         }`}
       >

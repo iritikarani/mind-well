@@ -54,7 +54,8 @@ export const NEGATIVE_REMARKS = [
   "You're too broken to fix now.",
 ];
 
-export const LOSE_QUOTE = "You should have thought about yourself.";
+export const LOSE_QUOTE =
+  "That's okay — some days take more out of us than others. You still showed up. ♡";
 
 export function winRemark(positiveAbsorbed: number, negativeAbsorbed: number): string {
   const total = positiveAbsorbed + negativeAbsorbed;
