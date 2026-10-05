@@ -123,13 +123,16 @@ export default async function DashboardPage() {
                 : "Ready for another little moment for yourself? ♡"}
             </p>
           </Card>
-          <Card>
+          <a
+            href="/badges"
+            className="pixel-panel pixel-pressable rounded-[22px] bg-surface p-6 shadow-[0_4px_20px_rgba(91,71,137,0.1)] transition hover:-translate-y-0.5"
+          >
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">
               Badges earned
             </p>
             <p className="mt-2 font-heading text-3xl font-bold text-heading">{badges.length}</p>
-            <p className="mt-1 text-sm text-muted">Keep playing to earn more</p>
-          </Card>
+            <p className="mt-1 text-sm text-muted">See your badge shelf →</p>
+          </a>
           <Card>
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">
               Games played today
@@ -181,7 +184,12 @@ export default async function DashboardPage() {
         </section>
 
         <section className="mt-10">
-          <h2 className="font-heading text-xl font-bold text-heading">Badges</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="font-heading text-xl font-bold text-heading">Badges</h2>
+            <LinkButton href="/badges" variant="ghost" className="px-3 py-1.5 text-sm">
+              See all →
+            </LinkButton>
+          </div>
           {badges.length === 0 ? (
             <Card className="mt-4">
               <p className="text-sm text-muted">
