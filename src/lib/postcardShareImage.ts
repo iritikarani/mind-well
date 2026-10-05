@@ -193,11 +193,9 @@ export async function shareOrDownloadPostcard(opts: PostcardShareOptions): Promi
       await navigator.share({
         files: [file],
         title: `${opts.name} — Happy Space ♡`,
-        // The link is appended to `text` too, not just passed as `url` —
-        // several share targets (WhatsApp included) drop `url` entirely
-        // once a file is attached and only surface `text`.
+        // The link goes in `text` only — passing `url` as well makes
+        // WhatsApp show it twice (it renders both fields).
         text: `A postcard from ${opts.name}, ${opts.country} — collected on Happy Space ♡\n${siteUrl()}`,
-        url: siteUrl(),
       });
       return;
     } catch (err) {
