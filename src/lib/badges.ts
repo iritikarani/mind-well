@@ -200,7 +200,7 @@ export interface SpinAndConnectRound {
 export interface FindTheWordEntry {
   word: string;
   variantIndex: number;
-  outcome: "yes" | "no" | "answered" | "skipped";
+  outcome: "yes" | "a_little" | "not_really" | "unsure" | "answered" | "skipped";
 }
 
 export interface AnagramsResult {

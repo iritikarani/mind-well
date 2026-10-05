@@ -74,7 +74,7 @@ export const findTheWordPlaySchema = z.object({
       z.object({
         word: z.string().min(1),
         variantIndex: z.number().int().min(0),
-        outcome: z.enum(["yes", "no", "answered", "skipped"]),
+        outcome: z.enum(["yes", "a_little", "not_really", "unsure", "answered", "skipped"]),
       }),
     )
     .length(3),

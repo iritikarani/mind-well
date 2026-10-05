@@ -14,10 +14,12 @@ const TARGET_FOUND = 3;
 
 type Stage = "loading" | "searching" | "loading-question" | "question" | "remark" | "closing";
 
+type YesNoOutcome = "yes" | "a_little" | "not_really" | "unsure";
+
 interface SessionEntry {
   word: string;
   variantIndex: number;
-  outcome: "yes" | "no" | "answered" | "skipped";
+  outcome: YesNoOutcome | "answered" | "skipped";
 }
 
 function cellKey(row: number, col: number) {
@@ -118,11 +120,17 @@ export function FindTheWordGame({ playsRemaining }: { playsRemaining?: number })
     setStage("question");
   }
 
-  function answerYesNo(outcome: "yes" | "no") {
+  function answerYesNo(outcome: YesNoOutcome) {
     if (!currentVariant || currentVariant.type !== "yesno" || !currentWord || currentVariantIndex === null) {
       return;
     }
-    setRemarkText(outcome === "yes" ? currentVariant.yes : currentVariant.no);
+    const textByOutcome: Record<YesNoOutcome, string> = {
+      yes: currentVariant.yes,
+      a_little: currentVariant.aLittle,
+      not_really: currentVariant.notReally,
+      unsure: currentVariant.unsure,
+    };
+    setRemarkText(textByOutcome[outcome]);
     setEntries((prev) => [...prev, { word: currentWord, variantIndex: currentVariantIndex, outcome }]);
     setStage("remark");
   }
@@ -282,12 +290,18 @@ export function FindTheWordGame({ playsRemaining }: { playsRemaining?: number })
                 {currentVariant.prompt}
               </p>
               {currentVariant.type === "yesno" ? (
-                <div className="mt-5 flex justify-center gap-3">
+                <div className="mx-auto mt-5 grid max-w-xs grid-cols-2 gap-3">
                   <Button variant="sky" onClick={() => answerYesNo("yes")}>
                     Yes
                   </Button>
-                  <Button variant="mint" onClick={() => answerYesNo("no")}>
-                    No
+                  <Button variant="peach" onClick={() => answerYesNo("a_little")}>
+                    A little
+                  </Button>
+                  <Button variant="mint" onClick={() => answerYesNo("not_really")}>
+                    Not really
+                  </Button>
+                  <Button variant="lavender" onClick={() => answerYesNo("unsure")}>
+                    I&apos;m not sure
                   </Button>
                 </div>
               ) : (
