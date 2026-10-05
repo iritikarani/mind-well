@@ -11,7 +11,6 @@ import { MoodCheckIn } from "@/components/app/MoodCheckIn";
 import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
 import { ShareBadgeButton } from "@/components/badges/ShareBadgeButton";
-import { colorByKey } from "@/lib/colorTheoryContent";
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -22,7 +21,7 @@ export default async function DashboardPage() {
   const DAY_MS = 24 * 60 * 60 * 1000;
   const weekStart = new Date(dayStart.getTime() - 6 * DAY_MS);
 
-  const [streak, badges, playsToday, journalCount, colorPlays, weekPlays] =
+  const [streak, badges, playsToday, journalCount, weekPlays] =
     await Promise.all([
       getEffectiveStreak(user.id),
       prisma.userBadge.findMany({
@@ -31,10 +30,6 @@ export default async function DashboardPage() {
       }),
       prisma.gamePlay.count({ where: { userId: user.id, playedAt: { gte: dayStart } } }),
       prisma.journalEntry.count({ where: { userId: user.id } }),
-      prisma.gamePlay.findMany({
-        where: { userId: user.id, game: "COLOR_THEORY" },
-        select: { result: true },
-      }),
       prisma.gamePlay.findMany({
         where: { userId: user.id, playedAt: { gte: weekStart } },
         select: { playedAt: true },
@@ -58,27 +53,6 @@ export default async function DashboardPage() {
   const quickActions = QUICK_ACTION_KEYS.map((key) => GAMES.find((g) => g.key === key)).filter(
     (g): g is NonNullable<typeof g> => !!g,
   );
-
-  const favoriteColor = (() => {
-    const counts = new Map<string, number>();
-    for (const play of colorPlays) {
-      try {
-        const { color } = JSON.parse(play.result) as { color?: string };
-        if (color) counts.set(color, (counts.get(color) ?? 0) + 1);
-      } catch {
-        // ignore malformed rows
-      }
-    }
-    let best: string | null = null;
-    let bestCount = 0;
-    for (const [color, count] of counts) {
-      if (count > bestCount) {
-        best = color;
-        bestCount = count;
-      }
-    }
-    return best ? colorByKey(best) : null;
-  })();
 
   return (
     <>
@@ -104,7 +78,7 @@ export default async function DashboardPage() {
           ))}
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <a
             href="#weekly-activity"
             className="pixel-panel pixel-pressable rounded-[22px] bg-surface p-6 text-left shadow-[0_4px_20px_rgba(91,71,137,0.1)] transition hover:-translate-y-0.5"
@@ -140,20 +114,6 @@ export default async function DashboardPage() {
             </p>
             <p className="mt-2 font-heading text-3xl font-bold text-heading">{playsToday}</p>
             <p className="mt-1 text-sm text-muted">See this week&apos;s activity →</p>
-          </a>
-          <a
-            href="/games/color-theory/my-colors"
-            className="pixel-panel pixel-pressable rounded-[22px] bg-surface p-6 text-left shadow-[0_4px_20px_rgba(91,71,137,0.1)] transition hover:-translate-y-0.5"
-          >
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted">
-              Favorite color
-            </p>
-            <p className="mt-2 font-heading text-3xl font-bold text-heading">
-              {favoriteColor ? favoriteColor.label : "—"}
-            </p>
-            <p className="mt-1 text-sm text-muted">
-              {favoriteColor ? "See My Colors →" : "Play Color Connection to find out"}
-            </p>
           </a>
           <a
             href="/games/three-things"
