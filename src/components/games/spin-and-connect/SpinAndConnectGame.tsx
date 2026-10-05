@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
@@ -11,13 +11,11 @@ import {
   closingRemark,
   getHint,
   isValidAnswer,
-  randomCategory,
-  randomLetter,
   tierFor,
   type CategoryKey,
   type Tier,
 } from "@/lib/spinConnectContent";
-import { SpinWheel, computeWheelRotation, SPIN_DURATION_MS } from "./SpinWheel";
+import { SpinWheel } from "./SpinWheel";
 
 const TOTAL_ROUNDS = 5;
 const LETTER_COLORS: [string, string] = ["#FFE9F0", "#FFC7DD"];
@@ -43,13 +41,12 @@ const TIER_LABEL: Record<Tier, string> = {
 export function SpinAndConnectGame() {
   const [stage, setStage] = useState<Stage>("spinning");
   const [roundIndex, setRoundIndex] = useState(0);
-  // Stable placeholders for the initial server-rendered pass — the mount
-  // effect below immediately randomizes and starts the spin animation on
-  // the client, so these values are never actually shown.
+  // Placeholders until the player actually flicks each wheel — never shown,
+  // since nothing reads these until both wheels have settled at least once.
   const [letter, setLetter] = useState(LETTERS[0]);
   const [category, setCategory] = useState<CategoryKey>(CATEGORIES[0].key);
-  const [letterRotation, setLetterRotation] = useState(0);
-  const [categoryRotation, setCategoryRotation] = useState(0);
+  const [letterReady, setLetterReady] = useState(false);
+  const [categoryReady, setCategoryReady] = useState(false);
   const [answers, setAnswers] = useState<string[]>([]);
   const [hintsUsed, setHintsUsed] = useState(0);
   const [lastResults, setLastResults] = useState<boolean[]>([]);
@@ -60,45 +57,40 @@ export function SpinAndConnectGame() {
 
   const tierInfo = tierFor(category, letter);
 
-  useEffect(() => {
-    const id = setTimeout(() => spinWheels({ letter: true, category: true }), 0);
-    return () => clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Once the player has flicked both wheels at least once this round, move
+  // from "waiting for flicks" to showing what they landed on.
+  function handleLetterSettle(idx: number) {
+    setLetter(LETTERS[idx]);
+    if (stage === "spinning") {
+      setLetterReady(true);
+      if (categoryReady) setStage("landed");
+    } else if (stage === "landed" && tierInfo.tier === "none" && !respinUsed) {
+      setRespinUsed(true);
+    }
+  }
 
-  function spinWheels(opts: { letter: boolean; category: boolean }) {
+  function handleCategorySettle(idx: number) {
+    setCategory(CATEGORIES[idx].key);
+    if (stage === "spinning") {
+      setCategoryReady(true);
+      if (letterReady) setStage("landed");
+    } else if (stage === "landed" && tierInfo.tier === "none" && !respinUsed) {
+      setRespinUsed(true);
+    }
+  }
+
+  const wheelsDisabled =
+    stage === "answering" ||
+    stage === "checking" ||
+    stage === "round-result" ||
+    stage === "closing" ||
+    (stage === "landed" && (tierInfo.tier !== "none" || respinUsed));
+
+  function resetWheelsForNewRound() {
+    setLetterReady(false);
+    setCategoryReady(false);
+    setRespinUsed(false);
     setStage("spinning");
-    if (opts.letter && opts.category) setRespinUsed(false);
-
-    const nextLetter = opts.letter ? randomLetterExcept(letter) : letter;
-    const nextCategory = opts.category ? randomCategoryExcept(category) : category;
-
-    if (opts.letter) {
-      const idx = LETTERS.indexOf(nextLetter);
-      setLetterRotation((prev) => computeWheelRotation(prev, idx, LETTERS.length));
-    }
-    if (opts.category) {
-      const idx = CATEGORIES.findIndex((c) => c.key === nextCategory);
-      setCategoryRotation((prev) => computeWheelRotation(prev, idx, CATEGORIES.length));
-    }
-
-    setTimeout(() => {
-      setLetter(nextLetter);
-      setCategory(nextCategory);
-      setStage("landed");
-    }, SPIN_DURATION_MS);
-  }
-
-  function randomLetterExcept(exclude: string) {
-    let next = randomLetter();
-    while (next === exclude && LETTERS.length > 1) next = randomLetter();
-    return next;
-  }
-
-  function randomCategoryExcept(exclude: CategoryKey) {
-    let next = randomCategory();
-    while (next === exclude && CATEGORIES.length > 1) next = randomCategory();
-    return next;
   }
 
   function startRound() {
@@ -157,7 +149,7 @@ export function SpinAndConnectGame() {
       return;
     }
     setRoundIndex((i) => i + 1);
-    spinWheels({ letter: true, category: true });
+    resetWheelsForNewRound();
   }
 
   async function finishSession() {
@@ -182,7 +174,7 @@ export function SpinAndConnectGame() {
     setRoundIndex(0);
     setRounds([]);
     setNewBadges([]);
-    spinWheels({ letter: true, category: true });
+    resetWheelsForNewRound();
   }
 
   const landedCatDef = categoryByKey(category);
@@ -230,18 +222,31 @@ export function SpinAndConnectGame() {
       <div className="grid grid-cols-2 gap-4">
         <Card className="flex flex-col items-center gap-3 py-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted">Letter</p>
-          <SpinWheel labels={LETTERS} rotation={letterRotation} size={180} colors={LETTER_COLORS} />
+          <SpinWheel
+            labels={LETTERS}
+            size={180}
+            colors={LETTER_COLORS}
+            disabled={wheelsDisabled}
+            onSettle={handleLetterSettle}
+          />
         </Card>
         <Card className="flex flex-col items-center gap-3 py-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted">Category</p>
           <SpinWheel
             labels={CATEGORIES.map((c) => c.emoji)}
-            rotation={categoryRotation}
             size={180}
             colors={CATEGORY_COLORS}
+            disabled={wheelsDisabled}
+            onSettle={handleCategorySettle}
           />
         </Card>
       </div>
+
+      {stage === "spinning" && (!letterReady || !categoryReady) && (
+        <p className="mt-4 text-center text-sm text-muted">
+          <span aria-hidden>👆</span> Flick each wheel to spin it.
+        </p>
+      )}
 
       {stage === "landed" && (
         <Card className="mt-6 text-center">
@@ -251,30 +256,8 @@ export function SpinAndConnectGame() {
                 No valid answers for {letter} + {landedCatDef.label}.
                 {respinUsed
                   ? " That's okay — this one just won't have an answer this round."
-                  : " Pick a wheel to re-spin (one re-spin per round)."}
+                  : " Flick either wheel to re-spin it (one re-spin per round)."}
               </p>
-              {!respinUsed && (
-                <div className="mt-4 flex justify-center gap-3">
-                  <Button
-                    variant="sky"
-                    onClick={() => {
-                      setRespinUsed(true);
-                      spinWheels({ letter: true, category: false });
-                    }}
-                  >
-                    Re-spin letter
-                  </Button>
-                  <Button
-                    variant="mint"
-                    onClick={() => {
-                      setRespinUsed(true);
-                      spinWheels({ letter: false, category: true });
-                    }}
-                  >
-                    Re-spin category
-                  </Button>
-                </div>
-              )}
               {respinUsed && (
                 <Button className="mt-4" onClick={nextRoundOrFinish} disabled={saving}>
                   {roundIndex + 1 >= TOTAL_ROUNDS ? "See results" : "Skip to next round"}
