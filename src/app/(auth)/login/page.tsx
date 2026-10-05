@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/Button";
 import { Input, Label, FieldError } from "@/components/ui/Input";
+import { GENERIC_ERROR_MESSAGE, describeFetchError } from "@/lib/errorMessages";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,11 +26,11 @@ export default function LoginPage() {
         body: JSON.stringify({ identifier, password }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Something went wrong");
+      if (!res.ok) throw new Error(data.error ?? GENERIC_ERROR_MESSAGE);
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(describeFetchError(err));
     } finally {
       setLoading(false);
     }

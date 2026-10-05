@@ -119,7 +119,11 @@ export function ThreeThingsGame() {
       <p className="font-heading font-semibold text-heading">
         {format(new Date(selectedDate), "EEEE, MMMM d, yyyy")}
       </p>
-      <p className="mt-1 text-xs text-muted">Up to three small things. None of them are required.</p>
+      <p className="mt-1 text-xs text-muted">
+        {!loadingDay && slots.every((s) => s.trim() === "")
+          ? "Your little page is still empty. Maybe today is the day you write your first thing. ♡"
+          : "Up to three small things. None of them are required."}
+      </p>
       <div className="mt-4 space-y-3">
         {slots.map((text, i) => (
           <ThingInput

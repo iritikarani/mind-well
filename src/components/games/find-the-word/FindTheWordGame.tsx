@@ -241,8 +241,8 @@ export function FindTheWordGame({ playsRemaining }: { playsRemaining?: number })
           </p>
           <div className="flex justify-center">
             <div
-              className="grid select-none gap-[2px] rounded-2xl bg-white/60 p-2"
-              style={{ gridTemplateColumns: `repeat(${grid.size}, minmax(0, 1fr))`, width: 320 }}
+              className="grid w-full max-w-[320px] select-none gap-[2px] rounded-2xl bg-white/60 p-2"
+              style={{ gridTemplateColumns: `repeat(${grid.size}, minmax(0, 1fr))` }}
             >
               {grid.letters.map((rowLetters, row) =>
                 rowLetters.map((letter, col) => {

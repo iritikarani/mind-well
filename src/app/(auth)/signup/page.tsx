@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/Button";
 import { Input, Label, FieldError } from "@/components/ui/Input";
+import { GENERIC_ERROR_MESSAGE, describeFetchError } from "@/lib/errorMessages";
 
 type Step = "form" | "otp";
 
@@ -33,11 +34,11 @@ export default function SignupPage() {
         body: JSON.stringify({ email, name, username, password, confirmPassword }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Something went wrong");
+      if (!res.ok) throw new Error(data.error ?? GENERIC_ERROR_MESSAGE);
       setDevCode(data.devCode ?? null);
       setStep("otp");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(describeFetchError(err));
     } finally {
       setLoading(false);
     }
@@ -54,11 +55,11 @@ export default function SignupPage() {
         body: JSON.stringify({ email, code }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Something went wrong");
+      if (!res.ok) throw new Error(data.error ?? GENERIC_ERROR_MESSAGE);
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(describeFetchError(err));
     } finally {
       setLoading(false);
     }

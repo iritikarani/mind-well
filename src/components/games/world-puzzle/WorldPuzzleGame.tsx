@@ -5,7 +5,7 @@ import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/cn";
 import { monumentById, postcardNote, type MonumentDef } from "@/lib/worldPuzzleContent";
-import { MonumentArt, ART_SIZE } from "./MonumentArt";
+import { MonumentArt } from "./MonumentArt";
 
 const DEFAULT_GRID = 3;
 
@@ -158,8 +158,8 @@ export function WorldPuzzleGame() {
           No timer, no move count — just piece this together at your own pace.
         </p>
         <Card className="mt-6 flex flex-col items-center gap-4 p-6">
-          <div className="overflow-hidden rounded-2xl">
-            <MonumentArt def={monument} />
+          <div className="aspect-square w-full max-w-[300px] overflow-hidden rounded-2xl">
+            <MonumentArt def={monument} size="100%" />
           </div>
           <p className="text-sm text-muted">Take a moment to look, then start whenever you&apos;re ready.</p>
           <Button onClick={() => setStage("puzzle")}>Start puzzle</Button>
@@ -169,7 +169,6 @@ export function WorldPuzzleGame() {
   }
 
   const solved = stage === "solved";
-  const piece = ART_SIZE / gridSize;
 
   if (stage === "puzzle" || stage === "solved") {
     return (
@@ -187,8 +186,8 @@ export function WorldPuzzleGame() {
         </div>
 
         <div
-          className="mx-auto grid gap-1 rounded-2xl bg-white/60 p-2"
-          style={{ gridTemplateColumns: `repeat(${gridSize}, ${piece}px)`, width: "fit-content" }}
+          className="mx-auto grid w-full max-w-[300px] gap-1 rounded-2xl bg-white/60 p-2"
+          style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}
         >
           {slots.map((content, slotIndex) => (
             <button
@@ -196,20 +195,21 @@ export function WorldPuzzleGame() {
               onClick={() => !solved && handlePieceClick(slotIndex)}
               disabled={solved}
               className={cn(
-                "relative overflow-hidden rounded-md shadow-sm transition",
+                "relative aspect-square overflow-hidden rounded-md shadow-sm transition",
                 selected === slotIndex && "ring-4 ring-blush-strong",
                 hintedSlot === slotIndex && "ring-4 ring-sky",
               )}
-              style={{ width: piece, height: piece }}
             >
               <div
                 style={{
                   position: "absolute",
-                  top: -Math.floor(content / gridSize) * piece,
-                  left: -(content % gridSize) * piece,
+                  top: `${-Math.floor(content / gridSize) * 100}%`,
+                  left: `${-(content % gridSize) * 100}%`,
+                  width: `${gridSize * 100}%`,
+                  height: `${gridSize * 100}%`,
                 }}
               >
-                <MonumentArt def={monument} />
+                <MonumentArt def={monument} size="100%" />
               </div>
             </button>
           ))}

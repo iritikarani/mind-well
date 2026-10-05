@@ -23,7 +23,11 @@ export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElem
   );
 }
 
-export function FieldError({ children }: { children?: string | null }) {
+export function FieldError({ children, id }: { children?: string | null; id?: string }) {
   if (!children) return null;
-  return <p className="mt-1.5 text-xs font-medium text-rose-500">{children}</p>;
+  return (
+    <p id={id} role="alert" className="mt-1.5 text-xs font-medium text-rose-500">
+      {children}
+    </p>
+  );
 }
