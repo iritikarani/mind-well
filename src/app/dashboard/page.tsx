@@ -1,54 +1,17 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
-import { formatDateInZone, formatDateTimeInZone, startOfDayInZone } from "@/lib/date";
+import { formatDateInZone, startOfDayInZone } from "@/lib/date";
 import { getUserTimeZone } from "@/lib/timezone";
 import { getEffectiveStreak } from "@/lib/streak";
 import { prisma } from "@/lib/prisma";
 import { BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
-import { GAMES, gameMeta } from "@/lib/games";
-import { monumentById } from "@/lib/worldPuzzleContent";
+import { GAMES } from "@/lib/games";
 import { AppHeader } from "@/components/app/AppHeader";
 import { MoodCheckIn } from "@/components/app/MoodCheckIn";
 import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
 import { ShareBadgeButton } from "@/components/badges/ShareBadgeButton";
 import { colorByKey } from "@/lib/colorTheoryContent";
-
-function summarizePlay(game: string, resultJson: string): string {
-  try {
-    const result = JSON.parse(resultJson);
-    if (game === "ANIMAL_RUNNER") {
-      return result.survived
-        ? `Survived · ${result.heartsRemaining}/10 hearts left`
-        : "Game over";
-    }
-    if (game === "THREE_THINGS") {
-      return `${result.entriesCount} thing${result.entriesCount === 1 ? "" : "s"} saved`;
-    }
-    if (game === "COLOR_THEORY") {
-      const color = result.color?.charAt(0).toUpperCase() + result.color?.slice(1);
-      return `${color} · ${result.questionsAnswered}/${result.totalQuestions} answered`;
-    }
-    if (game === "WORLD_PUZZLE") {
-      const monument = monumentById(result.monumentId);
-      return monument ? `${monument.name}, ${monument.country}` : "Puzzle completed";
-    }
-    if (game === "SPIN_AND_CONNECT") {
-      return `${result.totalCorrect}/${result.totalPossible} correct across ${result.rounds?.length ?? 5} rounds`;
-    }
-    if (game === "FIND_THE_WORD") {
-      const words = (result.wordsFound ?? []).map((w: { word: string }) => w.word).join(", ");
-      return words ? `Found ${words}` : "3 words found";
-    }
-    if (game === "ANAGRAMS") {
-      const seconds = Math.round((result.totalTimeMs ?? 0) / 1000);
-      return `Solved all 3 levels in ${seconds}s${result.usedUncommonWord ? " · found an uncommon word" : ""}`;
-    }
-    return "Played";
-  } catch {
-    return "Played";
-  }
-}
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -59,17 +22,12 @@ export default async function DashboardPage() {
   const DAY_MS = 24 * 60 * 60 * 1000;
   const weekStart = new Date(dayStart.getTime() - 6 * DAY_MS);
 
-  const [streak, badges, plays, playsToday, journalCount, colorPlays, weekPlays] =
+  const [streak, badges, playsToday, journalCount, colorPlays, weekPlays] =
     await Promise.all([
       getEffectiveStreak(user.id),
       prisma.userBadge.findMany({
         where: { userId: user.id },
         orderBy: { earnedAt: "desc" },
-      }),
-      prisma.gamePlay.findMany({
-        where: { userId: user.id },
-        orderBy: { playedAt: "desc" },
-        take: 8,
       }),
       prisma.gamePlay.count({ where: { userId: user.id, playedAt: { gte: dayStart } } }),
       prisma.journalEntry.count({ where: { userId: user.id } }),
@@ -174,14 +132,14 @@ export default async function DashboardPage() {
             <p className="mt-1 text-sm text-muted">See your badge shelf →</p>
           </a>
           <a
-            href="#game-history"
+            href="#weekly-activity"
             className="pixel-panel pixel-pressable rounded-[22px] bg-surface p-6 text-left shadow-[0_4px_20px_rgba(91,71,137,0.1)] transition hover:-translate-y-0.5"
           >
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">
               Games played today
             </p>
             <p className="mt-2 font-heading text-3xl font-bold text-heading">{playsToday}</p>
-            <p className="mt-1 text-sm text-muted">See recent activity →</p>
+            <p className="mt-1 text-sm text-muted">See this week&apos;s activity →</p>
           </a>
           <a
             href="/games/color-theory/my-colors"
@@ -273,33 +231,6 @@ export default async function DashboardPage() {
                 );
               })}
             </div>
-          )}
-        </section>
-
-        <section id="game-history" className="mt-10 scroll-mt-24">
-          <h2 className="font-heading text-xl font-bold text-heading">Game history</h2>
-          {plays.length === 0 ? (
-            <Card className="mt-4">
-              <p className="text-sm text-muted">Your game history will show up here.</p>
-            </Card>
-          ) : (
-            <Card className="mt-4 divide-y divide-black/5 p-0">
-              {plays.map((play) => {
-                const meta = gameMeta(play.game);
-                return (
-                  <div key={play.id} className="flex items-center justify-between px-5 py-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl">{meta?.emoji}</span>
-                      <div>
-                        <p className="text-sm font-semibold text-heading">{meta?.label}</p>
-                        <p className="text-xs text-muted">{summarizePlay(play.game, play.result)}</p>
-                      </div>
-                    </div>
-                    <p className="text-xs text-muted">{formatDateTimeInZone(play.playedAt, timeZone)}</p>
-                  </div>
-                );
-              })}
-            </Card>
           )}
         </section>
       </main>
