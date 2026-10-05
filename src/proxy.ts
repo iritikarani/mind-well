@@ -22,7 +22,10 @@ export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const authed = await hasValidSession(req);
 
-  const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/games");
+  const isProtected =
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/games") ||
+    pathname.startsWith("/badges");
   const isAuthPage =
     pathname.startsWith("/login") ||
     pathname.startsWith("/signup") ||
@@ -44,5 +47,12 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/games/:path*", "/login", "/signup", "/forgot-password"],
+  matcher: [
+    "/dashboard/:path*",
+    "/games/:path*",
+    "/badges/:path*",
+    "/login",
+    "/signup",
+    "/forgot-password",
+  ],
 };
