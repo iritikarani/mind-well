@@ -7,6 +7,7 @@ import { cn } from "@/lib/cn";
 import { monumentById, postcardNote, type MonumentDef } from "@/lib/worldPuzzleContent";
 import { randomValidationMessage } from "@/lib/validationMessages";
 import { MonumentArt } from "./MonumentArt";
+import { SharePostcardButton } from "./SharePostcardButton";
 
 const DEFAULT_GRID = 3;
 
@@ -23,7 +24,7 @@ function shuffledSlots(cells: number): number[] {
   return slots;
 }
 
-export function WorldPuzzleGame() {
+export function WorldPuzzleGame({ userName }: { userName: string }) {
   const [stage, setStage] = useState<Stage>("loading");
   const [monument, setMonument] = useState<MonumentDef | null>(null);
   const [gridSize, setGridSize] = useState(DEFAULT_GRID);
@@ -257,13 +258,21 @@ export function WorldPuzzleGame() {
           </div>
         </div>
 
-        <Button
-          variant="outline"
-          className="mt-5"
-          onClick={() => setPostcardFlipped((v) => !v)}
-        >
-          {postcardFlipped ? "Flip back" : "Flip postcard"}
-        </Button>
+        <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <Button variant="outline" onClick={() => setPostcardFlipped((v) => !v)}>
+            {postcardFlipped ? "Flip back" : "Flip postcard"}
+          </Button>
+          {quote && note && (
+            <SharePostcardButton
+              imageUrl={monument.image}
+              name={monument.name}
+              country={monument.country}
+              note={note}
+              quote={quote}
+              userName={userName}
+            />
+          )}
+        </div>
 
         <p className="mt-5 font-heading text-sm font-semibold text-purple-text">
           {validationMessage} <span aria-hidden>♡</span>
