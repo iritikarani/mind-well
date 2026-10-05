@@ -5,7 +5,7 @@ import { getUserTimeZone } from "@/lib/timezone";
 import { getEffectiveStreak } from "@/lib/streak";
 import { prisma } from "@/lib/prisma";
 import { BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
-import { gameMeta } from "@/lib/games";
+import { GAMES, gameMeta } from "@/lib/games";
 import { monumentById } from "@/lib/worldPuzzleContent";
 import { AppHeader } from "@/components/app/AppHeader";
 import { MoodCheckIn } from "@/components/app/MoodCheckIn";
@@ -56,25 +56,50 @@ export default async function DashboardPage() {
 
   const timeZone = await getUserTimeZone();
   const dayStart = startOfDayInZone(timeZone);
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const weekStart = new Date(dayStart.getTime() - 6 * DAY_MS);
 
-  const [streak, badges, plays, playsToday, journalCount, colorPlays] = await Promise.all([
-    getEffectiveStreak(user.id),
-    prisma.userBadge.findMany({
-      where: { userId: user.id },
-      orderBy: { earnedAt: "desc" },
-    }),
-    prisma.gamePlay.findMany({
-      where: { userId: user.id },
-      orderBy: { playedAt: "desc" },
-      take: 8,
-    }),
-    prisma.gamePlay.count({ where: { userId: user.id, playedAt: { gte: dayStart } } }),
-    prisma.journalEntry.count({ where: { userId: user.id } }),
-    prisma.gamePlay.findMany({
-      where: { userId: user.id, game: "COLOR_THEORY" },
-      select: { result: true },
-    }),
-  ]);
+  const [streak, badges, plays, playsToday, journalCount, colorPlays, weekPlays] =
+    await Promise.all([
+      getEffectiveStreak(user.id),
+      prisma.userBadge.findMany({
+        where: { userId: user.id },
+        orderBy: { earnedAt: "desc" },
+      }),
+      prisma.gamePlay.findMany({
+        where: { userId: user.id },
+        orderBy: { playedAt: "desc" },
+        take: 8,
+      }),
+      prisma.gamePlay.count({ where: { userId: user.id, playedAt: { gte: dayStart } } }),
+      prisma.journalEntry.count({ where: { userId: user.id } }),
+      prisma.gamePlay.findMany({
+        where: { userId: user.id, game: "COLOR_THEORY" },
+        select: { result: true },
+      }),
+      prisma.gamePlay.findMany({
+        where: { userId: user.id, playedAt: { gte: weekStart } },
+        select: { playedAt: true },
+      }),
+    ]);
+
+  const weeklyActivity = Array.from({ length: 7 }, (_, i) => {
+    const dayDate = new Date(weekStart.getTime() + i * DAY_MS);
+    const nextDayDate = new Date(dayDate.getTime() + DAY_MS);
+    const count = weekPlays.filter(
+      (p) => p.playedAt >= dayDate && p.playedAt < nextDayDate,
+    ).length;
+    const label = new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone }).format(
+      dayDate,
+    );
+    return { label, count };
+  });
+  const maxWeeklyCount = Math.max(1, ...weeklyActivity.map((d) => d.count));
+
+  const QUICK_ACTION_KEYS = ["THREE_THINGS", "SPIN_AND_CONNECT", "FIND_THE_WORD", "ANAGRAMS"] as const;
+  const quickActions = QUICK_ACTION_KEYS.map((key) => GAMES.find((g) => g.key === key)).filter(
+    (g): g is NonNullable<typeof g> => !!g,
+  );
 
   const favoriteColor = (() => {
     const counts = new Map<string, number>();
@@ -109,8 +134,23 @@ export default async function DashboardPage() {
           <MoodCheckIn />
         </Card>
 
+        <div className="mt-6 flex gap-2 overflow-x-auto pb-1">
+          {quickActions.map((game) => (
+            <a
+              key={game.key}
+              href={game.href}
+              className="pixel-pressable flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-lavender px-4 py-2 text-sm font-semibold text-lavender-text hover:bg-lavender-strong"
+            >
+              <span aria-hidden>{game.emoji}</span> {game.label}
+            </a>
+          ))}
+        </div>
+
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <Card>
+          <a
+            href="#weekly-activity"
+            className="pixel-panel pixel-pressable rounded-[22px] bg-surface p-6 text-left shadow-[0_4px_20px_rgba(91,71,137,0.1)] transition hover:-translate-y-0.5"
+          >
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">
               Current streak
             </p>
@@ -122,7 +162,7 @@ export default async function DashboardPage() {
                 ? `Longest: ${streak.longestCount} day${streak.longestCount === 1 ? "" : "s"}`
                 : "Ready for another little moment for yourself? ♡"}
             </p>
-          </Card>
+          </a>
           <a
             href="/badges"
             className="pixel-panel pixel-pressable rounded-[22px] bg-surface p-6 shadow-[0_4px_20px_rgba(91,71,137,0.1)] transition hover:-translate-y-0.5"
@@ -133,14 +173,20 @@ export default async function DashboardPage() {
             <p className="mt-2 font-heading text-3xl font-bold text-heading">{badges.length}</p>
             <p className="mt-1 text-sm text-muted">See your badge shelf →</p>
           </a>
-          <Card>
+          <a
+            href="#game-history"
+            className="pixel-panel pixel-pressable rounded-[22px] bg-surface p-6 text-left shadow-[0_4px_20px_rgba(91,71,137,0.1)] transition hover:-translate-y-0.5"
+          >
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">
               Games played today
             </p>
             <p className="mt-2 font-heading text-3xl font-bold text-heading">{playsToday}</p>
-            <p className="mt-1 text-sm text-muted">Recent activity below</p>
-          </Card>
-          <Card>
+            <p className="mt-1 text-sm text-muted">See recent activity →</p>
+          </a>
+          <a
+            href="/games/color-theory/my-colors"
+            className="pixel-panel pixel-pressable rounded-[22px] bg-surface p-6 text-left shadow-[0_4px_20px_rgba(91,71,137,0.1)] transition hover:-translate-y-0.5"
+          >
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">
               Favorite color
             </p>
@@ -148,17 +194,49 @@ export default async function DashboardPage() {
               {favoriteColor ? favoriteColor.label : "—"}
             </p>
             <p className="mt-1 text-sm text-muted">
-              {favoriteColor ? "From Color Connection" : "Play Color Connection to find out"}
+              {favoriteColor ? "See My Colors →" : "Play Color Connection to find out"}
             </p>
-          </Card>
-          <Card>
+          </a>
+          <a
+            href="/games/three-things"
+            className="pixel-panel pixel-pressable rounded-[22px] bg-surface p-6 text-left shadow-[0_4px_20px_rgba(91,71,137,0.1)] transition hover:-translate-y-0.5"
+          >
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">
               Journal entries
             </p>
             <p className="mt-2 font-heading text-3xl font-bold text-heading">{journalCount}</p>
-            <p className="mt-1 text-sm text-muted">Little things, saved</p>
-          </Card>
+            <p className="mt-1 text-sm text-muted">Jot another thing →</p>
+          </a>
         </div>
+
+        <section id="weekly-activity" className="mt-10 scroll-mt-24">
+          <h2 className="font-heading text-xl font-bold text-heading">This week</h2>
+          <Card className="mt-4">
+            <div className="flex gap-2" style={{ height: 120 }}>
+              {weeklyActivity.map((day, i) => (
+                <div key={i} className="flex flex-1 items-end">
+                  <div
+                    className={day.count > 0 ? "w-full rounded-t-md bg-purple" : "w-full rounded-t-md bg-lavender/60"}
+                    style={{ height: `${Math.max(6, (day.count / maxWeeklyCount) * 100)}%` }}
+                    title={`${day.count} game${day.count === 1 ? "" : "s"}`}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="mt-2 flex gap-2">
+              {weeklyActivity.map((day, i) => (
+                <span key={i} className="flex-1 text-center text-[11px] font-semibold text-muted">
+                  {day.label}
+                </span>
+              ))}
+            </div>
+            <p className="mt-3 text-center text-xs text-muted">
+              {weekPlays.length === 0
+                ? "No games yet this week — no rush, come back whenever you'd like. ♡"
+                : `${weekPlays.length} game${weekPlays.length === 1 ? "" : "s"} played this week.`}
+            </p>
+          </Card>
+        </section>
 
         <section className="mt-10">
           <div className="flex items-center justify-between">
@@ -198,7 +276,7 @@ export default async function DashboardPage() {
           )}
         </section>
 
-        <section className="mt-10">
+        <section id="game-history" className="mt-10 scroll-mt-24">
           <h2 className="font-heading text-xl font-bold text-heading">Game history</h2>
           {plays.length === 0 ? (
             <Card className="mt-4">
