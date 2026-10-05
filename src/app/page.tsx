@@ -106,12 +106,6 @@ function CategoryCard({
             {g.label}
           </li>
         ))}
-        {category === "3 Things" && (
-          <li className="flex items-center gap-2 text-sm text-muted">
-            <span aria-hidden>🗓️</span>
-            Calendar
-          </li>
-        )}
       </ul>
     </a>
   );
