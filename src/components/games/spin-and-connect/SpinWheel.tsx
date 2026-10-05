@@ -76,12 +76,21 @@ export function SpinWheel({
     };
   }, []);
 
+  // onSettle closes over the parent's current stage/ready-state at the time
+  // it's created, and a spin can take several seconds — reading it through a
+  // ref (always kept current) instead of capturing it directly in `settle`
+  // means a finished spin calls whatever the latest handler actually is,
+  // not whichever one happened to exist when this component first mounted.
+  const onSettleRef = useRef(onSettle);
+  useEffect(() => {
+    onSettleRef.current = onSettle;
+  });
+
   const settle = useCallback(() => {
     const localAngleAtTop = ((-rotationRef.current % 360) + 360) % 360;
     const idx = Math.floor(localAngleAtTop / segAngle) % labels.length;
     setSpinning(false);
-    onSettle(idx);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    onSettleRef.current(idx);
   }, [segAngle, labels.length]);
 
   const runFriction = useCallback(
@@ -158,62 +167,72 @@ export function SpinWheel({
   }
 
   return (
-    <div className="relative select-none" style={{ width: size, height: size }}>
-      <div className="absolute left-1/2 z-10 -translate-x-1/2" style={{ top: -size * 0.07 }}>
-        <svg width={size * 0.14} height={size * 0.11} viewBox="0 0 24 20">
-          <polygon points="0,0 24,0 12,20" fill="#F6C445" stroke="#FFFDFB" strokeWidth={1} />
+    // `size` is only an upper bound and the coordinate space the geometry
+    // above is computed in — the box itself is fluid (w-full, capped by
+    // maxWidth, height matched via aspect-square) so it shrinks to fit a
+    // narrow mobile card instead of overflowing it at a fixed pixel size.
+    // The SVG scales visually to fill that box while keeping its viewBox,
+    // so every angle/point computed above still lines up; pointer math reads
+    // the actual on-screen rect, so dragging isn't affected by the scale.
+    <div className="mx-auto w-full select-none" style={{ maxWidth: size }}>
+      {/* relative (not the outer div) so this has a definite height via
+          aspect-square — a percentage `top` on the absolute triangle below
+          needs that, since an auto-height ancestor resolves percentages to 0. */}
+      <div className="relative aspect-square w-full">
+        <div className="absolute left-1/2 z-10 -translate-x-1/2" style={{ top: "-7%", width: "14%" }}>
+          <svg width="100%" viewBox="0 0 24 20">
+            <polygon points="0,0 24,0 12,20" fill="#F6C445" stroke="#FFFDFB" strokeWidth={1} />
+          </svg>
+        </div>
+
+        <svg
+          ref={svgRef}
+          viewBox={`0 0 ${size} ${size}`}
+          className={cn(
+            "h-full w-full rounded-full shadow-md touch-none",
+            disabled ? "cursor-default opacity-60" : spinning ? "cursor-default" : "cursor-grab active:cursor-grabbing",
+          )}
+          style={{ transform: `rotate(${rotation}deg)` }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+        >
+          {labels.map((label, i) => {
+            const start = i * segAngle;
+            const end = (i + 1) * segAngle;
+            const mid = start + segAngle / 2;
+            const [x1, y1] = point(cx, cy, start, r);
+            const [x2, y2] = point(cx, cy, end, r);
+            const [lx, ly] = point(cx, cy, mid, r * 0.6);
+            const fill = colors[i % 2];
+
+            return (
+              <g key={i}>
+                <path
+                  d={`M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} Z`}
+                  fill={fill}
+                  stroke="#FFFDFB"
+                  strokeWidth={1.5}
+                />
+                <text
+                  x={lx}
+                  y={ly}
+                  fontSize={fontSize}
+                  fontWeight={700}
+                  fill={textColor}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  transform={`rotate(${mid}, ${lx}, ${ly})`}
+                >
+                  {label}
+                </text>
+              </g>
+            );
+          })}
+          <circle cx={cx} cy={cy} r={size * 0.045} fill="#FFFDFB" stroke={textColor} strokeWidth={1.5} />
         </svg>
       </div>
-
-      <svg
-        ref={svgRef}
-        width={size}
-        height={size}
-        viewBox={`0 0 ${size} ${size}`}
-        className={cn(
-          "rounded-full shadow-md touch-none",
-          disabled ? "cursor-default opacity-60" : spinning ? "cursor-default" : "cursor-grab active:cursor-grabbing",
-        )}
-        style={{ transform: `rotate(${rotation}deg)` }}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-      >
-        {labels.map((label, i) => {
-          const start = i * segAngle;
-          const end = (i + 1) * segAngle;
-          const mid = start + segAngle / 2;
-          const [x1, y1] = point(cx, cy, start, r);
-          const [x2, y2] = point(cx, cy, end, r);
-          const [lx, ly] = point(cx, cy, mid, r * 0.6);
-          const fill = colors[i % 2];
-
-          return (
-            <g key={i}>
-              <path
-                d={`M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} Z`}
-                fill={fill}
-                stroke="#FFFDFB"
-                strokeWidth={1.5}
-              />
-              <text
-                x={lx}
-                y={ly}
-                fontSize={fontSize}
-                fontWeight={700}
-                fill={textColor}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                transform={`rotate(${mid}, ${lx}, ${ly})`}
-              >
-                {label}
-              </text>
-            </g>
-          );
-        })}
-        <circle cx={cx} cy={cy} r={size * 0.045} fill="#FFFDFB" stroke={textColor} strokeWidth={1.5} />
-      </svg>
     </div>
   );
 }
