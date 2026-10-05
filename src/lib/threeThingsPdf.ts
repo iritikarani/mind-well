@@ -5,19 +5,43 @@ export type MonthEntries = Record<string, { slot: number; text: string }[]>;
 type RGB = readonly [number, number, number];
 
 const COLORS = {
-  bgTop: [253, 238, 244] as RGB,
-  bgBottom: [243, 239, 251] as RGB,
-  surface: [255, 253, 251] as RGB,
-  blush: [255, 227, 238] as RGB,
-  blushStrong: [255, 199, 221] as RGB,
-  blushText: [122, 59, 87] as RGB,
+  bgTop: [243, 236, 252] as RGB,
+  bgBottom: [255, 246, 234] as RGB,
+  surface: [255, 253, 248] as RGB,
+  lavender: [230, 218, 248] as RGB,
+  purple: [123, 91, 199] as RGB,
+  purpleText: [74, 58, 115] as RGB,
+  blushStrong: [255, 171, 212] as RGB,
+  blushText: [138, 59, 99] as RGB,
   butterText: [138, 106, 43] as RGB,
-  mintText: [47, 107, 74] as RGB,
-  heading: [107, 91, 115] as RGB,
-  muted: [166, 154, 168] as RGB,
+  mintText: [47, 122, 76] as RGB,
+  heading: [91, 75, 115] as RGB,
+  muted: [125, 112, 144] as RGB,
 };
 
 const BULLET_COLORS: RGB[] = [COLORS.blushText, COLORS.butterText, COLORS.mintText];
+
+/** Tiny 7x7 pixel-heart, drawn as literal squares to match the site's
+ * handcrafted pixel-art motif instead of a vector glyph or emoji. */
+const PIXEL_HEART_GRID = [
+  ".##.##.",
+  "#######",
+  "#######",
+  "#######",
+  ".#####.",
+  "..###..",
+  "...#...",
+];
+
+function paintPixelHeart(doc: Doc, originX: number, originY: number, cell: number, color: RGB) {
+  doc.setFillColor(...color);
+  PIXEL_HEART_GRID.forEach((row, y) => {
+    [...row].forEach((ch, x) => {
+      if (ch !== "#") return;
+      doc.rect(originX + x * cell, originY + y * cell, cell, cell, "F");
+    });
+  });
+}
 
 const PAGE_W = 210;
 const PAGE_H = 297;
@@ -67,28 +91,30 @@ function paintFooter(doc: Doc) {
   doc.setFont("Nunito", "normal");
   doc.setFontSize(9);
   doc.setTextColor(...COLORS.muted);
-  doc.text("Mind Well — take your time, one small thing at a time", PAGE_W / 2, FOOTER_Y, {
+  doc.text("HAPPY SPACE ♡ — a small pixelated world for your mental health", PAGE_W / 2, FOOTER_Y, {
     align: "center",
   });
 }
 
 function paintHeader(doc: Doc, monthLabel: string): number {
   const top = 16;
-  const bannerH = 26;
+  const bannerH = 30;
 
-  doc.setFillColor(...COLORS.blush);
+  doc.setFillColor(...COLORS.lavender);
   doc.roundedRect(MARGIN, top, CONTENT_W, bannerH, 5, 5, "F");
 
+  paintPixelHeart(doc, MARGIN + CONTENT_W - 17, top + 7, 1.6, COLORS.purple);
+
   doc.setFont("Quicksand", "normal");
-  doc.setFontSize(22);
+  doc.setFontSize(20);
+  doc.setTextColor(...COLORS.purpleText);
+  doc.text("HAPPY SPACE ♡", MARGIN + 8, top + 12);
+
+  doc.setFontSize(13);
   doc.setTextColor(...COLORS.blushText);
-  doc.text("Three Things", MARGIN + 8, top + 13);
+  doc.text(`3 Things — ${monthLabel}`, MARGIN + 8, top + 21);
 
   doc.setFont("Nunito", "normal");
-  doc.setFontSize(11);
-  doc.setTextColor(...COLORS.blushText);
-  doc.text(monthLabel, MARGIN + 8, top + 21);
-
   doc.setFontSize(10);
   doc.setTextColor(...COLORS.muted);
   doc.text("A few small things, saved one day at a time.", MARGIN + 8, top + bannerH + 9);
