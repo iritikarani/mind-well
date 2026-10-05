@@ -23,6 +23,8 @@ const START_HEARTS = 10;
 const BASKET_MIN_X = 8;
 const BASKET_MAX_X = 88;
 const CATCH_RADIUS = 15;
+const REMARK_WIDTH_PX = 140;
+const REMARK_SAFE_MARGIN_PX = REMARK_WIDTH_PX / 2 + 8;
 const KEY_MOVE_PCT_PER_SEC = 34;
 const BUTTON_NUDGE_PCT = 12;
 
@@ -255,7 +257,15 @@ export function AnimalRunnerGame() {
       // spawn
       if (!remarkRef.current && elapsed >= nextSpawnAtRef.current) {
         const sentiment: Sentiment = Math.random() < 0.4 ? "positive" : "negative";
-        const x = 15 + Math.random() * 70;
+        // The bubble is a fixed 140px wide, but the track can be as narrow
+        // as ~270px on a small phone — a pure 15-85% range would push it
+        // half off-screen there. Convert the bubble's half-width into a
+        // percentage of the *actual* measured track width instead, so the
+        // margin grows on narrow screens and stays close to the original
+        // 15% on wide ones.
+        const trackWidth = trackRef.current?.getBoundingClientRect().width || 600;
+        const marginPct = Math.min(45, (REMARK_SAFE_MARGIN_PX / trackWidth) * 100);
+        const x = marginPct + Math.random() * (100 - marginPct * 2);
         const text = pickRemark(sentiment, usedRemarksRef.current);
         const next: FallingRemark = {
           id: Math.random(),
