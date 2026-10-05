@@ -8,9 +8,11 @@ import { BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
 import { GAMES, gameMeta } from "@/lib/games";
 import { monumentById } from "@/lib/worldPuzzleContent";
 import { AppHeader } from "@/components/app/AppHeader";
+import { MoodCheckIn } from "@/components/app/MoodCheckIn";
 import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
 import { LinkButton } from "@/components/ui/Button";
+import { colorByKey } from "@/lib/colorTheoryContent";
 
 function summarizePlay(game: string, resultJson: string): string {
   try {
@@ -55,7 +57,7 @@ export default async function DashboardPage() {
   const timeZone = await getUserTimeZone();
   const dayStart = startOfDayInZone(timeZone);
 
-  const [streak, badges, plays, playsToday] = await Promise.all([
+  const [streak, badges, plays, playsToday, journalCount, colorPlays] = await Promise.all([
     getEffectiveStreak(user.id),
     prisma.userBadge.findMany({
       where: { userId: user.id },
@@ -67,18 +69,47 @@ export default async function DashboardPage() {
       take: 8,
     }),
     prisma.gamePlay.count({ where: { userId: user.id, playedAt: { gte: dayStart } } }),
+    prisma.journalEntry.count({ where: { userId: user.id } }),
+    prisma.gamePlay.findMany({
+      where: { userId: user.id, game: "COLOR_THEORY" },
+      select: { result: true },
+    }),
   ]);
+
+  const favoriteColor = (() => {
+    const counts = new Map<string, number>();
+    for (const play of colorPlays) {
+      try {
+        const { color } = JSON.parse(play.result) as { color?: string };
+        if (color) counts.set(color, (counts.get(color) ?? 0) + 1);
+      } catch {
+        // ignore malformed rows
+      }
+    }
+    let best: string | null = null;
+    let bestCount = 0;
+    for (const [color, count] of counts) {
+      if (count > bestCount) {
+        best = color;
+        bestCount = count;
+      }
+    }
+    return best ? colorByKey(best) : null;
+  })();
 
   return (
     <>
       <AppHeader name={user.name} streak={streak.currentCount} />
       <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-16 sm:px-10">
         <h1 className="font-heading text-3xl font-bold text-heading">
-          Welcome back, {user.name.split(" ")[0]}
+          Hi, {user.name.split(" ")[0]} <span aria-hidden>♡</span>
         </h1>
-        <p className="mt-1 text-muted">Take a breath. What would you like to do today?</p>
 
-        <div className="mt-8 grid gap-6 sm:grid-cols-3">
+        <Card className="mt-6">
+          <MoodCheckIn />
+        </Card>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <Card>
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">
               Current streak
@@ -87,7 +118,9 @@ export default async function DashboardPage() {
               {streak.currentCount} 🔥
             </p>
             <p className="mt-1 text-sm text-muted">
-              Longest: {streak.longestCount} day{streak.longestCount === 1 ? "" : "s"}
+              {streak.currentCount > 0
+                ? `Longest: ${streak.longestCount} day${streak.longestCount === 1 ? "" : "s"}`
+                : "Ready for another little moment for yourself? ♡"}
             </p>
           </Card>
           <Card>
@@ -104,6 +137,24 @@ export default async function DashboardPage() {
             <p className="mt-2 font-heading text-3xl font-bold text-heading">{playsToday}</p>
             <p className="mt-1 text-sm text-muted">Recent activity below</p>
           </Card>
+          <Card>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+              Favorite color
+            </p>
+            <p className="mt-2 font-heading text-3xl font-bold text-heading">
+              {favoriteColor ? favoriteColor.label : "—"}
+            </p>
+            <p className="mt-1 text-sm text-muted">
+              {favoriteColor ? "From Color Connection" : "Play Color Connection to find out"}
+            </p>
+          </Card>
+          <Card>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+              Journal entries
+            </p>
+            <p className="mt-2 font-heading text-3xl font-bold text-heading">{journalCount}</p>
+            <p className="mt-1 text-sm text-muted">Little things, saved</p>
+          </Card>
         </div>
 
         <section className="mt-10">
@@ -118,7 +169,7 @@ export default async function DashboardPage() {
               <a
                 key={game.key}
                 href={game.href}
-                className="rounded-[20px] bg-surface p-5 shadow-[0_4px_20px_rgba(122,59,87,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(122,59,87,0.12)]"
+                className="pixel-panel pixel-pressable rounded-[20px] bg-surface p-5 shadow-[0_4px_20px_rgba(91,71,137,0.1)] transition hover:-translate-y-0.5"
               >
                 <div className="text-3xl">{game.emoji}</div>
                 <p className="mt-2 font-heading font-semibold text-heading">{game.label}</p>
@@ -134,7 +185,7 @@ export default async function DashboardPage() {
           {badges.length === 0 ? (
             <Card className="mt-4">
               <p className="text-sm text-muted">
-                No badges yet — play a game to start earning them.
+                Your badge shelf is waiting for its first little achievement. ✨
               </p>
             </Card>
           ) : (

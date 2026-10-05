@@ -106,6 +106,12 @@ export const spinAndConnectPlaySchema = z.object({
     .min(5),
 });
 
+export const MOODS = ["Happy", "Okay", "Calm", "Neutral", "Low", "Upset", "Tired", "Unsure"] as const;
+
+export const moodSchema = z.object({
+  mood: z.enum(MOODS),
+});
+
 export const resetPasswordSchema = z
   .object({
     resetToken: z.string().trim().min(1),

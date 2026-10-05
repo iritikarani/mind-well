@@ -21,6 +21,7 @@ model User {
   gamePlays     GamePlay[]
   userBadges    UserBadge[]
   journalEntries JournalEntry[]
+  moodEntries   MoodEntry[]
   streak        Streak?
 }
 
@@ -105,4 +106,16 @@ model JournalEntry {
 
   @@unique([userId, date, slot])
   @@index([userId, date])
+}
+
+model MoodEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      String // YYYY-MM-DD, in the user's local calendar day
+  mood      String // Happy | Okay | Calm | Neutral | Low | Upset | Tired | Unsure
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
 }
