@@ -53,19 +53,19 @@ export function SpinAndConnectGame() {
   const [rounds, setRounds] = useState<RoundSummary[]>([]);
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
-  const [respinUsed, setRespinUsed] = useState(false);
 
   const tierInfo = tierFor(category, letter);
 
   // Once the player has flicked both wheels at least once this round, move
-  // from "waiting for flicks" to showing what they landed on.
+  // from "waiting for flicks" to showing what they landed on. After that,
+  // either wheel can still be flicked again as many times as the player
+  // wants — landing just updates that wheel's value and re-evaluates the
+  // combo, with no cap on re-spins.
   function handleLetterSettle(idx: number) {
     setLetter(LETTERS[idx]);
     if (stage === "spinning") {
       setLetterReady(true);
       if (categoryReady) setStage("landed");
-    } else if (stage === "landed" && tierInfo.tier === "none" && !respinUsed) {
-      setRespinUsed(true);
     }
   }
 
@@ -74,22 +74,15 @@ export function SpinAndConnectGame() {
     if (stage === "spinning") {
       setCategoryReady(true);
       if (letterReady) setStage("landed");
-    } else if (stage === "landed" && tierInfo.tier === "none" && !respinUsed) {
-      setRespinUsed(true);
     }
   }
 
   const wheelsDisabled =
-    stage === "answering" ||
-    stage === "checking" ||
-    stage === "round-result" ||
-    stage === "closing" ||
-    (stage === "landed" && (tierInfo.tier !== "none" || respinUsed));
+    stage === "answering" || stage === "checking" || stage === "round-result" || stage === "closing";
 
   function resetWheelsForNewRound() {
     setLetterReady(false);
     setCategoryReady(false);
-    setRespinUsed(false);
     setStage("spinning");
   }
 
@@ -219,7 +212,7 @@ export function SpinAndConnectGame() {
         </Pill>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-8">
         <Card className="flex flex-col items-center gap-3 py-6">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted">Letter</p>
           <SpinWheel
@@ -253,16 +246,12 @@ export function SpinAndConnectGame() {
           {tierInfo.tier === "none" ? (
             <>
               <p className="font-semibold text-heading">
-                No valid answers for {letter} + {landedCatDef.label}.
-                {respinUsed
-                  ? " That's okay — this one just won't have an answer this round."
-                  : " Flick either wheel to re-spin it (one re-spin per round)."}
+                No valid answers for {letter} + {landedCatDef.label}. Flick either wheel for a new
+                combo — spin as many times as you like.
               </p>
-              {respinUsed && (
-                <Button className="mt-4" onClick={nextRoundOrFinish} disabled={saving}>
-                  {roundIndex + 1 >= TOTAL_ROUNDS ? "See results" : "Skip to next round"}
-                </Button>
-              )}
+              <Button className="mt-4" variant="soft" onClick={nextRoundOrFinish} disabled={saving}>
+                {roundIndex + 1 >= TOTAL_ROUNDS ? "See results" : "Skip to next round"}
+              </Button>
             </>
           ) : (
             <>
@@ -278,6 +267,9 @@ export function SpinAndConnectGame() {
               <Button className="mt-4" onClick={startRound}>
                 Start round
               </Button>
+              <p className="mt-3 text-xs text-muted">
+                Not feeling this combo? Flick either wheel again for a new one.
+              </p>
             </>
           )}
         </Card>
@@ -303,6 +295,9 @@ export function SpinAndConnectGame() {
               />
             ))}
           </div>
+          <p className="mt-2 text-xs text-muted">
+            Tip: type your answer as one word with no spaces (e.g. &quot;bajiraomastani&quot;).
+          </p>
           <div className="mt-4 flex items-center justify-between">
             <button
               onClick={useHint}

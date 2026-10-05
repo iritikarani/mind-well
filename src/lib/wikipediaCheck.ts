@@ -18,12 +18,12 @@ const CATEGORY_SEARCH_TERMS: Record<CategoryKey, string> = {
   birds: "bird",
   countries: "country",
   sports: "sport",
-  movies: "film",
-  jobs: "occupation",
-  school_subjects: "academic subject",
-  emotions: "emotion",
-  clothing: "clothing",
   household: "household item",
+  // Unused by checkAnswerAgainstWikipedia — the bollywood category is
+  // validated separately by checkBollywoodHit below, which needs a
+  // release-year check this generic path doesn't do. Kept here only to
+  // satisfy this Record's exhaustiveness.
+  bollywood: "Hindi film",
 };
 
 /**
@@ -42,11 +42,6 @@ const CATEGORY_DISAMBIGUATORS: Partial<Record<CategoryKey, string[]>> = {
   animals: ["animal"],
   birds: ["bird"],
   sports: ["sport"],
-  movies: ["film"],
-  jobs: ["profession", "occupation"],
-  school_subjects: ["academic discipline", "subject"],
-  emotions: ["emotion"],
-  clothing: ["clothing"],
 };
 
 // Required by the Wikimedia API etiquette (identifies the app instead of
@@ -163,6 +158,100 @@ export async function checkAnswerAgainstWikipedia(
     // lenient rather than risk penalizing the player for our own hiccup.
     if (!valid && sawNetworkError) return { valid: false, checked: false };
     return { valid, checked: true };
+  } catch {
+    return { valid: false, checked: false };
+  }
+}
+
+const YEAR_CATEGORY_PATTERN = /^Category:(\d{4}) Hindi-language films$/;
+
+type CategoriesLookup =
+  | { kind: "found"; categories: string[] }
+  // A real "no such page" — must NOT be treated as a network error, or a
+  // fabricated/misspelled title would get the same "couldn't verify,
+  // benefit of the doubt" leniency as an actual outage and be marked
+  // correct. Confirmed this distinction matters by testing a genuinely
+  // nonexistent title before adding it.
+  | { kind: "not_found" }
+  | { kind: "error" };
+
+async function fetchCategories(title: string): Promise<CategoriesLookup> {
+  try {
+    const res = await fetch(
+      `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=categories&cllimit=50&format=json`,
+      { headers: { "User-Agent": USER_AGENT }, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) },
+    );
+    if (!res.ok) return { kind: "error" };
+    const data = await res.json();
+    const pages = data?.query?.pages ?? {};
+    const page = Object.values(pages)[0] as { missing?: unknown; categories?: { title: string }[] } | undefined;
+    if (!page || page.missing !== undefined) return { kind: "not_found" };
+    return { kind: "found", categories: (page.categories ?? []).map((c) => c.title) };
+  } catch {
+    return { kind: "error" };
+  }
+}
+
+function hindiFilmYear(categories: string[]): number | null {
+  for (const cat of categories) {
+    const m = cat.match(YEAR_CATEGORY_PATTERN);
+    if (m) return Number(m[1]);
+  }
+  return null;
+}
+
+/** Validates a Spin & Connect "Bollywood Hits (2000-2025)" answer directly
+ * off Wikipedia's own film categories, rather than a keyword search: every
+ * Hindi film's article is tagged with a "<year> Hindi-language films"
+ * category, so checking for that (with the year in range) confirms both
+ * "is this a Bollywood film" and "is it from 2000-2025" in one shot — no
+ * curated year/language data of our own to maintain. */
+export async function checkBollywoodHit(answer: string): Promise<WikipediaCheckResult> {
+  const trimmed = answer.trim();
+  if (!trimmed) return { valid: false, checked: true };
+
+  let sawNetworkError = false;
+
+  // A plain title, or the "(film)" disambiguator Wikipedia commonly uses
+  // for a movie whose name collides with something else, catches most
+  // answers directly without needing a search round-trip.
+  for (const candidate of [trimmed, `${trimmed} (film)`]) {
+    const lookup = await fetchCategories(candidate);
+    if (lookup.kind === "error") {
+      sawNetworkError = true;
+      continue;
+    }
+    if (lookup.kind === "not_found") continue;
+    const year = hindiFilmYear(lookup.categories);
+    if (year !== null && year >= 2000 && year <= 2025) return { valid: true, checked: true };
+  }
+
+  // Less common titles are often disambiguated by year instead (e.g. "Don
+  // (2006 film)") — a search for the title plus "Hindi film" surfaces the
+  // right page so its categories can be checked the same way.
+  try {
+    const res = await fetch(
+      `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(`${trimmed} Hindi film`)}&format=json&srlimit=5`,
+      { headers: { "User-Agent": USER_AGENT }, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) },
+    );
+    if (!res.ok) return sawNetworkError ? { valid: false, checked: false } : { valid: false, checked: true };
+
+    const data = await res.json();
+    const results: { title: string }[] = data?.query?.search ?? [];
+    for (const r of results) {
+      if (!titleMatchesAnswer(trimmed, r.title)) continue;
+      const lookup = await fetchCategories(r.title);
+      if (lookup.kind === "error") {
+        sawNetworkError = true;
+        continue;
+      }
+      if (lookup.kind === "not_found") continue;
+      const year = hindiFilmYear(lookup.categories);
+      if (year !== null && year >= 2000 && year <= 2025) return { valid: true, checked: true };
+    }
+
+    if (sawNetworkError) return { valid: false, checked: false };
+    return { valid: false, checked: true };
   } catch {
     return { valid: false, checked: false };
   }

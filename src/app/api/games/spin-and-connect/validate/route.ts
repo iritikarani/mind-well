@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { errorResponse, zodErrorResponse } from "@/lib/api-response";
 import { CATEGORIES, isValidAnswer, type CategoryKey } from "@/lib/spinConnectContent";
-import { checkAnswerAgainstWikipedia } from "@/lib/wikipediaCheck";
+import { checkAnswerAgainstWikipedia, checkBollywoodHit } from "@/lib/wikipediaCheck";
 
 export const maxDuration = 30;
 
@@ -36,7 +36,10 @@ export async function POST(req: NextRequest) {
       // it doesn't recognize.
       if (isValidAnswer(category, letter, trimmed)) return true;
 
-      const check = await checkAnswerAgainstWikipedia(trimmed, category);
+      const check =
+        category === "bollywood"
+          ? await checkBollywoodHit(trimmed)
+          : await checkAnswerAgainstWikipedia(trimmed, category);
       // Couldn't reach/parse Wikipedia at all (including being rate-limited)
       // — give the player the benefit of the doubt rather than marking a
       // possibly-correct answer wrong for a reason outside their control.
