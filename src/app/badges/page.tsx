@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/Card";
 import { BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
 import { gameMeta } from "@/lib/games";
 import { cn } from "@/lib/cn";
+import { ShareBadgeButton } from "@/components/badges/ShareBadgeButton";
 
 export default async function BadgesPage() {
   const user = await getCurrentUser();
@@ -98,6 +99,14 @@ export default async function BadgesPage() {
                     <p className="mt-2 text-[11px] text-muted">
                       {earnedAt ? `Earned ${formatDateInZone(earnedAt, timeZone)}` : "Not yet earned"}
                     </p>
+                    {earnedAt && (
+                      <ShareBadgeButton
+                        label={meta.label}
+                        description={meta.description}
+                        userName={user.name}
+                        dateLabel={formatDateInZone(earnedAt, timeZone)}
+                      />
+                    )}
                   </Card>
                 );
               })}

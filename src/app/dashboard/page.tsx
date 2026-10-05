@@ -11,6 +11,7 @@ import { AppHeader } from "@/components/app/AppHeader";
 import { MoodCheckIn } from "@/components/app/MoodCheckIn";
 import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
+import { ShareBadgeButton } from "@/components/badges/ShareBadgeButton";
 import { colorByKey } from "@/lib/colorTheoryContent";
 
 function summarizePlay(game: string, resultJson: string): string {
@@ -184,6 +185,12 @@ export default async function DashboardPage() {
                     <p className="mt-2 text-[11px] text-muted">
                       Earned {formatDateInZone(b.earnedAt, timeZone)}
                     </p>
+                    <ShareBadgeButton
+                      label={meta.label}
+                      description={meta.description}
+                      userName={user.name}
+                      dateLabel={formatDateInZone(b.earnedAt, timeZone)}
+                    />
                   </Card>
                 );
               })}
