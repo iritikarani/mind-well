@@ -80,9 +80,13 @@ export function drawColorBadge(canvas: HTMLCanvasElement, opts: BadgeOptions) {
   ctx.fillStyle = "#7D7090";
   ctx.fillText("Color Connection · Happy Space ♡", centerX, cardY + 215);
 
+  ctx.font = "16px sans-serif";
+  ctx.fillStyle = "rgba(93,75,115,0.65)";
+  ctx.fillText(window.location.host, centerX, cardY + 242);
+
   // Color swatch circle.
   ctx.beginPath();
-  ctx.arc(centerX, cardY + 300, 56, 0, Math.PI * 2);
+  ctx.arc(centerX, cardY + 320, 56, 0, Math.PI * 2);
   ctx.fillStyle = opts.colorHex;
   ctx.fill();
   ctx.lineWidth = 4;
@@ -93,7 +97,7 @@ export function drawColorBadge(canvas: HTMLCanvasElement, opts: BadgeOptions) {
   ctx.font = "italic 24px Georgia, serif";
   ctx.fillStyle = "#5B4B73";
   const quoteLines = wrapText(ctx, `"${opts.quote}"`, cardW - 120);
-  let qy = cardY + 420;
+  let qy = cardY + 440;
   for (const line of quoteLines) {
     ctx.fillText(line, centerX, qy);
     qy += 32;

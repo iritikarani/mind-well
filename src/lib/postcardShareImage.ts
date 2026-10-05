@@ -16,6 +16,17 @@ interface PostcardShareOptions {
   dateLabel: string;
 }
 
+/** The domain to print on the card and the full link to attach to the
+ * share — read from the page itself (not hardcoded) so it's always right
+ * even on a preview deployment or a future custom domain. */
+function siteLabel(): string {
+  return window.location.host;
+}
+
+function siteUrl(): string {
+  return window.location.origin;
+}
+
 function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
   const words = text.split(" ");
   const lines: string[] = [];
@@ -133,6 +144,10 @@ async function drawPostcard(canvas: HTMLCanvasElement, opts: PostcardShareOption
   ctx.fillStyle = "#5B4B73";
   ctx.fillText("Happy Space ♡", rightColX, 100);
 
+  ctx.font = "16px sans-serif";
+  ctx.fillStyle = "#9A8FB0";
+  ctx.fillText(siteLabel(), rightColX, 126);
+
   ctx.font = "bold 22px sans-serif";
   ctx.fillText(opts.userName, rightColX, height - 110);
   ctx.font = "16px sans-serif";
@@ -178,7 +193,11 @@ export async function shareOrDownloadPostcard(opts: PostcardShareOptions): Promi
       await navigator.share({
         files: [file],
         title: `${opts.name} — Happy Space ♡`,
-        text: `A postcard from ${opts.name}, ${opts.country} — collected on Happy Space ♡`,
+        // The link is appended to `text` too, not just passed as `url` —
+        // several share targets (WhatsApp included) drop `url` entirely
+        // once a file is attached and only surface `text`.
+        text: `A postcard from ${opts.name}, ${opts.country} — collected on Happy Space ♡\n${siteUrl()}`,
+        url: siteUrl(),
       });
       return;
     } catch (err) {

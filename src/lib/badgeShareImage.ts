@@ -12,6 +12,17 @@ interface AchievementBadgeOptions {
   dateLabel: string;
 }
 
+/** The domain to print on the card and the full link to attach to the
+ * share — read from the page itself (not hardcoded) so it's always right
+ * even on a preview deployment or a future custom domain. */
+function siteLabel(): string {
+  return window.location.host;
+}
+
+function siteUrl(): string {
+  return window.location.origin;
+}
+
 function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
   const words = text.split(" ");
   const lines: string[] = [];
@@ -75,10 +86,14 @@ function drawAchievementBadge(canvas: HTMLCanvasElement, opts: AchievementBadgeO
   ctx.fillStyle = "#7D7090";
   ctx.fillText("Happy Space ♡", centerX, ty + 16);
 
+  ctx.font = "16px sans-serif";
+  ctx.fillStyle = "#9A8FB0";
+  ctx.fillText(siteLabel(), centerX, ty + 42);
+
   ctx.font = "italic 24px Georgia, serif";
   ctx.fillStyle = "#5B4B73";
   const descLines = wrapText(ctx, opts.description, cardW - 140);
-  let qy = ty + 90;
+  let qy = ty + 110;
   for (const line of descLines) {
     ctx.fillText(line, centerX, qy);
     qy += 32;
@@ -132,7 +147,11 @@ export async function shareOrDownloadBadge(opts: AchievementBadgeOptions): Promi
       await navigator.share({
         files: [file],
         title: `${opts.label} — Happy Space ♡`,
-        text: `I earned the "${opts.label}" badge on Happy Space ♡`,
+        // The link is appended to `text` too, not just passed as `url` —
+        // several share targets (WhatsApp included) drop `url` entirely
+        // once a file is attached and only surface `text`.
+        text: `I earned the "${opts.label}" badge on Happy Space ♡\n${siteUrl()}`,
+        url: siteUrl(),
       });
       return;
     } catch (err) {
