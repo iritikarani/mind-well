@@ -13,18 +13,22 @@ import {
 } from "@/lib/animalRunnerContent";
 
 const GAME_DURATION_MS = 120_000;
-const FALL_DURATION_MS = 6000;
-const CATCH_LINE_PCT = 82; // how far down the track the basket sits
-const SPAWN_MIN_GAP_MS = 300;
-const SPAWN_MAX_GAP_MS = 700;
 const START_HEARTS = 10;
-const BASKET_MIN_X = 8;
-const BASKET_MAX_X = 88;
-const CATCH_RADIUS = 15;
-const KEY_MOVE_PCT_PER_SEC = 34;
-const BUTTON_NUDGE_PCT = 12;
+const PLAYER_X = 18; // fixed horizontal position of the runner, percent from left
+const OBSTACLE_SPAWN_X = 112; // starts off-screen right
+const OBSTACLE_TRAVEL_MS = 2200; // time for an obstacle to reach the player
+const OBSTACLE_TAIL_MS = 350; // extra travel after a collision, so it visibly passes through
+const SPAWN_MIN_GAP_MS = 650;
+const SPAWN_MAX_GAP_MS = 1300;
+const JUMP_MS = 520;
+const DUCK_TAP_MS = 550;
+const SWIPE_DOWN_THRESHOLD = 30;
+const TAP_MAX_MS = 400;
+const TAP_MAX_DRIFT = 20;
 
 type Sentiment = "positive" | "negative";
+type ObstacleKind = "low" | "high";
+type Pose = "idle" | "jump" | "duck";
 
 const BUBBLE_COLORS = [
   "bg-blush/90 text-blush-text",
@@ -34,25 +38,25 @@ const BUBBLE_COLORS = [
   "bg-peach/90 text-blush-text",
 ] as const;
 
-interface FallingRemark {
+interface Obstacle {
   id: number;
   spawnedAt: number;
-  x: number;
+  kind: ObstacleKind;
   sentiment: Sentiment;
   remark: string;
   resolved: boolean;
-  caught: boolean;
+  avoided: boolean;
   colorClass: string;
 }
 
 type Stage = "select" | "countdown" | "playing" | "result";
 
 const ENVIRONMENTS = [
-  { name: "meadow", sky: "from-sky/60 to-mint/40" },
-  { name: "forest", sky: "from-mint/60 to-lavender/40" },
-  { name: "beach", sky: "from-sky/70 to-butter/40" },
-  { name: "night sky", sky: "from-lavender/70 to-blush/30" },
-  { name: "garden", sky: "from-blush/50 to-mint/40" },
+  { name: "meadow", sky: "from-sky/60 to-mint/40", ground: "bg-mint-text/40" },
+  { name: "forest", sky: "from-mint/60 to-lavender/40", ground: "bg-mint-text/40" },
+  { name: "beach", sky: "from-sky/70 to-butter/40", ground: "bg-butter-text/30" },
+  { name: "night sky", sky: "from-lavender/70 to-blush/30", ground: "bg-lavender-text/30" },
+  { name: "garden", sky: "from-blush/50 to-mint/40", ground: "bg-blush-text/30" },
 ] as const;
 
 function pickRemark(sentiment: Sentiment, used: Set<string>) {
@@ -64,19 +68,15 @@ function pickRemark(sentiment: Sentiment, used: Set<string>) {
   return pick;
 }
 
-function clampBasketX(x: number) {
-  return Math.min(BASKET_MAX_X, Math.max(BASKET_MIN_X, x));
-}
-
 export function AnimalRunnerGame() {
   const [stage, setStage] = useState<Stage>("select");
   const [animal, setAnimal] = useState<AnimalKey>("fox");
   const [environment, setEnvironment] = useState<(typeof ENVIRONMENTS)[number]>(ENVIRONMENTS[0]);
   const [hearts, setHearts] = useState(START_HEARTS);
   const [timeLeftMs, setTimeLeftMs] = useState(GAME_DURATION_MS);
-  const [basketX, setBasketX] = useState(50);
-  const [remark, setRemark] = useState<FallingRemark | null>(null);
-  const [remarkY, setRemarkY] = useState(0);
+  const [pose, setPose] = useState<Pose>("idle");
+  const [obstacle, setObstacle] = useState<Obstacle | null>(null);
+  const [obstacleX, setObstacleX] = useState(OBSTACLE_SPAWN_X);
   const [flash, setFlash] = useState<"good" | "bad" | null>(null);
   const [countdown, setCountdown] = useState(3);
   const [saving, setSaving] = useState(false);
@@ -88,18 +88,20 @@ export function AnimalRunnerGame() {
     negativeDodged: 0,
   });
 
-  const basketXRef = useRef(50);
+  const stageRef = useRef<Stage>("select");
   const heartsRef = useRef(START_HEARTS);
-  const remarkRef = useRef<FallingRemark | null>(null);
+  const poseRef = useRef<Pose>("idle");
+  const obstacleRef = useRef<Obstacle | null>(null);
   const nextSpawnAtRef = useRef(0);
   const startedAtRef = useRef(0);
-  const lastFrameAtRef = useRef(0);
   const usedRemarksRef = useRef<Set<string>>(new Set());
   const rafRef = useRef<number | null>(null);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const jumpTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const duckTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const duckHeldRef = useRef(false);
   const endedRef = useRef(false);
-  const keysRef = useRef<{ left: boolean; right: boolean }>({ left: false, right: false });
-  const trackRef = useRef<HTMLDivElement | null>(null);
+  const touchStartRef = useRef<{ x: number; y: number; t: number } | null>(null);
 
   const statsRef = useRef({
     positiveAbsorbed: 0,
@@ -108,10 +110,13 @@ export function AnimalRunnerGame() {
     negativeDodged: 0,
   });
 
-  const setBasketXBoth = useCallback((x: number) => {
-    const clamped = clampBasketX(x);
-    basketXRef.current = clamped;
-    setBasketX(clamped);
+  useEffect(() => {
+    stageRef.current = stage;
+  }, [stage]);
+
+  const setPoseBoth = useCallback((p: Pose) => {
+    poseRef.current = p;
+    setPose(p);
   }, []);
 
   const showFlash = useCallback((kind: "good" | "bad") => {
@@ -120,30 +125,43 @@ export function AnimalRunnerGame() {
     flashTimeoutRef.current = setTimeout(() => setFlash(null), 400);
   }, []);
 
-  const handlePointerMove = useCallback(
-    (e: PointerEvent<HTMLDivElement>) => {
-      if (stage !== "playing") return;
-      const rect = trackRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const pct = ((e.clientX - rect.left) / rect.width) * 100;
-      setBasketXBoth(pct);
-    },
-    [stage, setBasketXBoth],
-  );
+  const doJump = useCallback(() => {
+    if (stageRef.current !== "playing" || poseRef.current !== "idle") return;
+    setPoseBoth("jump");
+    if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
+    jumpTimeoutRef.current = setTimeout(() => {
+      if (poseRef.current === "jump") setPoseBoth("idle");
+    }, JUMP_MS);
+  }, [setPoseBoth]);
+
+  const doDuckTap = useCallback(() => {
+    if (stageRef.current !== "playing" || poseRef.current !== "idle") return;
+    setPoseBoth("duck");
+    if (duckTimeoutRef.current) clearTimeout(duckTimeoutRef.current);
+    duckTimeoutRef.current = setTimeout(() => {
+      if (poseRef.current === "duck" && !duckHeldRef.current) setPoseBoth("idle");
+    }, DUCK_TAP_MS);
+  }, [setPoseBoth]);
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (e.code === "ArrowLeft") {
+      if (stageRef.current !== "playing") return;
+      if (e.code === "Space" || e.code === "ArrowUp") {
         e.preventDefault();
-        keysRef.current.left = true;
-      } else if (e.code === "ArrowRight") {
+        doJump();
+      } else if (e.code === "ArrowDown") {
         e.preventDefault();
-        keysRef.current.right = true;
+        if (!duckHeldRef.current) {
+          duckHeldRef.current = true;
+          if (poseRef.current === "idle") setPoseBoth("duck");
+        }
       }
     }
     function onKeyUp(e: KeyboardEvent) {
-      if (e.code === "ArrowLeft") keysRef.current.left = false;
-      else if (e.code === "ArrowRight") keysRef.current.right = false;
+      if (e.code === "ArrowDown") {
+        duckHeldRef.current = false;
+        if (stageRef.current === "playing" && poseRef.current === "duck") setPoseBoth("idle");
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
@@ -151,14 +169,28 @@ export function AnimalRunnerGame() {
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
     };
+  }, [doJump, setPoseBoth]);
+
+  const handlePointerDown = useCallback((e: PointerEvent<HTMLDivElement>) => {
+    if (stageRef.current !== "playing") return;
+    touchStartRef.current = { x: e.clientX, y: e.clientY, t: performance.now() };
   }, []);
 
-  const nudgeBasket = useCallback(
-    (delta: number) => {
-      if (stage !== "playing") return;
-      setBasketXBoth(basketXRef.current + delta);
+  const handlePointerUp = useCallback(
+    (e: PointerEvent<HTMLDivElement>) => {
+      if (stageRef.current !== "playing" || !touchStartRef.current) return;
+      const dx = e.clientX - touchStartRef.current.x;
+      const dy = e.clientY - touchStartRef.current.y;
+      const dt = performance.now() - touchStartRef.current.t;
+      touchStartRef.current = null;
+
+      if (dy > SWIPE_DOWN_THRESHOLD && dy > Math.abs(dx)) {
+        doDuckTap();
+      } else if (dt < TAP_MAX_MS && Math.abs(dx) < TAP_MAX_DRIFT && Math.abs(dy) < TAP_MAX_DRIFT) {
+        doJump();
+      }
     },
-    [stage, setBasketXBoth],
+    [doJump, doDuckTap],
   );
 
   const finishGame = useCallback((survived: boolean) => {
@@ -186,31 +218,27 @@ export function AnimalRunnerGame() {
       .finally(() => setSaving(false));
   }, []);
 
-  const resolveRemark = useCallback(
-    (r: FallingRemark) => {
-      const caught = Math.abs(r.x - basketXRef.current) <= CATCH_RADIUS;
-      r.caught = caught;
+  const resolveObstacle = useCallback(
+    (o: Obstacle) => {
+      const avoided =
+        (o.kind === "low" && poseRef.current === "jump") ||
+        (o.kind === "high" && poseRef.current === "duck");
+      o.avoided = avoided;
 
-      if (r.sentiment === "positive") {
-        if (caught) {
-          statsRef.current.positiveAbsorbed += 1;
-          heartsRef.current = Math.min(10, heartsRef.current + 1);
-          showFlash("good");
-        } else {
-          // missing a good one costs you, same as letting a bad one in
-          statsRef.current.positiveDodged += 1;
-          heartsRef.current = Math.max(0, heartsRef.current - 1);
-          showFlash("bad");
-        }
+      if (avoided) {
+        if (o.sentiment === "positive") statsRef.current.positiveDodged += 1;
+        else statsRef.current.negativeDodged += 1;
+        return;
+      }
+
+      if (o.sentiment === "positive") {
+        statsRef.current.positiveAbsorbed += 1;
+        heartsRef.current = Math.min(10, heartsRef.current + 1);
+        showFlash("good");
       } else {
-        if (caught) {
-          statsRef.current.negativeAbsorbed += 1;
-          heartsRef.current = Math.max(0, heartsRef.current - 1);
-          showFlash("bad");
-        } else {
-          // safely let a bad one pass — no penalty
-          statsRef.current.negativeDodged += 1;
-        }
+        statsRef.current.negativeAbsorbed += 1;
+        heartsRef.current = Math.max(0, heartsRef.current - 1);
+        showFlash("bad");
       }
       setHearts(heartsRef.current);
     },
@@ -221,23 +249,13 @@ export function AnimalRunnerGame() {
     if (stage !== "playing") return;
 
     startedAtRef.current = performance.now();
-    lastFrameAtRef.current = startedAtRef.current;
-    nextSpawnAtRef.current = 1200;
+    nextSpawnAtRef.current = 900;
     endedRef.current = false;
 
     function tick(now: number) {
       const elapsed = now - startedAtRef.current;
-      const dtSec = Math.min(0.1, (now - lastFrameAtRef.current) / 1000);
-      lastFrameAtRef.current = now;
-
       const remaining = Math.max(0, GAME_DURATION_MS - elapsed);
       setTimeLeftMs(remaining);
-
-      // continuous keyboard movement
-      if (keysRef.current.left || keysRef.current.right) {
-        const delta = KEY_MOVE_PCT_PER_SEC * dtSec * (keysRef.current.right ? 1 : -1);
-        setBasketXBoth(basketXRef.current + delta);
-      }
 
       if (remaining <= 0) {
         finishGame(true);
@@ -248,44 +266,40 @@ export function AnimalRunnerGame() {
         return;
       }
 
-      // spawn
-      if (!remarkRef.current && elapsed >= nextSpawnAtRef.current) {
+      if (!obstacleRef.current && elapsed >= nextSpawnAtRef.current) {
         const sentiment: Sentiment = Math.random() < 0.4 ? "positive" : "negative";
-        const x = 15 + Math.random() * 70;
+        const kind: ObstacleKind = Math.random() < 0.5 ? "low" : "high";
         const text = pickRemark(sentiment, usedRemarksRef.current);
-        const next: FallingRemark = {
+        const next: Obstacle = {
           id: Math.random(),
           spawnedAt: elapsed,
-          x,
+          kind,
           sentiment,
           remark: text,
           resolved: false,
-          caught: false,
+          avoided: false,
           colorClass: BUBBLE_COLORS[Math.floor(Math.random() * BUBBLE_COLORS.length)],
         };
-        remarkRef.current = next;
-        setRemark(next);
+        obstacleRef.current = next;
+        setObstacle(next);
       }
 
-      // fall + resolve
-      const r = remarkRef.current;
-      if (r) {
-        const t = elapsed - r.spawnedAt;
-        const y = 100 * (t / FALL_DURATION_MS);
-        setRemarkY(y);
+      const o = obstacleRef.current;
+      if (o) {
+        const t = elapsed - o.spawnedAt;
+        const progress = Math.min(1, t / OBSTACLE_TRAVEL_MS);
+        const x = OBSTACLE_SPAWN_X - (OBSTACLE_SPAWN_X - PLAYER_X) * progress;
+        setObstacleX(x);
 
-        const resolveT = FALL_DURATION_MS * (CATCH_LINE_PCT / 100);
-        if (!r.resolved && t >= resolveT) {
-          r.resolved = true;
-          resolveRemark(r);
+        if (!o.resolved && t >= OBSTACLE_TRAVEL_MS) {
+          o.resolved = true;
+          resolveObstacle(o);
         }
 
-        // caught remarks vanish into the basket right away; missed ones keep
-        // falling until they reach the ground.
-        const shouldClear = r.resolved && r.caught ? true : t >= FALL_DURATION_MS;
+        const shouldClear = o.resolved && o.avoided ? true : t >= OBSTACLE_TRAVEL_MS + OBSTACLE_TAIL_MS;
         if (shouldClear) {
-          remarkRef.current = null;
-          setRemark(null);
+          obstacleRef.current = null;
+          setObstacle(null);
           nextSpawnAtRef.current =
             elapsed + SPAWN_MIN_GAP_MS + Math.random() * (SPAWN_MAX_GAP_MS - SPAWN_MIN_GAP_MS);
         }
@@ -298,7 +312,7 @@ export function AnimalRunnerGame() {
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [stage, finishGame, resolveRemark, setBasketXBoth]);
+  }, [stage, finishGame, resolveObstacle]);
 
   function startGame() {
     setEnvironment(ENVIRONMENTS[Math.floor(Math.random() * ENVIRONMENTS.length)]);
@@ -312,9 +326,13 @@ export function AnimalRunnerGame() {
     usedRemarksRef.current = new Set();
     setHearts(START_HEARTS);
     setTimeLeftMs(GAME_DURATION_MS);
-    setRemark(null);
-    remarkRef.current = null;
-    setBasketXBoth(50);
+    setObstacle(null);
+    obstacleRef.current = null;
+    setObstacleX(OBSTACLE_SPAWN_X);
+    duckHeldRef.current = false;
+    if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
+    if (duckTimeoutRef.current) clearTimeout(duckTimeoutRef.current);
+    setPoseBoth("idle");
     setCountdown(3);
     setStage("countdown");
   }
@@ -336,8 +354,8 @@ export function AnimalRunnerGame() {
       <div className="mx-auto max-w-2xl text-center">
         <h1 className="font-heading text-3xl font-bold text-heading">Pick your companion</h1>
         <p className="mt-2 text-muted">
-          You&apos;ll have two calm minutes. Move your basket to catch the good remarks — and let
-          the bad ones fall right past you.
+          You&apos;ll have two calm minutes. Jump over the thoughts on the ground and duck under the
+          floating ones — kind ones give you a little lift either way.
         </p>
         <div className="mt-8 grid grid-cols-3 gap-4 sm:grid-cols-6">
           {ANIMALS.map((a) => (
@@ -354,7 +372,7 @@ export function AnimalRunnerGame() {
           ))}
         </div>
         <Button onClick={startGame} className="mt-8 px-10 py-4 text-lg">
-          Start catching
+          Start running
         </Button>
       </div>
     );
@@ -400,10 +418,10 @@ export function AnimalRunnerGame() {
               Caught negative: {finalStats.negativeAbsorbed}
             </div>
             <div className="rounded-xl bg-sky px-3 py-2 text-sky-text">
-              Missed positive: {finalStats.positiveDodged}
+              Jumped/ducked past positive: {finalStats.positiveDodged}
             </div>
             <div className="rounded-xl bg-butter px-3 py-2 text-butter-text">
-              Let negative pass: {finalStats.negativeDodged}
+              Jumped/ducked past negative: {finalStats.negativeDodged}
             </div>
           </div>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -440,52 +458,58 @@ export function AnimalRunnerGame() {
       </div>
 
       <div
-        ref={trackRef}
-        onPointerMove={handlePointerMove}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
         style={{ touchAction: "none" }}
-        className={`relative h-96 overflow-hidden rounded-[24px] border border-black/5 bg-gradient-to-b ${environment.sky} transition ${
+        className={`relative h-96 overflow-hidden rounded-[24px] border border-black/5 bg-gradient-to-b select-none ${environment.sky} transition ${
           flash === "bad" ? "ring-4 ring-blush-strong" : flash === "good" ? "ring-4 ring-mint" : ""
         }`}
       >
-        {remark && (
+        {/* scrolling ground strip, sells the side-scrolling motion */}
+        <div
+          aria-hidden
+          className={`animate-ground-scroll absolute bottom-0 h-4 w-full ${environment.ground}`}
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(90deg, rgba(255,255,255,0.5) 0 10px, transparent 10px 32px)",
+          }}
+        />
+
+        {obstacle && (
           <div
-            className={`absolute flex w-[140px] min-h-[64px] -translate-x-1/2 items-center justify-center rounded-2xl px-3 py-2 text-center text-xs font-semibold shadow-md ${remark.colorClass}`}
-            style={{ left: `${remark.x}%`, top: `${Math.min(remarkY, 100)}%` }}
+            className={`absolute flex w-32 min-h-16 -translate-x-1/2 flex-col items-center justify-center gap-1 rounded-2xl px-3 py-2 text-center text-xs font-semibold shadow-md ${obstacle.colorClass}`}
+            style={{
+              left: `${obstacleX}%`,
+              bottom: obstacle.kind === "low" ? "16px" : "88px",
+            }}
           >
-            &quot;{remark.remark}&quot;
+            <span aria-hidden className="text-sm leading-none">
+              {obstacle.kind === "low" ? "⤴" : "⤵"}
+            </span>
+            &quot;{obstacle.remark}&quot;
           </div>
         )}
 
         <div
-          className="absolute bottom-4 flex -translate-x-1/2 flex-col items-center"
-          style={{ left: `${basketX}%` }}
+          className="absolute bottom-4 -translate-x-1/2"
+          style={{ left: `${PLAYER_X}%` }}
         >
-          <AnimalAvatar animal={animal} size={72} />
-          <svg width="140" height="70" viewBox="0 0 140 70" className="-mt-3">
-            <path d="M10 20 L130 20 L110 65 L30 65 Z" fill="#C98A4B" stroke="#8A5A2B" strokeWidth="5" />
-            <path d="M10 20 L130 20" stroke="#8A5A2B" strokeWidth="7" strokeLinecap="round" />
-            <path
-              d="M35 20 Q70 -15 105 20"
-              fill="none"
-              stroke="#8A5A2B"
-              strokeWidth="7"
-              strokeLinecap="round"
-            />
-          </svg>
+          <AnimalAvatar animal={animal} pose={pose} size={84} />
         </div>
       </div>
 
       <div className="mt-6 flex justify-center gap-4">
-        <Button variant="sky" onClick={() => nudgeBasket(-BUTTON_NUDGE_PCT)}>
-          ◀ Move
+        <Button variant="sky" onClick={doJump}>
+          ⤴ Jump
         </Button>
-        <Button variant="mint" onClick={() => nudgeBasket(BUTTON_NUDGE_PCT)}>
-          Move ▶
+        <Button variant="mint" onClick={doDuckTap}>
+          ⤵ Duck
         </Button>
       </div>
       <p className="mt-3 text-center text-xs text-muted">
-        Drag, use the arrow keys, or tap the buttons to move your basket. Catch a good remark to
-        take it in — but miss one and it costs you just the same as catching a bad one.
+        Tap, press Space/↑, or hit Jump to clear thoughts on the ground. Swipe down, press ↓, or hit
+        Duck to clear the floating ones. Catch one instead and a kind thought lifts your energy —
+        an unkind one dips it just a little, never all at once.
       </p>
     </div>
   );

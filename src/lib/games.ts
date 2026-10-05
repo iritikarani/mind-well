@@ -29,7 +29,7 @@ export const GAMES: GameMeta[] = [
     category: "Validation?",
     emoji: "🦊",
     href: "/games/animal-runner",
-    tagline: "Choose a companion and catch the good remarks as they fall.",
+    tagline: "Choose a companion and jump or duck past thoughts as you run.",
     playable: true,
   },
   {

@@ -44,13 +44,13 @@ function Ears({ ears, primary, accent }: { ears: string; primary: string; accent
           <ellipse cx="66" cy="-8" rx="4" ry="18" fill={accent} opacity={0.7} transform="rotate(8 66 -8)" />
         </>
       );
-    case "antler":
+    case "fuzzy":
       return (
         <>
-          <circle cx="30" cy="10" r="7" fill={primary} />
-          <circle cx="70" cy="10" r="7" fill={primary} />
-          <path d="M30 4 L26 -10 M30 4 L34 -8" stroke={primary} strokeWidth="3" strokeLinecap="round" fill="none" />
-          <path d="M70 4 L74 -10 M70 4 L66 -8" stroke={primary} strokeWidth="3" strokeLinecap="round" fill="none" />
+          <circle cx="22" cy="14" r="17" fill={primary} />
+          <circle cx="78" cy="14" r="17" fill={primary} />
+          <circle cx="22" cy="14" r="9" fill={accent} opacity={0.7} />
+          <circle cx="78" cy="14" r="9" fill={accent} opacity={0.7} />
         </>
       );
     default:
