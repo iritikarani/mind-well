@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 import { monumentById, postcardNote, type MonumentDef } from "@/lib/worldPuzzleContent";
 import { randomValidationMessage } from "@/lib/validationMessages";
 import { MonumentArt } from "./MonumentArt";
-import { SharePostcardButton } from "./SharePostcardButton";
+import { PostcardReveal } from "./PostcardReveal";
 
 const DEFAULT_GRID = 3;
 
@@ -36,7 +36,6 @@ export function WorldPuzzleGame({ userName }: { userName: string }) {
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [limitReached, setLimitReached] = useState(false);
-  const [postcardFlipped, setPostcardFlipped] = useState(false);
   const [validationMessage, setValidationMessage] = useState("");
 
   async function applyFetchedMonument() {
@@ -56,7 +55,6 @@ export function WorldPuzzleGame({ userName }: { userName: string }) {
     setNote(null);
     setNewBadges([]);
     setSelected(null);
-    setPostcardFlipped(false);
     applyFetchedMonument();
   }
 
@@ -234,45 +232,9 @@ export function WorldPuzzleGame({ userName }: { userName: string }) {
   return (
     <div className="mx-auto max-w-lg text-center">
       <Card className="p-8">
-        <div className="postcard-scene mx-auto h-[300px] w-full max-w-[280px] sm:h-[340px] sm:max-w-[320px]">
-          <div
-            className={cn(
-              "postcard-flipper relative h-full w-full",
-              postcardFlipped && "is-flipped",
-            )}
-          >
-            <div className="postcard-face absolute inset-0 overflow-hidden rounded-2xl">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={monument.image}
-                alt={monument.name}
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <div className="postcard-face postcard-face-back flex flex-col items-center justify-center rounded-2xl bg-lavender p-5 text-center">
-              <h2 className="font-heading text-xl font-bold text-heading">{monument.name}</h2>
-              <p className="text-sm text-muted">{monument.country}</p>
-              <p className="mt-3 text-sm text-heading">{note}</p>
-              <p className="mt-3 text-xs italic text-purple-text">{quote}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <Button variant="outline" onClick={() => setPostcardFlipped((v) => !v)}>
-            {postcardFlipped ? "Flip back" : "Flip postcard"}
-          </Button>
-          {quote && note && (
-            <SharePostcardButton
-              imageUrl={monument.image}
-              name={monument.name}
-              country={monument.country}
-              note={note}
-              quote={quote}
-              userName={userName}
-            />
-          )}
-        </div>
+        {quote && note && (
+          <PostcardReveal monument={monument} quote={quote} note={note} userName={userName} />
+        )}
 
         <p className="mt-5 font-heading text-sm font-semibold text-purple-text">
           {validationMessage} <span aria-hidden>♡</span>
