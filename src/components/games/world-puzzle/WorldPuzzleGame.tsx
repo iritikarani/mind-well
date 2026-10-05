@@ -5,6 +5,7 @@ import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/cn";
 import { monumentById, postcardNote, type MonumentDef } from "@/lib/worldPuzzleContent";
+import { randomValidationMessage } from "@/lib/validationMessages";
 import { MonumentArt } from "./MonumentArt";
 
 const DEFAULT_GRID = 3;
@@ -35,6 +36,7 @@ export function WorldPuzzleGame() {
   const [saving, setSaving] = useState(false);
   const [limitReached, setLimitReached] = useState(false);
   const [postcardFlipped, setPostcardFlipped] = useState(false);
+  const [validationMessage, setValidationMessage] = useState("");
 
   async function applyFetchedMonument() {
     const res = await fetch("/api/games/world-puzzle/monument");
@@ -132,6 +134,7 @@ export function WorldPuzzleGame() {
       }
     } finally {
       setSaving(false);
+      setValidationMessage(randomValidationMessage());
       setStage("revealed");
     }
   }
@@ -261,6 +264,10 @@ export function WorldPuzzleGame() {
         >
           {postcardFlipped ? "Flip back" : "Flip postcard"}
         </Button>
+
+        <p className="mt-5 font-heading text-sm font-semibold text-purple-text">
+          {validationMessage} <span aria-hidden>♡</span>
+        </p>
 
         {newBadges.length > 0 && (
           <div className="mt-4 rounded-xl bg-butter px-4 py-2 text-sm font-semibold text-butter-text">

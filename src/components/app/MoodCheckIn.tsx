@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
+import { LinkButton } from "@/components/ui/Button";
 
 const MOODS: { key: string; emoji: string }[] = [
   { key: "Happy", emoji: "😊" },
@@ -14,7 +15,20 @@ const MOODS: { key: string; emoji: string }[] = [
   { key: "Unsure", emoji: "🤔" },
 ];
 
-export function MoodCheckIn() {
+const LOW_MOODS = new Set(["Low", "Upset", "Tired", "Unsure"]);
+
+export function MoodCheckIn({
+  heading = "How are you feeling today?",
+  subtext = "Totally optional — pick one if you'd like.",
+  suggestGame = true,
+}: {
+  heading?: string;
+  subtext?: string;
+  /** Whether a low/hard mood should offer a link to Animal Runner. Turned
+   * off where that would be circular — e.g. the re-check shown at the end
+   * of Animal Runner itself. */
+  suggestGame?: boolean;
+} = {}) {
   const [mood, setMood] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -52,11 +66,13 @@ export function MoodCheckIn() {
     }
   }
 
+  const showSuggestion = suggestGame && !loading && !!mood && LOW_MOODS.has(mood);
+
   return (
     <div>
-      <p className="font-heading text-sm font-semibold text-heading">How are you feeling today?</p>
-      <p className="mt-0.5 text-xs text-muted">Totally optional — pick one if you&apos;d like.</p>
-      <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="How are you feeling today?">
+      <p className="font-heading text-sm font-semibold text-heading">{heading}</p>
+      <p className="mt-0.5 text-xs text-muted">{subtext}</p>
+      <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label={heading}>
         {MOODS.map((m) => {
           const selected = mood === m.key;
           return (
@@ -81,6 +97,20 @@ export function MoodCheckIn() {
       </div>
       {mood && (
         <p className="mt-3 text-xs text-muted">Thanks for sharing that. ♡</p>
+      )}
+      {showSuggestion && (
+        <div className="mt-3 rounded-xl bg-lavender/50 p-3">
+          <p className="text-sm text-heading">
+            Want a gentle place to land? Animal Runner might help. <span aria-hidden>♡</span>
+          </p>
+          <LinkButton
+            href="/games/animal-runner"
+            variant="lavender"
+            className="mt-2 px-4 py-2 text-xs"
+          >
+            Play Animal Runner
+          </LinkButton>
+        </div>
       )}
     </div>
   );

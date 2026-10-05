@@ -5,6 +5,7 @@ import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { COLORS, colorByKey, type ColorKey } from "@/lib/colorTheoryContent";
 import { downloadColorBadge } from "@/lib/colorBadge";
+import { randomValidationMessage } from "@/lib/validationMessages";
 
 type Stage = "select" | "loading" | "questions" | "closing";
 
@@ -18,6 +19,7 @@ export function ColorTheoryGame({ userName }: { userName: string }) {
   const [saving, setSaving] = useState(false);
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [limitReached, setLimitReached] = useState(false);
+  const [validationMessage, setValidationMessage] = useState("");
 
   async function chooseColor(key: ColorKey) {
     setColor(key);
@@ -64,6 +66,7 @@ export function ColorTheoryGame({ userName }: { userName: string }) {
       }
     } finally {
       setSaving(false);
+      setValidationMessage(randomValidationMessage());
       setStage("closing");
     }
   }
@@ -177,6 +180,9 @@ export function ColorTheoryGame({ userName }: { userName: string }) {
           </span>
           <h1 className="mt-5 font-heading text-2xl font-bold text-heading">{def.affirmation}</h1>
           <p className="mt-2 text-muted">Thanks for taking a moment to reflect.</p>
+          <p className="mt-3 font-heading text-sm font-semibold text-purple-text">
+            {validationMessage} <span aria-hidden>♡</span>
+          </p>
 
           {newBadges.length > 0 && (
             <div className="mt-4 rounded-xl bg-butter px-4 py-2 text-sm font-semibold text-butter-text">

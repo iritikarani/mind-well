@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
 import { Button, LinkButton } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { MoodCheckIn } from "@/components/app/MoodCheckIn";
 import { AnimalAvatar } from "./AnimalAvatar";
 import { ANIMALS, type AnimalKey } from "./animals";
 import {
@@ -11,6 +12,7 @@ import {
   POSITIVE_REMARKS,
   winRemark,
 } from "@/lib/animalRunnerContent";
+import { randomValidationMessage } from "@/lib/validationMessages";
 
 const GAME_DURATION_MS = 120_000;
 const FALL_DURATION_MS = 6000;
@@ -81,6 +83,7 @@ export function AnimalRunnerGame() {
   const [countdown, setCountdown] = useState(3);
   const [saving, setSaving] = useState(false);
   const [finalSurvived, setFinalSurvived] = useState(false);
+  const [validationMessage, setValidationMessage] = useState("");
   const [finalStats, setFinalStats] = useState({
     positiveAbsorbed: 0,
     negativeAbsorbed: 0,
@@ -168,6 +171,7 @@ export function AnimalRunnerGame() {
     const statsSnapshot = { ...statsRef.current };
     setFinalSurvived(survived);
     setFinalStats(statsSnapshot);
+    setValidationMessage(randomValidationMessage());
     setStage("result");
     setSaving(true);
 
@@ -392,6 +396,9 @@ export function AnimalRunnerGame() {
               ? winRemark(finalStats.positiveAbsorbed, finalStats.negativeAbsorbed)
               : LOSE_QUOTE}
           </p>
+          <p className="mt-3 font-heading text-sm font-semibold text-purple-text">
+            {validationMessage} <span aria-hidden>♡</span>
+          </p>
           <div className="mt-6 grid grid-cols-2 gap-3 text-sm">
             <div className="rounded-xl bg-mint px-3 py-2 text-mint-text">
               Caught positive: {finalStats.positiveAbsorbed}
@@ -406,6 +413,15 @@ export function AnimalRunnerGame() {
               Let negative pass: {finalStats.negativeDodged}
             </div>
           </div>
+
+          <div className="mt-6 rounded-2xl bg-white/60 p-4 text-left">
+            <MoodCheckIn
+              heading="How are you feeling now?"
+              subtext="No pressure — totally optional."
+              suggestGame={false}
+            />
+          </div>
+
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Button onClick={startGame} variant="soft" disabled={saving}>
               Play again

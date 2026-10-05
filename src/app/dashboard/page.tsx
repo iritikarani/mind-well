@@ -5,12 +5,11 @@ import { getUserTimeZone } from "@/lib/timezone";
 import { getEffectiveStreak } from "@/lib/streak";
 import { prisma } from "@/lib/prisma";
 import { BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
-import { GAMES, gameMeta } from "@/lib/games";
+import { gameMeta } from "@/lib/games";
 import { monumentById } from "@/lib/worldPuzzleContent";
 import { AppHeader } from "@/components/app/AppHeader";
 import { MoodCheckIn } from "@/components/app/MoodCheckIn";
 import { Card } from "@/components/ui/Card";
-import { Pill } from "@/components/ui/Pill";
 import { LinkButton } from "@/components/ui/Button";
 import { colorByKey } from "@/lib/colorTheoryContent";
 
@@ -159,29 +158,6 @@ export default async function DashboardPage() {
             <p className="mt-1 text-sm text-muted">Little things, saved</p>
           </Card>
         </div>
-
-        <section className="mt-10">
-          <div className="flex items-center justify-between">
-            <h2 className="font-heading text-xl font-bold text-heading">Games</h2>
-            <LinkButton href="/games" variant="ghost" className="px-3 py-1.5 text-sm">
-              See all →
-            </LinkButton>
-          </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {GAMES.map((game) => (
-              <a
-                key={game.key}
-                href={game.href}
-                className="pixel-panel pixel-pressable rounded-[20px] bg-surface p-5 shadow-[0_4px_20px_rgba(91,71,137,0.1)] transition hover:-translate-y-0.5"
-              >
-                <div className="text-3xl">{game.emoji}</div>
-                <p className="mt-2 font-heading font-semibold text-heading">{game.label}</p>
-                <p className="mt-1 text-xs text-muted">{game.category}</p>
-                {!game.playable && <Pill tone="muted" className="mt-2">Coming soon</Pill>}
-              </a>
-            ))}
-          </div>
-        </section>
 
         <section className="mt-10">
           <div className="flex items-center justify-between">
