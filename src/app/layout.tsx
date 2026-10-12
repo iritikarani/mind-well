@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito, Quicksand, Press_Start_2P } from "next/font/google";
 import { TimezoneSync } from "@/components/app/TimezoneSync";
+import { SiteFooter } from "@/components/legal/SiteFooter";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-dvh flex flex-col">
         <TimezoneSync />
         {children}
+        <SiteFooter />
       </body>
     </html>
   );

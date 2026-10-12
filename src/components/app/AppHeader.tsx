@@ -62,7 +62,9 @@ export function AppHeader({
           {typeof streak === "number" && streak > 0 && (
             <Pill tone="butter">🔥 {streak}-day streak</Pill>
           )}
-          <span className="text-sm font-medium text-muted">Hi, {name}</span>
+          <Link href="/settings" className="text-sm font-medium text-muted hover:text-purple-text">
+            Hi, {name}
+          </Link>
           <button
             onClick={logout}
             disabled={loading}
@@ -106,7 +108,13 @@ export function AppHeader({
           </nav>
           <div className="mt-3 flex items-center justify-between border-t border-lavender/60 pt-3">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-muted">Hi, {name}</span>
+              <Link
+                href="/settings"
+                onClick={() => setMenuOpen(false)}
+                className="text-sm font-medium text-muted hover:text-purple-text"
+              >
+                Hi, {name} · Settings
+              </Link>
               {typeof streak === "number" && streak > 0 && (
                 <Pill tone="butter">🔥 {streak}</Pill>
               )}

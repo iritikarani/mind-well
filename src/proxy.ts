@@ -25,7 +25,8 @@ export async function proxy(req: NextRequest) {
   const isProtected =
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/games") ||
-    pathname.startsWith("/badges");
+    pathname.startsWith("/badges") ||
+    pathname.startsWith("/settings");
   const isAuthPage =
     pathname.startsWith("/login") ||
     pathname.startsWith("/signup") ||
@@ -51,6 +52,7 @@ export const config = {
     "/dashboard/:path*",
     "/games/:path*",
     "/badges/:path*",
+    "/settings/:path*",
     "/login",
     "/signup",
     "/forgot-password",

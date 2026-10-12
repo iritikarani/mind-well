@@ -1,4 +1,4 @@
-// Prisma schema for Mind Well
+// Prisma schema for Happy Space
 
 generator client {
   provider = "prisma-client"
@@ -16,6 +16,10 @@ model User {
   name         String
   passwordHash String
   createdAt    DateTime @default(now())
+
+  // Brute-force protection: consecutive wrong passwords, and a temporary lock.
+  failedLoginCount Int       @default(0)
+  lockedUntil      DateTime?
 
   otpCodes      OtpCode[]
   gamePlays     GamePlay[]

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createPasswordResetOtp } from "@/lib/otp";
+import { OtpRateLimitError } from "@/lib/throttle";
 import { forgotPasswordSchema } from "@/lib/validation";
 import { zodErrorResponse, isDev } from "@/lib/api-response";
 
@@ -21,7 +22,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: genericMessage });
   }
 
-  const { devCode } = await createPasswordResetOtp({ email, userId: user.id });
+  let devCode: string;
+  try {
+    ({ devCode } = await createPasswordResetOtp({ email, userId: user.id }));
+  } catch (err) {
+    // Same answer as "no such account" so the limit can't be used to probe
+    // which addresses are registered.
+    if (err instanceof OtpRateLimitError) return NextResponse.json({ message: genericMessage });
+    throw err;
+  }
 
   return NextResponse.json({
     message: genericMessage,

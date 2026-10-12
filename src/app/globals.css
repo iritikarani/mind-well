@@ -20,19 +20,19 @@
 
   --color-butter: #ffe9b8;
   --color-butter-soft: #fff3d6;
-  --color-butter-text: #8a6a2b;
+  --color-butter-text: #755619;
 
   --color-sky: #cdecfb;
   --color-sky-text: #35658a;
 
   --color-mint: #d7f2de;
-  --color-mint-text: #2f7a4c;
+  --color-mint-text: #296c43;
 
   --color-peach: #ffd2b8;
   --color-peach-text: #7a4420;
 
   --color-heading: #5b4b73;
-  --color-muted: #7d7090;
+  --color-muted: #675a7c;
 }
 
 @theme inline {
