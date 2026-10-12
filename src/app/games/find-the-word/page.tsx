@@ -36,6 +36,8 @@ export default async function FindTheWordPage() {
   const pastPlays = await prisma.gamePlay.findMany({
     where: { userId: user.id, game: "FIND_THE_WORD" },
     orderBy: { playedAt: "desc" },
+    // Recent history is plenty for "don't repeat last time's question".
+    take: 300,
     select: { result: true },
   });
   const lastVariantByWord: Record<string, number> = {};
