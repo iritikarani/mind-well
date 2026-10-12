@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth";
 import { createSignupOtp } from "@/lib/otp";
-import { OtpRateLimitError } from "@/lib/throttle";
 import { signupSchema } from "@/lib/validation";
 import { errorResponse, zodErrorResponse, isDev } from "@/lib/api-response";
 
@@ -24,20 +23,12 @@ export async function POST(req: NextRequest) {
   if (usernameTaken) return errorResponse("That username is taken", 409);
 
   const passwordHash = await hashPassword(password);
-  let devCode: string;
-  try {
-    ({ devCode } = await createSignupOtp({
-      email,
-      pendingName: name,
-      pendingUsername: username,
-      pendingPasswordHash: passwordHash,
-    }));
-  } catch (err) {
-    if (err instanceof OtpRateLimitError) {
-      return errorResponse("Too many codes requested. Please wait a little while and try again.", 429);
-    }
-    throw err;
-  }
+  const { devCode } = await createSignupOtp({
+    email,
+    pendingName: name,
+    pendingUsername: username,
+    pendingPasswordHash: passwordHash,
+  });
 
   return NextResponse.json({
     message: "We sent a verification code to your email.",

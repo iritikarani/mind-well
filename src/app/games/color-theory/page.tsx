@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { AppHeader } from "@/components/app/AppHeader";
@@ -7,8 +6,6 @@ import { DailyLimitReachedPage } from "@/components/games/DailyLimitReached";
 import { getEffectiveStreak } from "@/lib/streak";
 import { gameMeta } from "@/lib/games";
 import { hasReachedDailyLimit } from "@/lib/playLimit";
-
-export const metadata: Metadata = { title: "Hue Hugs" };
 
 export default async function ColorTheoryPage() {
   const user = await getCurrentUser();

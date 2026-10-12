@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -6,8 +5,6 @@ import { getEffectiveStreak } from "@/lib/streak";
 import { AppHeader } from "@/components/app/AppHeader";
 import { LinkButton } from "@/components/ui/Button";
 import { monumentById } from "@/lib/worldPuzzleContent";
-
-export const metadata: Metadata = { title: "My World" };
 
 export default async function MyWorldPage() {
   const user = await getCurrentUser();
@@ -57,7 +54,7 @@ export default async function MyWorldPage() {
         {postcards.length === 0 ? (
           <div className="pixel-panel mt-8 rounded-[22px] bg-surface p-8 text-center">
             <p className="text-muted">
-              Complete a Postcard Puzzle to start your collection. Every finished puzzle becomes a
+              Complete a World Puzzle to start your collection. Every finished puzzle becomes a
               little postcard here. ♡
             </p>
           </div>

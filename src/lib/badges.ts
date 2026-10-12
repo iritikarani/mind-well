@@ -2,158 +2,158 @@ import { prisma } from "@/lib/prisma";
 import type { GameKey } from "@/generated/prisma/enums";
 
 export const BADGE_CATALOG = {
-  // Basket Buddies (Animal Runner)
+  // Animal Runner
   POSITIVITY_MAGNET: {
-    label: "Kindness Catcher",
+    label: "Kind Heart",
     description: "Caught mostly kind remarks in a single run",
     game: "ANIMAL_RUNNER" as GameKey,
   },
   CLEAN_DODGE: {
-    label: "Soft Shield",
+    label: "Brave Runner",
     description: "Let most of the unkind remarks pass right by",
     game: "ANIMAL_RUNNER" as GameKey,
   },
   SURVIVOR: {
-    label: "Tiny Trooper",
+    label: "Little Survivor",
     description: "Made it through the full two minutes",
     game: "ANIMAL_RUNNER" as GameKey,
   },
   KEEP_GOING: {
-    label: "Hop Along",
+    label: "Keep Going",
     description: "Finished a run, start to end",
     game: "ANIMAL_RUNNER" as GameKey,
   },
 
-  // Postcard Puzzles
+  // World Puzzle
   PATIENT_BUILDER: {
-    label: "Cozy Builder",
+    label: "Patient Builder",
     description: "Completed a puzzle",
     game: "WORLD_PUZZLE" as GameKey,
   },
   WORLD_TRAVELER: {
-    label: "Pocket Passport",
+    label: "World Traveler",
     description: "Completed puzzles of monuments from 5+ different countries",
     game: "WORLD_PUZZLE" as GameKey,
   },
   QUOTE_COLLECTOR: {
-    label: "Quote Squirrel",
+    label: "Quote Collector",
     description: "Flipped and viewed 10 puzzle quotes total",
     game: "WORLD_PUZZLE" as GameKey,
   },
 
   // Color Theory
   COLOR_CONNECTOR: {
-    label: "Hue Hugger",
+    label: "Color Connector",
     description: "Completed all 7 questions in a session",
     game: "COLOR_THEORY" as GameKey,
   },
   COLOR_WHISPERER: {
-    label: "Hue Whisperer",
+    label: "Color Whisperer",
     description: "Played the same color 5+ times",
     game: "COLOR_THEORY" as GameKey,
   },
   RAINBOW_MIND: {
-    label: "Rainbow Keeper",
+    label: "Rainbow Mind",
     description: "Played every color at least once",
     game: "COLOR_THEORY" as GameKey,
   },
 
-  // Whimsy Wheels
+  // Spin & Connect
   QUICK_THINKER: {
-    label: "Clever Cloud",
+    label: "Quick Thinker",
     description: "Completed a round with zero hints used",
     game: "SPIN_AND_CONNECT" as GameKey,
   },
   WORDSMITH: {
-    label: "Spin Star",
+    label: "Brilliant Connector",
     description: "Answered every round correctly in a session",
     game: "SPIN_AND_CONNECT" as GameKey,
   },
   FIVE_ROUNDS_STRONG: {
-    label: "Round-the-Wheel",
+    label: "Connection Genius",
     description: "Completed a full 5-round session",
     game: "SPIN_AND_CONNECT" as GameKey,
   },
   CREATIVE_THINKER: {
-    label: "Gem Finder",
+    label: "Creative Thinker",
     description: "Found a valid answer for a rare combo",
     game: "SPIN_AND_CONNECT" as GameKey,
   },
 
-  // Word Nest
+  // Find the Word
   SELF_AWARE: {
-    label: "Gentle Noticer",
+    label: "Self-Aware",
     description: "Completed a full 3-word session",
     game: "FIND_THE_WORD" as GameKey,
   },
   HONEST_VOICE: {
-    label: "Open Heart",
+    label: "Honest Voice",
     description: "Answered all 3 reflective questions",
     game: "FIND_THE_WORD" as GameKey,
   },
   RETURN_VISITOR: {
-    label: "Cozy Regular",
+    label: "Return Visitor",
     description: "Played the game 5+ times",
     game: "FIND_THE_WORD" as GameKey,
   },
 
-  // Alphabet Soup
+  // Anagrams
   SPEED_SOLVER: {
-    label: "Speedy Spoon",
+    label: "Brain Spark",
     description: "Completed all 3 levels quickly",
     game: "ANAGRAMS" as GameKey,
   },
   WORDPLAY_GENIUS: {
-    label: "Secret Ingredient",
+    label: "Word Wizard",
     description: "Formed an uncommon/unique word",
     game: "ANAGRAMS" as GameKey,
   },
   LEVEL_MASTER: {
-    label: "Full Bowl",
-    description: "Completed a full Alphabet Soup session",
+    label: "Word Explorer",
+    description: "Completed a full Anagrams session",
     game: "ANAGRAMS" as GameKey,
   },
   SHARP_THINKER: {
-    label: "Classic Recipe",
+    label: "Sharp Thinker",
     description: "Solved every level with only common words",
     game: "ANAGRAMS" as GameKey,
   },
   WORD_MASTER: {
-    label: "Head Chef",
-    description: "Completed 10 Alphabet Soup sessions",
+    label: "Word Master",
+    description: "Completed 10 Anagrams sessions",
     game: "ANAGRAMS" as GameKey,
   },
 
-  // Tiny Treasures
+  // Three Things
   REFLECTOR: {
-    label: "Little Collector",
+    label: "Reflector",
     description: "Saved entries on 7 different days",
     game: "THREE_THINGS" as GameKey,
   },
   FULL_HOUSE: {
-    label: "Three Jewels",
+    label: "Full House",
     description: "Saved all 3 things on a single date",
     game: "THREE_THINGS" as GameKey,
   },
   MONTHLY_KEEPER: {
-    label: "Treasure Chest",
+    label: "Monthly Keeper",
     description: "Downloaded a full month's PDF",
     game: "THREE_THINGS" as GameKey,
   },
 
   // Cross-game
   EXPLORER: {
-    label: "Wonderland Wanderer",
+    label: "Explorer",
     description: "Played all 7 games at least once",
     game: null,
   },
   STREAK_KEEPER: {
-    label: "Little Flame",
+    label: "Streak Keeper",
     description: "7-day streak",
     game: null,
   },
   CENTURY_CLUB: {
-    label: "Hundred Hugs",
+    label: "Century Club",
     description: "100 total game plays",
     game: null,
   },

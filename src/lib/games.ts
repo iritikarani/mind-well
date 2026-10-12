@@ -25,7 +25,7 @@ export const CATEGORY_META: Record<
 export const GAMES: GameMeta[] = [
   {
     key: "ANIMAL_RUNNER",
-    label: "Basket Buddies",
+    label: "Animal Runner",
     category: "Validation?",
     emoji: "🦊",
     href: "/games/animal-runner",
@@ -34,7 +34,7 @@ export const GAMES: GameMeta[] = [
   },
   {
     key: "WORLD_PUZZLE",
-    label: "Postcard Puzzles",
+    label: "World Puzzle",
     category: "Validation?",
     emoji: "🧩",
     href: "/games/world-puzzle",
@@ -43,7 +43,7 @@ export const GAMES: GameMeta[] = [
   },
   {
     key: "COLOR_THEORY",
-    label: "Hue Hugs",
+    label: "Color Connection",
     category: "Validation?",
     emoji: "🎨",
     href: "/games/color-theory",
@@ -52,7 +52,7 @@ export const GAMES: GameMeta[] = [
   },
   {
     key: "SPIN_AND_CONNECT",
-    label: "Whimsy Wheels",
+    label: "Spin & Connect",
     category: "Threads",
     emoji: "🎡",
     href: "/games/spin-and-connect",
@@ -61,7 +61,7 @@ export const GAMES: GameMeta[] = [
   },
   {
     key: "FIND_THE_WORD",
-    label: "Word Nest",
+    label: "Find the Word",
     category: "Threads",
     emoji: "🔤",
     href: "/games/find-the-word",
@@ -70,20 +70,20 @@ export const GAMES: GameMeta[] = [
   },
   {
     key: "ANAGRAMS",
-    label: "Alphabet Soup",
+    label: "Anagrams",
     category: "Mind Flow",
-    emoji: "🥣",
+    emoji: "🔀",
     href: "/games/anagrams",
     tagline: "Rearrange letters into new words across three levels.",
     playable: true,
   },
   {
     key: "THREE_THINGS",
-    label: "Tiny Treasures",
+    label: "Journal",
     category: "3 Things",
     emoji: "📓",
     href: "/games/three-things",
-    tagline: "Your little journal: jot down up to three things, any day, no pressure.",
+    tagline: "Jot down up to three things, any day, no pressure.",
     playable: true,
   },
 ];

@@ -1,11 +1,8 @@
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { AppHeader } from "@/components/app/AppHeader";
 import { SpinAndConnectGame } from "@/components/games/spin-and-connect/SpinAndConnectGame";
 import { getEffectiveStreak } from "@/lib/streak";
-
-export const metadata: Metadata = { title: "Whimsy Wheels" };
 
 export default async function SpinAndConnectPage() {
   const user = await getCurrentUser();

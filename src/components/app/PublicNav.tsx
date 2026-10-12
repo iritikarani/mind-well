@@ -37,12 +37,6 @@ export function PublicNav({ loggedIn }: { loggedIn: boolean }) {
               {link.label}
             </a>
           ))}
-          <Link
-            href="/calm"
-            className="font-heading text-sm font-semibold text-heading/80 hover:text-purple"
-          >
-            Calm
-          </Link>
         </nav>
 
         <div className="hidden lg:block">
@@ -81,13 +75,6 @@ export function PublicNav({ loggedIn }: { loggedIn: boolean }) {
             >
               Home
             </a>
-            <Link
-              href="/calm"
-              onClick={() => setMenuOpen(false)}
-              className="min-h-11 rounded-xl px-3 py-2.5 font-heading text-sm font-semibold text-heading hover:bg-lavender/40"
-            >
-              Calm corner
-            </Link>
             {NAV_CATEGORIES.map((category) => (
               <MobileNavCategory
                 key={category}

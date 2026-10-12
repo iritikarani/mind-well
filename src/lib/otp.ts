@@ -1,7 +1,6 @@
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import type { OtpPurpose } from "@/generated/prisma/enums";
-import { OTP_SENDS_PER_HOUR, OtpRateLimitError } from "@/lib/throttle";
 
 const OTP_TTL_MINUTES = 10;
 const MAX_ATTEMPTS = 5;
@@ -15,21 +14,18 @@ function hashCode(code: string) {
 }
 
 const OTP_SUBJECT: Record<OtpPurpose, string> = {
-  SIGNUP: "Your Happy Space verification code",
-  PASSWORD_RESET: "Reset your Happy Space password",
+  SIGNUP: "Your Mind Well verification code",
+  PASSWORD_RESET: "Reset your Mind Well password",
 };
 
 const OTP_INTRO: Record<OtpPurpose, string> = {
-  SIGNUP: "Use this code to finish creating your Happy Space account:",
-  PASSWORD_RESET: "Use this code to reset your Happy Space password:",
+  SIGNUP: "Use this code to finish creating your Mind Well account:",
+  PASSWORD_RESET: "Use this code to reset your Mind Well password:",
 };
 
 /** Sends the OTP by email via Brevo's transactional email API. */
 async function deliverOtp(email: string, code: string, purpose: OtpPurpose) {
-  // Never log codes in production — logs are not a safe place for credentials.
-  if (process.env.NODE_ENV !== "production") {
-    console.log(`[OTP] ${purpose} code for ${email}: ${code}`);
-  }
+  console.log(`[OTP] ${purpose} code for ${email}: ${code}`);
 
   const apiKey = process.env.BREVO_API_KEY;
   const senderEmail = process.env.BREVO_SENDER_EMAIL;
@@ -45,7 +41,7 @@ async function deliverOtp(email: string, code: string, purpose: OtpPurpose) {
       Accept: "application/json",
     },
     body: JSON.stringify({
-      sender: { name: "Happy Space", email: senderEmail },
+      sender: { name: "Mind Well", email: senderEmail },
       to: [{ email }],
       subject: OTP_SUBJECT[purpose],
       htmlContent: `
@@ -62,22 +58,12 @@ async function deliverOtp(email: string, code: string, purpose: OtpPurpose) {
   }
 }
 
-/** Caps how many codes one address can be sent per hour — stops email
- * flooding, quota burn, and unlimited guess attempts via re-requests. */
-async function assertCanSendOtp(email: string) {
-  const recent = await prisma.otpCode.count({
-    where: { email, createdAt: { gte: new Date(Date.now() - 60 * 60 * 1000) } },
-  });
-  if (recent >= OTP_SENDS_PER_HOUR) throw new OtpRateLimitError();
-}
-
 export async function createSignupOtp(params: {
   email: string;
   pendingName: string;
   pendingUsername: string;
   pendingPasswordHash: string;
 }) {
-  await assertCanSendOtp(params.email);
   await prisma.otpCode.updateMany({
     where: { email: params.email, purpose: "SIGNUP", consumed: false },
     data: { consumed: true },
@@ -104,7 +90,6 @@ export async function createPasswordResetOtp(params: {
   email: string;
   userId: string;
 }) {
-  await assertCanSendOtp(params.email);
   await prisma.otpCode.updateMany({
     where: { email: params.email, purpose: "PASSWORD_RESET", consumed: false },
     data: { consumed: true },

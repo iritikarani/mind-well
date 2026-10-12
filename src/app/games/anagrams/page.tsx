@@ -1,11 +1,8 @@
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { AppHeader } from "@/components/app/AppHeader";
 import { AnagramsGame } from "@/components/games/anagrams/AnagramsGame";
 import { getEffectiveStreak } from "@/lib/streak";
-
-export const metadata: Metadata = { title: "Alphabet Soup" };
 
 export default async function AnagramsPage() {
   const user = await getCurrentUser();

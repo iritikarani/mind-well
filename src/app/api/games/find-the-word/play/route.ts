@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   if (!user) return errorResponse("Not signed in", 401);
 
   if (await hasReachedDailyLimit(user.id, "FIND_THE_WORD")) {
-    return errorResponse("You've already played Word Nest twice today", 429);
+    return errorResponse("You've already played Find the Word twice today", 429);
   }
 
   const body = await req.json().catch(() => null);

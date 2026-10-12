@@ -235,7 +235,7 @@ export function FindTheWordGame({
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <h1 className="font-heading text-2xl font-bold text-heading">Word Nest</h1>
+        <h1 className="font-heading text-2xl font-bold text-heading">Find the Word</h1>
         <div className="flex items-center gap-2">
           {typeof playsRemaining === "number" && (
             <Pill tone="lavender">

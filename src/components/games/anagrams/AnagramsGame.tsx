@@ -219,7 +219,7 @@ export function AnagramsGame() {
   return (
     <div className="mx-auto max-w-lg">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="font-heading text-2xl font-bold text-heading">Alphabet Soup</h1>
+        <h1 className="font-heading text-2xl font-bold text-heading">Anagrams</h1>
         <Pill tone="sky">Level {levelNumber} of 3</Pill>
       </div>
 

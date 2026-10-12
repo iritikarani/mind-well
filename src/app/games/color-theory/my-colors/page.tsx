@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -6,8 +5,6 @@ import { getEffectiveStreak } from "@/lib/streak";
 import { AppHeader } from "@/components/app/AppHeader";
 import { LinkButton } from "@/components/ui/Button";
 import { colorByKey } from "@/lib/colorTheoryContent";
-
-export const metadata: Metadata = { title: "My Colors" };
 
 export default async function MyColorsPage() {
   const user = await getCurrentUser();
@@ -50,14 +47,14 @@ export default async function MyColorsPage() {
             </p>
           </div>
           <LinkButton href="/games/color-theory" variant="ghost" className="px-3 py-1.5 text-sm">
-            ← Back to Hue Hugs
+            ← Back to Color Connection
           </LinkButton>
         </div>
 
         {entries.length === 0 ? (
           <div className="pixel-panel mt-8 rounded-[22px] bg-surface p-8 text-center">
             <p className="text-muted">
-              Play Hue Hugs to start collecting colors. Each one leaves behind a little
+              Play Color Connection to start collecting colors. Each one leaves behind a little
               keepsake here. ♡
             </p>
           </div>

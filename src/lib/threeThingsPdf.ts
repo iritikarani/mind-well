@@ -112,7 +112,7 @@ function paintHeader(doc: Doc, monthLabel: string): number {
 
   doc.setFontSize(13);
   doc.setTextColor(...COLORS.blushText);
-  doc.text(`Tiny Treasures — ${monthLabel}`, MARGIN + 8, top + 21);
+  doc.text(`3 Things — ${monthLabel}`, MARGIN + 8, top + 21);
 
   doc.setFont("Nunito", "normal");
   doc.setFontSize(10);

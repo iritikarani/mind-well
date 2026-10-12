@@ -1,5 +1,5 @@
 /**
- * Generates a shareable keepsake image for a Postcard Puzzles postcard — a
+ * Generates a shareable keepsake image for a World Puzzle postcard — a
  * flip animation can't itself be shared, so this combines both sides
  * (the monument photo and the handwritten-style note) into one landscape
  * image, the way a real postcard photographs front-and-back side by side.

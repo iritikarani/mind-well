@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { AppHeader } from "@/components/app/AppHeader";
@@ -8,8 +7,6 @@ import { getEffectiveStreak } from "@/lib/streak";
 import { prisma } from "@/lib/prisma";
 import { gameMeta } from "@/lib/games";
 import { DAILY_PLAY_LIMITS, getPlaysToday, hasReachedDailyLimit } from "@/lib/playLimit";
-
-export const metadata: Metadata = { title: "Word Nest" };
 
 export default async function FindTheWordPage() {
   const user = await getCurrentUser();
@@ -36,8 +33,6 @@ export default async function FindTheWordPage() {
   const pastPlays = await prisma.gamePlay.findMany({
     where: { userId: user.id, game: "FIND_THE_WORD" },
     orderBy: { playedAt: "desc" },
-    // Recent history is plenty for "don't repeat last time's question".
-    take: 300,
     select: { result: true },
   });
   const lastVariantByWord: Record<string, number> = {};

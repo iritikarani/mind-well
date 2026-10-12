@@ -30,7 +30,7 @@ export function startOfDayInZone(timeZone: string): Date {
 /**
  * A pure calendar-date day count: the same number for the same "YYYY-MM-DD"
  * everywhere, regardless of timezone. Used for content that should be
- * identical for everyone on the same calendar date (e.g. the Postcard Puzzles'
+ * identical for everyone on the same calendar date (e.g. the World Puzzle's
  * puzzle of the day) — two users in different timezones both on "Sep 8"
  * locally get the same index, even though that's a different real-world
  * moment for each of them.

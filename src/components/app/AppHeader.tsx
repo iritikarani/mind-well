@@ -9,7 +9,6 @@ import { MobileNavCategory } from "@/components/app/MobileNavCategory";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Home" },
-  { href: "/calm", label: "Calm" },
   { href: "/games#validation", label: "Validation?" },
   { href: "/games#threads", label: "Threads" },
   { href: "/games#mind-flow", label: "Mind Flow" },
@@ -63,9 +62,7 @@ export function AppHeader({
           {typeof streak === "number" && streak > 0 && (
             <Pill tone="butter">🔥 {streak}-day streak</Pill>
           )}
-          <Link href="/settings" className="text-sm font-medium text-muted hover:text-purple-text">
-            Hi, {name}
-          </Link>
+          <span className="text-sm font-medium text-muted">Hi, {name}</span>
           <button
             onClick={logout}
             disabled={loading}
@@ -99,13 +96,6 @@ export function AppHeader({
             >
               Home
             </Link>
-            <Link
-              href="/calm"
-              onClick={() => setMenuOpen(false)}
-              className="min-h-11 rounded-xl px-3 py-2.5 font-heading text-sm font-semibold text-heading hover:bg-lavender/40"
-            >
-              Calm corner
-            </Link>
             {NAV_CATEGORIES.map((category) => (
               <MobileNavCategory
                 key={category}
@@ -116,13 +106,7 @@ export function AppHeader({
           </nav>
           <div className="mt-3 flex items-center justify-between border-t border-lavender/60 pt-3">
             <div className="flex items-center gap-2">
-              <Link
-                href="/settings"
-                onClick={() => setMenuOpen(false)}
-                className="text-sm font-medium text-muted hover:text-purple-text"
-              >
-                Hi, {name} · Settings
-              </Link>
+              <span className="text-sm font-medium text-muted">Hi, {name}</span>
               {typeof streak === "number" && streak > 0 && (
                 <Pill tone="butter">🔥 {streak}</Pill>
               )}

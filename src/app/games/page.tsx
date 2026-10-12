@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
@@ -6,8 +5,6 @@ import { GAME_CATEGORIES, GAMES, CATEGORY_META, categorySlug } from "@/lib/games
 import { AppHeader } from "@/components/app/AppHeader";
 import { Pill } from "@/components/ui/Pill";
 import { getEffectiveStreak } from "@/lib/streak";
-
-export const metadata: Metadata = { title: "Games" };
 
 export default async function GamesPage() {
   const user = await getCurrentUser();
