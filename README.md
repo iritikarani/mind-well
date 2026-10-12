@@ -18,8 +18,8 @@ Next.js (App Router), TypeScript, Tailwind CSS and Prisma on PostgreSQL.
   Whimsy Wheels (answers checked against our word bank, then Wikipedia), Word Nest,
   Alphabet Soup, and Tiny Treasures (journal).
 - **Badges, streaks, mood check-ins, shareable badge/postcard images.**
-- **Trust** — privacy, terms and a support & safety page; Settings lets you download all
-  your data or delete your account; login lockout and email throttling.
+- **Account** — Settings lets you download all your data or delete your account; login
+  lockout and email throttling protect sign-in.
 
 ## Getting started
 
@@ -41,7 +41,6 @@ Open [http://localhost:3000](http://localhost:3000).
 | `SESSION_SECRET` | Signing session cookies — use a long random string |
 | `BREVO_API_KEY`, `BREVO_SENDER_EMAIL` | Sending sign-up / password-reset codes |
 | `NEXT_PUBLIC_SITE_URL` | Optional — public address for link previews and the sitemap (defaults to the Vercel production URL) |
-| `NEXT_PUBLIC_CONTACT_EMAIL` | Optional — shown on the privacy page as the contact address |
 
 In development, one-time codes are logged to the server console and returned by the API so
 the flow can be tested without an inbox. They are never logged or returned in production.
@@ -59,9 +58,3 @@ node scripts/make-icons.mjs           # regenerate app icons from src/app/icon.s
 ```
 
 CI (`.github/workflows/ci.yml`) runs the type check, lint, tests and a build on every push.
-
-## Notes
-
-- Safety numbers on `/safety` (Tele-MANAS, KIRAN, 988, Samaritans) should be re-verified for
-  your audience before launch.
-- The privacy page and terms are plain-language drafts, not legal advice.

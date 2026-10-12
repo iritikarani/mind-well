@@ -5,7 +5,6 @@ import { getEffectiveStreak } from "@/lib/streak";
 import { AppHeader } from "@/components/app/AppHeader";
 import { DeleteAccountForm } from "@/components/app/DeleteAccountForm";
 import { Card } from "@/components/ui/Card";
-import Link from "next/link";
 
 export const metadata: Metadata = { title: "Settings" };
 
@@ -60,12 +59,6 @@ export default async function SettingsPage() {
           </div>
         </Card>
 
-        <p className="text-center text-xs text-muted">
-          Need support?{" "}
-          <Link href="/safety" className="font-semibold underline underline-offset-2">
-            Find help here
-          </Link>
-        </p>
       </main>
     </>
   );

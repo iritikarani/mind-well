@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { BreathingPacer } from "@/components/calm/BreathingPacer";
 import { SoundMixer } from "@/components/calm/SoundMixer";
 import { Card } from "@/components/ui/Card";
@@ -50,12 +49,6 @@ export function CalmCorner({ loggedIn }: { loggedIn: boolean }) {
             </LinkButton>
           </>
         )}
-        <p className="mt-4 text-xs text-muted">
-          Feeling overwhelmed?{" "}
-          <Link href="/safety" className="font-semibold underline underline-offset-2">
-            Here&apos;s who you can reach right now.
-          </Link>
-        </p>
       </div>
     </main>
   );
