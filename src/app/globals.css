@@ -241,3 +241,103 @@ h1, h2, h3, h4, .font-heading {
     animation: none !important;
   }
 }
+
+/* ───────────── Your Space (the room) ───────────── */
+
+@keyframes room-rain {
+  0% { transform: translate(0, -24px); opacity: 0; }
+  15% { opacity: 0.85; }
+  100% { transform: translate(-6px, 130px); opacity: 0; }
+}
+
+@keyframes room-cloud {
+  0% { transform: translateX(-14px); }
+  100% { transform: translateX(14px); }
+}
+
+@keyframes room-steam {
+  0% { transform: translateY(0) scaleX(1); opacity: 0; }
+  30% { opacity: 0.7; }
+  100% { transform: translateY(-14px) scaleX(1.4); opacity: 0; }
+}
+
+@keyframes room-breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.02, 1.05); }
+}
+
+@keyframes room-flag {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(5deg); }
+}
+
+@keyframes room-sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2.5deg); }
+}
+
+@keyframes room-mote {
+  0% { transform: translate(0, 0); opacity: 0; }
+  20% { opacity: 0.8; }
+  100% { transform: translate(10px, -26px); opacity: 0; }
+}
+
+@keyframes room-flicker {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  45% { opacity: 0.82; transform: scale(0.94, 1.06); }
+  70% { opacity: 0.95; transform: scale(1.04, 0.97); }
+}
+
+@keyframes room-zzz {
+  0% { transform: translate(0, 0); opacity: 0; }
+  25% { opacity: 0.9; }
+  100% { transform: translate(8px, -14px); opacity: 0; }
+}
+
+@keyframes room-bird {
+  0% { transform: translateX(-30px); }
+  100% { transform: translateX(150px); }
+}
+
+.room-rain { animation: room-rain 1.1s linear infinite; }
+.room-cloud { animation: room-cloud 14s ease-in-out infinite alternate; }
+.room-steam { animation: room-steam 3s ease-out infinite; }
+.room-breathe { animation: room-breathe 5.5s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+.room-flag { animation: room-flag 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: 0% 100%; }
+.room-sway { animation: room-sway 6s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+.room-mote { animation: room-mote 7s ease-in infinite; }
+.room-flicker { animation: room-flicker 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+.room-zzz { animation: room-zzz 4s ease-out infinite; }
+.room-bird { animation: room-bird 22s linear infinite; }
+.room-twinkle { animation: twinkle 3s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+
+/* Clickable things in the room lift a little and show a dashed ring. */
+.room-hot { cursor: pointer; outline: none; }
+.room-hot .room-ring { opacity: 0; transition: opacity 0.2s ease; }
+.room-hot .room-body { transition: transform 0.25s cubic-bezier(0.3, 0.7, 0.3, 1.2); transform-box: fill-box; transform-origin: 50% 100%; }
+.room-hot .room-label { opacity: 0; transition: opacity 0.2s ease; pointer-events: none; }
+.room-hot:hover .room-ring,
+.room-hot:focus-visible .room-ring { opacity: 1; }
+.room-hot:hover .room-body,
+.room-hot:focus-visible .room-body { transform: translateY(-2px) scale(1.03); }
+.room-hot:hover .room-label,
+.room-hot:focus-visible .room-label { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .room-rain,
+  .room-cloud,
+  .room-steam,
+  .room-breathe,
+  .room-flag,
+  .room-sway,
+  .room-mote,
+  .room-flicker,
+  .room-zzz,
+  .room-bird,
+  .room-twinkle,
+  .room-hot .room-body {
+    animation: none !important;
+    transition: none !important;
+  }
+  .room-rain { opacity: 0.6; }
+}

@@ -21,6 +21,8 @@ export function MoodCheckIn({
   heading = "How are you feeling today?",
   subtext = "Totally optional — pick one if you'd like.",
   suggestGame = true,
+  initialMood,
+  onMoodChange,
 }: {
   heading?: string;
   subtext?: string;
@@ -28,12 +30,20 @@ export function MoodCheckIn({
    * off where that would be circular — e.g. the re-check shown at the end
    * of Animal Runner itself. */
   suggestGame?: boolean;
+  /** Today's mood when the page already knows it (null = known to be unset),
+   * so the buttons are right on first paint and no fetch is needed. Leave
+   * undefined to have the component look it up itself. */
+  initialMood?: string | null;
+  /** Called whenever the chosen mood changes — lets the room's window
+   * follow along live. */
+  onMoodChange?: (mood: string | null) => void;
 } = {}) {
-  const [mood, setMood] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [mood, setMood] = useState<string | null>(initialMood ?? null);
+  const [loading, setLoading] = useState(initialMood === undefined);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    if (initialMood !== undefined) return;
     let ignore = false;
     fetch("/api/mood")
       .then((r) => r.json())
@@ -46,11 +56,12 @@ export function MoodCheckIn({
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [initialMood]);
 
   async function pick(key: string) {
     const previous = mood;
     setMood(key);
+    onMoodChange?.(key);
     setSaving(true);
     try {
       const res = await fetch("/api/mood", {
@@ -58,9 +69,13 @@ export function MoodCheckIn({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mood: key }),
       });
-      if (!res.ok) setMood(previous);
+      if (!res.ok) {
+        setMood(previous);
+        onMoodChange?.(previous);
+      }
     } catch {
       setMood(previous);
+      onMoodChange?.(previous);
     } finally {
       setSaving(false);
     }

@@ -9,6 +9,7 @@ import { MobileNavCategory } from "@/components/app/MobileNavCategory";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Home" },
+  { href: "/calm", label: "Calm" },
   { href: "/games#validation", label: "Validation?" },
   { href: "/games#threads", label: "Threads" },
   { href: "/games#mind-flow", label: "Mind Flow" },
@@ -97,6 +98,13 @@ export function AppHeader({
               className="min-h-11 rounded-xl px-3 py-2.5 font-heading text-sm font-semibold text-heading hover:bg-lavender/40"
             >
               Home
+            </Link>
+            <Link
+              href="/calm"
+              onClick={() => setMenuOpen(false)}
+              className="min-h-11 rounded-xl px-3 py-2.5 font-heading text-sm font-semibold text-heading hover:bg-lavender/40"
+            >
+              Calm corner
             </Link>
             {NAV_CATEGORIES.map((category) => (
               <MobileNavCategory

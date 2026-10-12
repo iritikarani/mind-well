@@ -1,13 +1,14 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
-import { formatDateInZone, startOfDayInZone } from "@/lib/date";
+import { formatDateInZone, startOfDayInZone, todayKeyInZone } from "@/lib/date";
 import { getUserTimeZone } from "@/lib/timezone";
 import { getEffectiveStreak } from "@/lib/streak";
 import { prisma } from "@/lib/prisma";
 import { BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
 import { GAMES } from "@/lib/games";
 import { AppHeader } from "@/components/app/AppHeader";
-import { MoodCheckIn } from "@/components/app/MoodCheckIn";
+import { YourSpace } from "@/components/space/YourSpace";
+import { monumentById } from "@/lib/worldPuzzleContent";
 import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
 import { ShareBadgeButton } from "@/components/badges/ShareBadgeButton";
@@ -21,7 +22,9 @@ export default async function DashboardPage() {
   const DAY_MS = 24 * 60 * 60 * 1000;
   const weekStart = new Date(dayStart.getTime() - 6 * DAY_MS);
 
-  const [streak, badges, playsToday, journalCount, weekPlays] =
+  const todayKey = todayKeyInZone(timeZone);
+
+  const [streak, badges, playsToday, journalCount, weekPlays, totalPlays, todayMood, journalToday, puzzlePlays] =
     await Promise.all([
       getEffectiveStreak(user.id),
       prisma.userBadge.findMany({
@@ -34,7 +37,33 @@ export default async function DashboardPage() {
         where: { userId: user.id, playedAt: { gte: weekStart } },
         select: { playedAt: true },
       }),
+      prisma.gamePlay.count({ where: { userId: user.id } }),
+      prisma.moodEntry.findUnique({
+        where: { userId_date: { userId: user.id, date: todayKey } },
+        select: { mood: true },
+      }),
+      prisma.journalEntry.count({ where: { userId: user.id, date: todayKey } }),
+      prisma.gamePlay.findMany({
+        where: { userId: user.id, game: "WORLD_PUZZLE" },
+        orderBy: { playedAt: "desc" },
+        take: 60,
+        select: { result: true },
+      }),
     ]);
+
+  const seenMonuments = new Set<string>();
+  for (const play of puzzlePlays) {
+    try {
+      const { monumentId } = JSON.parse(play.result) as { monumentId?: string };
+      if (monumentId && monumentById(monumentId)) seenMonuments.add(monumentId);
+    } catch {
+      // ignore malformed rows
+    }
+  }
+  const postcards = [...seenMonuments].slice(0, 5).map((id) => ({
+    id,
+    name: monumentById(id)?.name ?? id,
+  }));
 
   const weeklyActivity = Array.from({ length: 7 }, (_, i) => {
     const dayDate = new Date(weekStart.getTime() + i * DAY_MS);
@@ -58,13 +87,16 @@ export default async function DashboardPage() {
     <>
       <AppHeader name={user.name} streak={streak.currentCount} />
       <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-16 sm:px-10">
-        <h1 className="font-heading text-3xl font-bold text-heading">
-          Hi, {user.name.split(" ")[0]} <span aria-hidden>♡</span>
-        </h1>
-
-        <Card className="mt-6">
-          <MoodCheckIn />
-        </Card>
+        <YourSpace
+          name={user.name}
+          userSeed={user.id}
+          initialMood={todayMood?.mood ?? null}
+          postcards={postcards}
+          postcardTotal={seenMonuments.size}
+          badgeCount={badges.length}
+          totalPlays={totalPlays}
+          journalToday={journalToday > 0}
+        />
 
         <div className="mt-6 flex gap-2 overflow-x-auto pb-1">
           {quickActions.map((game) => (
