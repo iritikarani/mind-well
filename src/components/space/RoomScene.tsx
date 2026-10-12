@@ -547,7 +547,7 @@ export function RoomScene({
             />
           )}
         </g>
-        <HotLabel x={316} y={132} text={journalToday ? "Journal ✓" : "Journal"} />
+        <HotLabel x={316} y={132} text={journalToday ? "Tiny Treasures ✓" : "Tiny Treasures"} />
       </Link>
       <rect x="351" y="157" width="12" height="10" rx="3" fill="#ffc9df" />
       <path d="M363 159 q5 1 0 6" stroke="#ffc9df" strokeWidth="2" fill="none" />

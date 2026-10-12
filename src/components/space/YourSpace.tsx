@@ -90,7 +90,7 @@ export function YourSpace({
         <RoomLink href="/calm" emoji="🕯️" label="Calm corner" />
         <RoomLink href="/games/world-puzzle/my-world" emoji="🗺️" label={`Postcards · ${postcardTotal}`} />
         <RoomLink href="/badges" emoji="🏅" label={`Badges · ${badgeCount}`} />
-        <RoomLink href="/games/three-things" emoji="📖" label="Journal" />
+        <RoomLink href="/games/three-things" emoji="📖" label="Tiny Treasures" />
         <RoomLink href="/games" emoji="🧸" label="Games" />
       </nav>
 
