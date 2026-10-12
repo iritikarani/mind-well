@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -11,6 +12,8 @@ import { BADGE_CATALOG, type BadgeKey } from "@/lib/badges";
 import { gameMeta } from "@/lib/games";
 import { cn } from "@/lib/cn";
 import { ShareBadgeButton } from "@/components/badges/ShareBadgeButton";
+
+export const metadata: Metadata = { title: "Badges" };
 
 export default async function BadgesPage() {
   const user = await getCurrentUser();

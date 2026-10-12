@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { AppHeader } from "@/components/app/AppHeader";
 import { ThreeThingsGame } from "@/components/games/three-things/ThreeThingsGame";
 import { getEffectiveStreak } from "@/lib/streak";
+
+export const metadata: Metadata = { title: "Three Things" };
 
 export default async function ThreeThingsPage() {
   const user = await getCurrentUser();

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { AppHeader } from "@/components/app/AppHeader";
@@ -7,6 +8,8 @@ import { getEffectiveStreak } from "@/lib/streak";
 import { prisma } from "@/lib/prisma";
 import { gameMeta } from "@/lib/games";
 import { DAILY_PLAY_LIMITS, getPlaysToday, hasReachedDailyLimit } from "@/lib/playLimit";
+
+export const metadata: Metadata = { title: "Find the Word" };
 
 export default async function FindTheWordPage() {
   const user = await getCurrentUser();

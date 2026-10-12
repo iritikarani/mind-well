@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -11,6 +12,8 @@ import { hasReachedDailyLimit } from "@/lib/playLimit";
 import { monumentById, postcardNote, randomQuote } from "@/lib/worldPuzzleContent";
 import { startOfDayInZone } from "@/lib/date";
 import { getUserTimeZone } from "@/lib/timezone";
+
+export const metadata: Metadata = { title: "World Puzzle" };
 
 export default async function WorldPuzzlePage() {
   const user = await getCurrentUser();

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -5,6 +6,8 @@ import { getEffectiveStreak } from "@/lib/streak";
 import { AppHeader } from "@/components/app/AppHeader";
 import { LinkButton } from "@/components/ui/Button";
 import { monumentById } from "@/lib/worldPuzzleContent";
+
+export const metadata: Metadata = { title: "My World" };
 
 export default async function MyWorldPage() {
   const user = await getCurrentUser();

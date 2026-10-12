@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { formatDateInZone, startOfDayInZone, todayKeyInZone } from "@/lib/date";
@@ -12,6 +13,8 @@ import { monumentById } from "@/lib/worldPuzzleContent";
 import { Card } from "@/components/ui/Card";
 import { LinkButton } from "@/components/ui/Button";
 import { ShareBadgeButton } from "@/components/badges/ShareBadgeButton";
+
+export const metadata: Metadata = { title: "Your room" };
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
