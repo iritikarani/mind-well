@@ -151,7 +151,7 @@ export function WorldPuzzleGame({ userName }: { userName: string }) {
     return (
       <div className="mx-auto max-w-md text-center">
         <div className="flex items-center justify-between">
-          <h1 className="font-heading text-3xl font-bold text-heading">World Puzzle</h1>
+          <h1 className="font-heading text-3xl font-bold text-heading">Postcard Puzzles</h1>
           <LinkButton href="/games/world-puzzle/my-world" variant="ghost" className="px-3 py-1.5 text-sm">
             My World 🗺️
           </LinkButton>

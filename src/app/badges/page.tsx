@@ -79,7 +79,7 @@ export default async function BadgesPage() {
             <div className="text-3xl">🎨</div>
             <p className="mt-2 font-heading font-semibold text-heading">My Colors</p>
             <p className="mt-1 text-xs text-muted">
-              Every keepsake badge you&apos;ve earned from Color Connection.
+              Every keepsake badge you&apos;ve earned from Hue Hugs.
             </p>
           </a>
         </div>

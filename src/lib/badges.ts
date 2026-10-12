@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import type { GameKey } from "@/generated/prisma/enums";
 
 export const BADGE_CATALOG = {
-  // Animal Runner
+  // Basket Buddies (Animal Runner)
   POSITIVITY_MAGNET: {
     label: "Kind Heart",
     description: "Caught mostly kind remarks in a single run",
@@ -24,7 +24,7 @@ export const BADGE_CATALOG = {
     game: "ANIMAL_RUNNER" as GameKey,
   },
 
-  // World Puzzle
+  // Postcard Puzzles
   PATIENT_BUILDER: {
     label: "Patient Builder",
     description: "Completed a puzzle",
@@ -58,7 +58,7 @@ export const BADGE_CATALOG = {
     game: "COLOR_THEORY" as GameKey,
   },
 
-  // Spin & Connect
+  // Whimsy Wheels
   QUICK_THINKER: {
     label: "Quick Thinker",
     description: "Completed a round with zero hints used",
@@ -80,7 +80,7 @@ export const BADGE_CATALOG = {
     game: "SPIN_AND_CONNECT" as GameKey,
   },
 
-  // Find the Word
+  // Word Nest
   SELF_AWARE: {
     label: "Self-Aware",
     description: "Completed a full 3-word session",
@@ -97,7 +97,7 @@ export const BADGE_CATALOG = {
     game: "FIND_THE_WORD" as GameKey,
   },
 
-  // Anagrams
+  // Alphabet Soup
   SPEED_SOLVER: {
     label: "Brain Spark",
     description: "Completed all 3 levels quickly",
@@ -110,7 +110,7 @@ export const BADGE_CATALOG = {
   },
   LEVEL_MASTER: {
     label: "Word Explorer",
-    description: "Completed a full Anagrams session",
+    description: "Completed a full Alphabet Soup session",
     game: "ANAGRAMS" as GameKey,
   },
   SHARP_THINKER: {
@@ -120,11 +120,11 @@ export const BADGE_CATALOG = {
   },
   WORD_MASTER: {
     label: "Word Master",
-    description: "Completed 10 Anagrams sessions",
+    description: "Completed 10 Alphabet Soup sessions",
     game: "ANAGRAMS" as GameKey,
   },
 
-  // Three Things
+  // Tiny Treasures
   REFLECTOR: {
     label: "Reflector",
     description: "Saved entries on 7 different days",

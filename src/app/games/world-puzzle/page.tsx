@@ -13,7 +13,7 @@ import { monumentById, postcardNote, randomQuote } from "@/lib/worldPuzzleConten
 import { startOfDayInZone } from "@/lib/date";
 import { getUserTimeZone } from "@/lib/timezone";
 
-export const metadata: Metadata = { title: "World Puzzle" };
+export const metadata: Metadata = { title: "Postcard Puzzles" };
 
 export default async function WorldPuzzlePage() {
   const user = await getCurrentUser();

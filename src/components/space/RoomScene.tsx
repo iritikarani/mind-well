@@ -530,7 +530,7 @@ export function RoomScene({
       <rect x="384" y="172" width="4.500" height="43" fill="#d49a66" />
       <rect x="266" y="166" width="128" height="8" rx="3" fill="#e8b88a" />
       <rect x="266" y="172" width="128" height="3" rx="1.500" fill="#cc9566" />
-      <Link href="/games/three-things" className="room-hot" aria-label="Your journal — Three Things">
+      <Link href="/games/three-things" className="room-hot" aria-label="Your journal — Tiny Treasures">
         <rect className="room-ring" x="286" y="140" width="58" height="30" rx="7" fill="none" stroke="#7b5bc7" strokeWidth="1.600" strokeDasharray="4 3" />
         <rect x="286" y="140" width="58" height="30" rx="7" fill="transparent" />
         <g className="room-body">

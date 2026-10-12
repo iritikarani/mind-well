@@ -41,7 +41,7 @@ export default function PrivacyPage() {
       <ul className="list-disc space-y-1.5 pl-5">
         <li><strong>Hosting and database</strong> providers store the data above on our behalf.</li>
         <li><strong>An email service (Brevo)</strong> delivers your verification codes. It receives your email address and the code.</li>
-        <li><strong>Wikipedia</strong> is asked, in Spin &amp; Connect, whether an answer you typed is a real item in a category. Only the typed word and the category are sent — nothing that identifies you.</li>
+        <li><strong>Wikipedia</strong> is asked, in Whimsy Wheels, whether an answer you typed is a real item in a category. Only the typed word and the category are sent — nothing that identifies you.</li>
       </ul>
 
       <H2>Your choices</H2>

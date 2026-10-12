@@ -57,7 +57,7 @@ export default async function MyWorldPage() {
         {postcards.length === 0 ? (
           <div className="pixel-panel mt-8 rounded-[22px] bg-surface p-8 text-center">
             <p className="text-muted">
-              Complete a World Puzzle to start your collection. Every finished puzzle becomes a
+              Complete a Postcard Puzzle to start your collection. Every finished puzzle becomes a
               little postcard here. ♡
             </p>
           </div>

@@ -9,7 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { gameMeta } from "@/lib/games";
 import { DAILY_PLAY_LIMITS, getPlaysToday, hasReachedDailyLimit } from "@/lib/playLimit";
 
-export const metadata: Metadata = { title: "Find the Word" };
+export const metadata: Metadata = { title: "Word Nest" };
 
 export default async function FindTheWordPage() {
   const user = await getCurrentUser();

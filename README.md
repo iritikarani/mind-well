@@ -14,9 +14,9 @@ Next.js (App Router), TypeScript, Tailwind CSS and Prisma on PostgreSQL.
   optional repeating calendar reminder (`.ics`, no push permissions needed).
 - **Calm corner** (`/calm`, public) — a breathing pacer and a mixer of live-generated
   sounds (rain, waves, fire, wind, hum, chimes) with a sleep timer. No audio files.
-- **Games** — Animal Runner, World Puzzle (postcards → My World), Color Connection,
-  Spin & Connect (answers checked against our word bank, then Wikipedia), Find the Word,
-  Anagrams, and Three Things (journal).
+- **Games** — Basket Buddies, Postcard Puzzles (postcards → My World), Hue Hugs,
+  Whimsy Wheels (answers checked against our word bank, then Wikipedia), Word Nest,
+  Alphabet Soup, and Tiny Treasures (journal).
 - **Badges, streaks, mood check-ins, shareable badge/postcard images.**
 - **Trust** — privacy, terms and a support & safety page; Settings lets you download all
   your data or delete your account; login lockout and email throttling.

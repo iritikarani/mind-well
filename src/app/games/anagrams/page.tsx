@@ -5,7 +5,7 @@ import { AppHeader } from "@/components/app/AppHeader";
 import { AnagramsGame } from "@/components/games/anagrams/AnagramsGame";
 import { getEffectiveStreak } from "@/lib/streak";
 
-export const metadata: Metadata = { title: "Anagrams" };
+export const metadata: Metadata = { title: "Alphabet Soup" };
 
 export default async function AnagramsPage() {
   const user = await getCurrentUser();

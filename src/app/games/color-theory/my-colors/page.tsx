@@ -50,14 +50,14 @@ export default async function MyColorsPage() {
             </p>
           </div>
           <LinkButton href="/games/color-theory" variant="ghost" className="px-3 py-1.5 text-sm">
-            ← Back to Color Connection
+            ← Back to Hue Hugs
           </LinkButton>
         </div>
 
         {entries.length === 0 ? (
           <div className="pixel-panel mt-8 rounded-[22px] bg-surface p-8 text-center">
             <p className="text-muted">
-              Play Color Connection to start collecting colors. Each one leaves behind a little
+              Play Hue Hugs to start collecting colors. Each one leaves behind a little
               keepsake here. ♡
             </p>
           </div>

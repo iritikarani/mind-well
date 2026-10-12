@@ -5,7 +5,7 @@ import { AppHeader } from "@/components/app/AppHeader";
 import { ThreeThingsGame } from "@/components/games/three-things/ThreeThingsGame";
 import { getEffectiveStreak } from "@/lib/streak";
 
-export const metadata: Metadata = { title: "Three Things" };
+export const metadata: Metadata = { title: "Tiny Treasures" };
 
 export default async function ThreeThingsPage() {
   const user = await getCurrentUser();

@@ -200,7 +200,7 @@ function hindiFilmYear(categories: string[]): number | null {
   return null;
 }
 
-/** Validates a Spin & Connect "Bollywood Hits (2000-2025)" answer directly
+/** Validates a Whimsy Wheels "Bollywood Hits (2000-2025)" answer directly
  * off Wikipedia's own film categories, rather than a keyword search: every
  * Hindi film's article is tagged with a "<year> Hindi-language films"
  * category, so checking for that (with the year in range) confirms both

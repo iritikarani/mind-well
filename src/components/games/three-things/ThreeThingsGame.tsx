@@ -142,7 +142,7 @@ export function ThreeThingsGame() {
     <div className="mx-auto max-w-5xl">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="flex items-center gap-2 font-heading text-3xl font-bold text-heading">
-          <PixelHeart size={22} /> 3 Things
+          <PixelHeart size={22} /> Tiny Treasures
         </h1>
         <Button variant="soft" onClick={exportPdf} disabled={exporting}>
           {exporting ? "Preparing…" : "Download month as PDF"}

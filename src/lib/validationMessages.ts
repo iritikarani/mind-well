@@ -1,6 +1,6 @@
 /**
  * A short, explicit validating line shown at the end of each game in the
- * "Validation?" category (Animal Runner, World Puzzle, Color Connection) —
+ * "Validation?" category (Basket Buddies, Postcard Puzzles, Hue Hugs) —
  * distinct from each game's own result copy, since the category's whole
  * point ("Play • Reflect • Validate") is to end on an unconditional
  * statement that the player's feelings are valid, not just a message about

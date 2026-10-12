@@ -1,6 +1,6 @@
 /**
  * Generates a personalized, downloadable "Soul" badge as a PNG using the
- * Canvas API — a shareable keepsake card for a Color Connection session.
+ * Canvas API — a shareable keepsake card for a Hue Hugs session.
  */
 
 interface BadgeOptions {
@@ -78,7 +78,7 @@ export function drawColorBadge(canvas: HTMLCanvasElement, opts: BadgeOptions) {
 
   ctx.font = "20px sans-serif";
   ctx.fillStyle = "#7D7090";
-  ctx.fillText("Color Connection · Happy Space ♡", centerX, cardY + 215);
+  ctx.fillText("Hue Hugs · Happy Space ♡", centerX, cardY + 215);
 
   ctx.font = "16px sans-serif";
   ctx.fillStyle = "rgba(93,75,115,0.65)";

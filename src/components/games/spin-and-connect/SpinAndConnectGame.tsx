@@ -206,7 +206,7 @@ export function SpinAndConnectGame() {
   return (
     <div className="mx-auto max-w-xl">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="font-heading text-2xl font-bold text-heading">Spin &amp; Connect</h1>
+        <h1 className="font-heading text-2xl font-bold text-heading">Whimsy Wheels</h1>
         <Pill tone="sky">
           Round {roundIndex + 1} of {TOTAL_ROUNDS}
         </Pill>

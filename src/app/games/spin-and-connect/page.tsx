@@ -5,7 +5,7 @@ import { AppHeader } from "@/components/app/AppHeader";
 import { SpinAndConnectGame } from "@/components/games/spin-and-connect/SpinAndConnectGame";
 import { getEffectiveStreak } from "@/lib/streak";
 
-export const metadata: Metadata = { title: "Spin & Connect" };
+export const metadata: Metadata = { title: "Whimsy Wheels" };
 
 export default async function SpinAndConnectPage() {
   const user = await getCurrentUser();

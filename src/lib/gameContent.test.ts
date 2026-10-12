@@ -13,7 +13,7 @@ import {
 import { LEVEL1_PUZZLES, LEVEL2_PUZZLES, LEVEL3_PUZZLES } from "./anagramsContent";
 import { MONUMENTS } from "./worldPuzzleContent";
 
-describe("Spin & Connect categories", () => {
+describe("Whimsy Wheels categories", () => {
   it("is exactly the ten chosen categories", () => {
     expect(CATEGORIES.map((c) => c.key)).toEqual([
       "fruits",
@@ -93,7 +93,7 @@ describe("answer checking", () => {
   });
 });
 
-describe("Anagrams", () => {
+describe("Alphabet Soup", () => {
   const letters = (s: string) => s.toUpperCase().split("").sort().join("");
 
   it("Level 1 and 2: every accepted word really is an anagram of the source", () => {
@@ -116,7 +116,7 @@ describe("Anagrams", () => {
   });
 });
 
-describe("World Puzzle monuments", () => {
+describe("Postcard Puzzles monuments", () => {
   const pub = path.resolve(__dirname, "../../public");
 
   it("ids are unique", () => {

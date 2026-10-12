@@ -8,7 +8,7 @@ import { getEffectiveStreak } from "@/lib/streak";
 import { gameMeta } from "@/lib/games";
 import { hasReachedDailyLimit } from "@/lib/playLimit";
 
-export const metadata: Metadata = { title: "Color Connection" };
+export const metadata: Metadata = { title: "Hue Hugs" };
 
 export default async function ColorTheoryPage() {
   const user = await getCurrentUser();

@@ -80,7 +80,7 @@ export function ColorTheoryGame({ userName }: { userName: string }) {
     return (
       <div className="mx-auto max-w-2xl text-center">
         <div className="flex items-center justify-between">
-          <h1 className="font-heading text-3xl font-bold text-heading">Color Connection</h1>
+          <h1 className="font-heading text-3xl font-bold text-heading">Hue Hugs</h1>
           <LinkButton href="/games/color-theory/my-colors" variant="ghost" className="px-3 py-1.5 text-sm">
             My Colors 🎨
           </LinkButton>

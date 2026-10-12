@@ -26,9 +26,9 @@ export function MoodCheckIn({
 }: {
   heading?: string;
   subtext?: string;
-  /** Whether a low/hard mood should offer a link to Animal Runner. Turned
+  /** Whether a low/hard mood should offer a link to Basket Buddies. Turned
    * off where that would be circular — e.g. the re-check shown at the end
-   * of Animal Runner itself. */
+   * of Basket Buddies itself. */
   suggestGame?: boolean;
   /** Today's mood when the page already knows it (null = known to be unset),
    * so the buttons are right on first paint and no fetch is needed. Leave
@@ -116,14 +116,14 @@ export function MoodCheckIn({
       {showSuggestion && (
         <div className="mt-3 rounded-xl bg-lavender/50 p-3">
           <p className="text-sm text-heading">
-            Want a gentle place to land? Animal Runner might help. <span aria-hidden>♡</span>
+            Want a gentle place to land? Basket Buddies might help. <span aria-hidden>♡</span>
           </p>
           <LinkButton
             href="/games/animal-runner"
             variant="lavender"
             className="mt-2 px-4 py-2 text-xs"
           >
-            Play Animal Runner
+            Play Basket Buddies
           </LinkButton>
         </div>
       )}
